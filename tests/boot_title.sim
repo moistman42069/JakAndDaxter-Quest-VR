@@ -1,0 +1,24 @@
+# Boot on the simulated headset (any of the three games): the title on the panel; the left menu button's short press
+# (Start) at "PRESS START", then A through the title's menus into a new game. Expect "[vr]" lines with no errors, a
+# panel picture at the title, and eye pictures once the opening cutscene or play starts (cutscenes through Jak's eyes
+# by default). The run ends itself ("quit"; jak_vr exit_wanted).
+900 shot title
+1200 menu 1
+1206 menu 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 shot after-start
+3300 shot scene
+3360 head_yaw 40
+3420 shot scene-head-left
+3480 head_yaw 0
+3600 left_y 1
+3700 left_y 0
+3760 shot later
+3800 quit 0

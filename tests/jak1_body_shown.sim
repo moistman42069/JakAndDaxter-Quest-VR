@@ -1,0 +1,26 @@
+# Body shown (LIST 40), Jak 1: run once for each choice (body-shown 0 to 6 in the settings folder's vr-options.txt).
+# A look down at the hands held out ahead, then the eyes stood behind and above him (view_free): what is cut away.
+2380 shot title
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 head_pitch -55
+4200 rh_z -0.3
+4200 lh_z -0.3
+4200 rh_x 0.25
+4200 lh_x -0.25
+4260 shot s-down
+4270 head_pitch 0
+4270 view_free 1
+4270 view_z 2.8
+4270 view_y -0.3
+4330 shot s-behind
+4340 view_z 1.6
+4340 view_y -0.7
+4400 shot s-behind-near
+4410 quit 0

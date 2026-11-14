@@ -1,0 +1,19 @@
+# Jak 1's title: Start pressed every 10 s, a panel picture before each, to see when the game takes it. The logo skips
+# only once village1 has loaded; "PRESS START" then waits for the next press (title-obs.gc target-title-wait).
+600 shot t0600
+900 menu 1
+906 menu 0
+1150 shot t1150
+1500 menu 1
+1506 menu 0
+1750 shot t1750
+2100 menu 1
+2106 menu 0
+2350 shot t2350
+2700 menu 1
+2706 menu 0
+2950 shot t2950
+3300 a 1
+3306 a 0
+3550 shot t3550
+3600 quit 0

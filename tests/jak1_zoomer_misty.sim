@@ -1,0 +1,37 @@
+# Jak 1 on the Zoomer (LIST item 9), run with JAKVR_TEST_CONTINUE=misty-bike (and JAKVR_STATE_TRACE=1): Misty
+# Island's Zoomer, which a new game may ride (Fire Canyon's asks for power cells), about 2 seconds' walk ahead: B (the
+# game's Circle) pressed walking slowly up to it gets on;
+# expect the view in third person by itself while riding.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+5400 shot zm-start
+5420 left_y 1
+5500 left_y 0.35
+5510 b 1
+5516 b 0
+5530 b 1
+5536 b 0
+5550 b 1
+5556 b 0
+5570 b 1
+5576 b 0
+5590 b 1
+5596 b 0
+5610 b 1
+5616 b 0
+5630 b 1
+5636 b 0
+5650 left_y 0
+5700 shot zm-on
+5720 left_y 1
+5840 shot zm-drive1
+5960 shot zm-drive2
+6000 left_y 0
+6060 shot zm-stop
+6100 quit 0

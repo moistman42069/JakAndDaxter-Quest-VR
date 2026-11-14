@@ -1,0 +1,15 @@
+# Jak 1 looking down at his body (the start of jak1_body.sim, short): a new game to Geyser Rock in first person, a look
+# straight ahead, then 60 degrees down, twice.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot b-start
+4260 head_pitch -60
+4320 shot b-down
+4400 shot b-down2
+4410 quit 0

@@ -1,0 +1,36 @@
+# Jak II on the JET-Board (LIST item 9), run with JAKVR_TEST_BOARD=1 JAKVR_TEST_CONTINUE=ctysluma-start (and
+# JAKVR_STATE_TRACE=1): in Haven City the right stick's click (the board's R2 moved there on foot by Fists on the
+# right grip) puts Jak on the board; expect the view in third person by itself, the ride, then off the board and first
+# person again (on the board the right grip is R2 again: it gets him off).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+6000 shot j2b-start
+6020 right_click 1
+6026 right_click 0
+6120 shot j2b-on
+6140 left_y 1
+6260 shot j2b-ride1
+6380 shot j2b-ride2
+6400 left_y 0
+6460 right_grip 1
+6466 right_grip 0
+6580 shot j2b-off
+6600 quit 0

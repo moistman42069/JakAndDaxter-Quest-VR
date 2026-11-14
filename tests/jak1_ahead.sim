@@ -1,0 +1,11 @@
+# Jak 1: one look straight ahead in first person at Geyser Rock (a quick check of what is by his face).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot b-start
+4210 quit 0

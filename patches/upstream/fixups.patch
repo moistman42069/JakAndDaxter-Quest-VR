@@ -1,0 +1,1918 @@
+diff --git a/.github/workflows/macos-build-arm.yaml b/.github/workflows/macos-build-arm.yaml
+index 52d89308a7de07af0bd363ac60a21dea2b8cd76f..5de7becc25fd8251f90b13a402c65cd83f7b9313 100644
+--- a/.github/workflows/macos-build-arm.yaml
++++ b/.github/workflows/macos-build-arm.yaml
+@@ -29,13 +29,15 @@ jobs:
+           HOMEBREW_NO_INSTALL_CLEANUP: 1
+           HOMEBREW_NO_ANALYTICS: 1
+         run: |
+-          if ! brew install ninja nasm; then
++          if ! brew install ninja nasm openssl@3 brotli nghttp2; then
+             brew update
+-            brew install ninja nasm
++            brew install ninja nasm openssl@3 brotli nghttp2
+           fi
++          # keg-only, so give CMake's FindOpenSSL an explicit hint
++          echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)" >> $GITHUB_ENV
+ 
+       - name: Setup sccache
+-        uses: hendrikmuhs/ccache-action@v1.2.23
++        uses: hendrikmuhs/ccache-action@v1.2.24
+         with:
+           variant: sccache
+           key: macos-15-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
+diff --git a/.github/workflows/offline-tests.yaml b/.github/workflows/offline-tests.yaml
+index 97a942a57dae51d1fb80fd142373a75fbe3a6e86..d0a05c95427bc477f41a60b0b77152b63375f3e9 100644
+--- a/.github/workflows/offline-tests.yaml
++++ b/.github/workflows/offline-tests.yaml
+@@ -33,6 +33,7 @@ jobs:
+           COMMENT_ID: ${{ github.event.comment.user.id }}
+           COMMENT: ${{ github.event.comment.body }}
+           PR_NUMBER: ${{ github.event.issue.number }}
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: |
+           set -e
+ 
+@@ -67,6 +68,7 @@ jobs:
+             SHA=$(gh api repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.head.sha')
+             if [ "$COMMENT" = "ok to test" ] && grep -Fxq "$COMMENT_ID" ./.tmp-ci/allowlist.txt; then
+               is_trusted=true
++              gh pr comment "${{ github.event.issue.number }}" --body "Offline tests running: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+             fi
+           fi
+ 
+diff --git a/.github/workflows/release-pipeline.yaml b/.github/workflows/release-pipeline.yaml
+index f7697db6756464859f8babea69b069106fc56f19..51f94d388a82688dcf241bf1e144ea6ef8a30656 100644
+--- a/.github/workflows/release-pipeline.yaml
++++ b/.github/workflows/release-pipeline.yaml
+@@ -12,6 +12,10 @@ on:
+           - patch
+           - minor
+           - major
++      release_version:
++        description: 'Explicit release version (e.g. 0.3.8). If set, skips automatic version bump.'
++        required: false
++        type: string
+ 
+ permissions:
+   contents: write
+@@ -25,23 +29,48 @@ jobs:
+     steps:
+       # Docs - https://github.com/mathieudutour/github-tag-action
+       - name: Bump Version and Push Tag
+-        if: github.repository == 'open-goal/jak-project'
++        if: github.repository == 'open-goal/jak-project' && !inputs.release_version
+         id: tag_version
+-        uses: mathieudutour/github-tag-action@v6.2
++        uses: mathieudutour/github-tag-action@v7
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+           tag_prefix: v
+-          default_bump: ${{ github.event.inputs.bump }}
++          default_bump: ${{ inputs.bump }}
++
++      - name: Create Explicit Tag
++        if: inputs.release_version
++        env:
++          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++        run: |
++          gh api \
++            --method POST \
++            "/repos/${{ github.repository }}/git/refs" \
++            -f "ref=refs/tags/v${{ inputs.release_version }}" \
++            -f "sha=${{ github.sha }}"
+ 
+       - name: Create Release
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+-        run: gh release create ${{ steps.tag_version.outputs.new_tag }} --generate-notes --draft --repo ${{ github.repository }}
++        run: |
++          if [ -n "${{ inputs.release_version }}" ]; then
++            TAG="v${{ inputs.release_version }}"
++          else
++            TAG="${{ steps.tag_version.outputs.new_tag }}"
++          fi
++
++          gh release create "$TAG" \
++            --generate-notes \
++            --draft \
++            --repo "${{ github.repository }}"
+ 
+       - name: Output new tag
+         id: set_tag
+         run: |
+-          echo "new_tag=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_OUTPUT
++          if [ -n "${{ inputs.release_version }}" ]; then
++            echo "new_tag=v${{ inputs.release_version }}" >> "$GITHUB_OUTPUT"
++          else
++            echo "new_tag=${{ steps.tag_version.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
++          fi
+ 
+   # Windows
+   build_windows_clang:
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9fa40c23051fde85bd1b390315ba0a4f0d5ac50..2c3c2a95272e21abe49f92713f3ba1665261964b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,10 +26,13 @@ else()
+ endif()
+ 
+ # For clangd
++# file(COPY), not configure_file(): configure_file registers its input as a
++# configure dependency, putting the ever-rewritten compile_commands.json into
++# the Ninja regen rule and causing an endless reconfigure loop.
+ if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
+-    configure_file(
++    file(COPY
+         "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
+-        "${PROJECT_SOURCE_DIR}/build/compile_commands.json")
++        DESTINATION "${PROJECT_SOURCE_DIR}/build")
+ endif()
+ 
+ # NOTE - for SDL, i think SDL3 regressed this - https://github.com/libsdl-org/SDL/pull/6455
+@@ -199,6 +202,13 @@ function(build_third_party_lib dir_name target_name)
+ endfunction()
+ 
+ # Dependencies and Libraries
++# - for reasons outside of my understanding, on some distros CMake can't find a library if it's
++# in `/usr/lib64` instead of `/usr/lib`.  This problem was encountered for libcurl not being able
++# to find OpenSSL even though its most definitely installed!
++if(UNIX AND NOT APPLE)
++    list(APPEND CMAKE_LIBRARY_PATH "/usr/lib64")
++endif()
++
+ # includes relative to top level jak-project folder
+ include_directories(./)
+ 
+@@ -213,18 +223,25 @@ set(CURL_USE_LIBSSH2 OFF)
+ # but this is another part of libcurl we probably don't need (multi-threading/parallelism)
+ set(CURL_USE_LIBPSL OFF)
+ set(CURL_ZLIB OFF)
++# these default to AUTO since curl 8.10 and would silently pick up system libs
++set(CURL_BROTLI OFF CACHE BOOL "Disable Brotli support" FORCE)
++set(CURL_ZSTD OFF CACHE BOOL "Disable zstd support" FORCE)
++set(USE_NGHTTP2 OFF CACHE BOOL "Disable nghttp2 support" FORCE)
++# curl's BUILD_EXAMPLES cache option (default ON) would otherwise leak into
++# discord-rpc's identically named option and break its examples add_subdirectory
++set(BUILD_EXAMPLES OFF)
+ # suddenly became enabled on macOS atleast, only needed for unicode URLs
+ # wasn't being properly statically linked
+ set(USE_LIBIDN2 OFF)
+ if(WIN32)
+     set(CURL_USE_SCHANNEL ON) # native Windows SSL support
+-elseif(APPLE)
+-    set(CURL_USE_SECTRANSP ON) # native macOS SSL support
+ else()
++    # curl 8.15 removed the native macOS backend (CURL_USE_SECTRANSP), so macOS
++    # uses OpenSSL like linux (Homebrew openssl@3, see the macOS build workflows)
+     if(STATICALLY_LINK)
+         set(OPENSSL_USE_STATIC_LIBS TRUE)
+     endif()
+-    set(CURL_USE_OPENSSL ON) # not native, but seems to be the best choice for linux
++    set(CURL_USE_OPENSSL ON)
+ endif()
+ include_directories(third-party/curl/include)
+ if(STATICALLY_LINK)
+@@ -272,9 +289,6 @@ build_third_party_lib(fmt fmt)
+ # build common library
+ add_subdirectory(common)
+ 
+-# build decompiler
+-add_subdirectory(decompiler)
+-
+ # cubeb - audio
+ build_third_party_lib(cubeb cubeb)
+ 
+@@ -307,6 +321,9 @@ add_subdirectory(goalc)
+ # build standalone tools
+ add_subdirectory(tools)
+ 
++# build decompiler
++add_subdirectory(decompiler)
++
+ # build the gtest libraries
+ if(WIN32)
+     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+diff --git a/common/cross_os_debug/xdbg.cpp b/common/cross_os_debug/xdbg.cpp
+index b980a79b5ef83bddb959b8417df14f624207600f..7f14170e4b2a8c66d8ce5e557749753bfb8b4874 100644
+--- a/common/cross_os_debug/xdbg.cpp
++++ b/common/cross_os_debug/xdbg.cpp
+@@ -319,6 +319,14 @@ bool cont_now(const ThreadID& tid) {
+   return true;
+ }
+ 
++bool single_step_now(const ThreadID& tid) {
++  if (ptrace(PTRACE_SINGLESTEP, tid.id, nullptr, nullptr) < 0) {
++    printf("[Debugger] Failed to PTRACE_SINGLESTEP %s\n", strerror(errno));
++    return false;
++  }
++  return true;
++}
++
+ #elif _WIN32
+ 
+ ThreadID::ThreadID(DWORD _pid, DWORD _tid) : pid(_pid), tid(_tid) {}
+@@ -407,6 +415,41 @@ bool cont_now(const ThreadID& tid) {
+   return true;
+ }
+ 
++/*!
++ * Execute a single instruction in the given thread, then stop again.
++ * Windows has no single-step request, so we set the x86 trap flag (EFLAGS.TF) and resume. The
++ * CPU raises a single-step exception after exactly one instruction. The flag is cleared by the
++ * CPU when the exception is delivered, so this does not need to be undone.
++ */
++bool single_step_now(const ThreadID& tid) {
++  CONTEXT context = {};
++  context.ContextFlags = CONTEXT_CONTROL;
++  HANDLE hThr = OpenThread(THREAD_GET_CONTEXT | THREAD_SET_CONTEXT, FALSE, tid.tid);
++
++  if (hThr == NULL) {
++    win_print_last_error("OpenThread single_step_now");
++    return false;
++  }
++
++  if (!GetThreadContext(hThr, &context)) {
++    win_print_last_error("GetThreadContext single_step_now");
++    CloseHandle(hThr);
++    return false;
++  }
++
++  context.EFlags |= 0x100;  // TF
++  context.ContextFlags = CONTEXT_CONTROL;
++
++  if (!SetThreadContext(hThr, &context)) {
++    win_print_last_error("SetThreadContext single_step_now");
++    CloseHandle(hThr);
++    return false;
++  }
++  CloseHandle(hThr);
++
++  return cont_now(tid);
++}
++
+ DEBUG_EVENT debugEvent;
+ void ignore_debug_event() {
+   if (!ContinueDebugEvent(debugEvent.dwProcessId, debugEvent.dwThreadId, DBG_CONTINUE)) {
+@@ -588,7 +631,7 @@ bool write_goal_memory(const u8* src_buffer,
+                        const DebugContext& context,
+                        const MemoryHandle& mem) {
+   SIZE_T written;
+-  HANDLE hProc = OpenProcess(PROCESS_VM_WRITE, FALSE, context.tid.pid);
++  HANDLE hProc = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, context.tid.pid);
+ 
+   if (hProc == NULL) {
+     win_print_last_error("OpenProcess write_goal_memory");
+@@ -732,6 +775,9 @@ bool break_now(const ThreadID& tid) {
+ bool cont_now(const ThreadID& tid) {
+   return false;
+ }
++bool single_step_now(const ThreadID& tid) {
++  return false;
++}
+ bool open_memory(const ThreadID& tid, MemoryHandle* out) {
+   return false;
+ }
+diff --git a/common/cross_os_debug/xdbg.h b/common/cross_os_debug/xdbg.h
+index 2cbf36a956353b60f8bbdec5bc792cf38ed0a009..da81f968daece4b938e44abd20326284be4bc2e3 100644
+--- a/common/cross_os_debug/xdbg.h
++++ b/common/cross_os_debug/xdbg.h
+@@ -107,6 +107,7 @@ bool get_regs_now(const ThreadID& tid, Regs* out);
+ bool set_regs_now(const ThreadID& tid, const Regs& in);
+ bool break_now(const ThreadID& tid);
+ bool cont_now(const ThreadID& tid);
++bool single_step_now(const ThreadID& tid);
+ bool open_memory(const ThreadID& tid, MemoryHandle* out);
+ bool close_memory(const ThreadID& tid, MemoryHandle* handle);
+ bool read_goal_memory(u8* dest_buffer,
+diff --git a/decompiler/config.cpp b/decompiler/config.cpp
+index ec09d676ad0c704c81c46817ce119a60da724d09..75a965ce87b55c2824210a0eac5544f095fd88ea 100644
+--- a/decompiler/config.cpp
++++ b/decompiler/config.cpp
+@@ -339,6 +339,9 @@ Config make_config_via_json(nlohmann::json& json) {
+   if (json.contains("rip_streamed_audio")) {
+     config.rip_streamed_audio = json.at("rip_streamed_audio").get<bool>();
+   }
++  if (json.contains("rip_music")) {
++    config.rip_music = json.at("rip_music").get<bool>();
++  }
+ 
+   if (inputs_json.contains("animated_textures")) {
+     config.animated_textures =
+diff --git a/decompiler/config.h b/decompiler/config.h
+index bfd5c0d403329d905c02515df0e6baa7f145a4fc..e71d176675c6d5898839624ee49a69137ec4b154 100644
+--- a/decompiler/config.h
++++ b/decompiler/config.h
+@@ -180,6 +180,7 @@ struct Config {
+   int levels_extract_threads = 0;
+   bool save_texture_pngs = false;
+   bool rip_streamed_audio = false;
++  bool rip_music = false;
+ 
+   DecompileHacks hacks;
+ 
+diff --git a/decompiler/extractor/main.cpp b/decompiler/extractor/main.cpp
+index 8da650d8916ea537ab32c517880d55d7e29e28bb..93efb1b810fe10ca2d18d63e1a1f614f390b725c 100644
+--- a/decompiler/extractor/main.cpp
++++ b/decompiler/extractor/main.cpp
+@@ -193,6 +193,11 @@ int main(int argc, char** argv) {
+   bool flag_folder = false;
+   std::string game_name = "jak1";
+   std::string decomp_config_override = "{}";
++#if defined(__aarch64__) || defined(_M_ARM64)
++  std::string instr_set_name = "arm64";
++#else
++  std::string instr_set_name = "x86";
++#endif
+ 
+   lg::initialize();
+ 
+@@ -216,10 +221,22 @@ int main(int argc, char** argv) {
+   app.add_flag("-c,--compile", flag_compile, "Compile the game");
+   app.add_flag("-p,--play", flag_play, "Play the game");
+   app.add_flag("-f,--folder", flag_folder, "Take ISO input from a folder");
++  app.add_option("--instruction-set", instr_set_name,
++                 "Select the x86 or ARM64 code generation backend.");
+   define_common_cli_arguments(app);
+   app.validate_positionals();
+   CLI11_PARSE(app, argc, argv);
+ 
++  emitter::InstructionSet instr_set;
++  if (instr_set_name == "x86") {
++    instr_set = emitter::InstructionSet::X86;
++  } else if (instr_set_name == "arm64") {
++    instr_set = emitter::InstructionSet::ARM64;
++  } else {
++    lg::error("Instruction set '{}' must be 'x86' or 'arm64'", instr_set_name);
++    return 1;
++  }
++
+   lg::info("Working Directory - {}", fs::current_path().string());
+ 
+   // If no flag is set, we default to running everything
+@@ -394,7 +411,7 @@ int main(int argc, char** argv) {
+   }
+ 
+   if (flag_compile) {
+-    const auto status_code = compile(iso_data_path, data_subfolder);
++    const auto status_code = compile(iso_data_path, data_subfolder, instr_set);
+     if (status_code != ExtractorErrorCode::SUCCESS) {
+       return static_cast<int>(status_code);
+     }
+diff --git a/game/CMakeLists.txt b/game/CMakeLists.txt
+index 7b537305b6fafb6cfba87b864980362a00b7a1d4..739ab152ffd5e984d615e95f84adbc8735920864 100644
+--- a/game/CMakeLists.txt
++++ b/game/CMakeLists.txt
+@@ -244,6 +244,31 @@ set(RUNTIME_SOURCE
+         mips2c/jak3_functions/ocean.cpp
+         mips2c/jak3_functions/ocean_vu0.cpp
+         mips2c/jak3_functions/generic_merc.cpp
++        mips2c/jakx_functions/collide_func.cpp
++        mips2c/jakx_functions/debug.cpp
++        mips2c/jakx_functions/font.cpp
++        mips2c/jakx_functions/foreground.cpp
++        mips2c/jakx_functions/generic_effect.cpp
++        mips2c/jakx_functions/joint.cpp
++        mips2c/jakx_functions/lights.cpp
++        mips2c/jakx_functions/sky.cpp
++        mips2c/jakx_functions/texture.cpp
++        mips2c/jakx_functions/particle_curves.cpp
++        mips2c/jakx_functions/cloth.cpp
++        mips2c/jakx_functions/collide_cache.cpp
++        mips2c/jakx_functions/collide_hash.cpp
++        mips2c/jakx_functions/collide_mesh.cpp
++        mips2c/jakx_functions/spatial_hash.cpp
++        mips2c/jakx_functions/sparticle.cpp
++        mips2c/jakx_functions/sparticle_launcher.cpp
++        mips2c/jakx_functions/nav_control.cpp
++        mips2c/jakx_functions/nav_engine.cpp
++        mips2c/jakx_functions/merc_blend_shape.cpp
++        mips2c/jakx_functions/wvehicle_part.cpp
++        mips2c/jakx_functions/ripple.cpp
++        mips2c/jakx_functions/shadow.cpp
++        mips2c/jakx_functions/ocean.cpp
++        mips2c/jakx_functions/generic_merc.cpp
+         mips2c/mips2c_table.cpp
+         overlord/common/dma.cpp
+         overlord/common/fake_iso.cpp
+diff --git a/game/graphics/pipelines/opengl.cpp b/game/graphics/pipelines/opengl.cpp
+index d8fef37c375e30f420991298b0e53eef742366e3..1b728c04aa08980be40a64fdf1f96a5882478871 100644
+--- a/game/graphics/pipelines/opengl.cpp
++++ b/game/graphics/pipelines/opengl.cpp
+@@ -904,6 +904,10 @@ void GLDisplay::render() {
+     g_gfx_data->debug_gui.want_reboot_in_debug = false;
+     MasterExit = RuntimeExitStatus::RESTART_IN_DEBUG;
+   }
++  if (g_gfx_data->debug_gui.want_reboot_in_retail) {
++    g_gfx_data->debug_gui.want_reboot_in_retail = false;
++    MasterExit = RuntimeExitStatus::RESTART_IN_RETAIL;
++  }
+ 
+   {
+     auto p = scoped_prof("check-close-window");
+diff --git a/game/main.cpp b/game/main.cpp
+index b733125e88215cb48fd8c4a2304545edaf458a7b..a3e0d66d659e453e223c3fa301008d5bd5c52b17 100644
+--- a/game/main.cpp
++++ b/game/main.cpp
+@@ -634,6 +634,7 @@ int main(int argc, char** argv) {
+ #endif
+ 
+   bool force_debug_next_time = false;
++  bool force_retail_next_time = false;
+   // always start with an empty arg, as internally kmachine starts at `1` not `0`
+   std::vector<const char*> arg_ptrs = {""};
+   for (auto& str : game_args) {
+@@ -653,6 +654,15 @@ int main(int argc, char** argv) {
+         arg_ptrs.push_back(str.data());
+       }
+     }
++    if (force_retail_next_time) {
++      force_retail_next_time = false;
++      arg_ptrs = {""};  // see above for rationale
++      for (auto& str : game_args) {
++        if (str != "-debug") {
++          arg_ptrs.push_back(str.data());
++        }
++      }
++    }
+ 
+     // run the runtime in a loop so we can reset the game and have it restart cleanly
+     lg::info("OpenGOAL Runtime {}.{}", versions::GOAL_VERSION_MAJOR, versions::GOAL_VERSION_MINOR);
+@@ -674,6 +684,9 @@ int main(int argc, char** argv) {
+         case RuntimeExitStatus::RESTART_IN_DEBUG:
+           force_debug_next_time = true;
+           break;
++        case RuntimeExitStatus::RESTART_IN_RETAIL:
++          force_retail_next_time = true;
++          break;
+       }
+     } catch (std::exception& ex) {
+ #ifdef __SWITCH__
+diff --git a/game/mips2c/mips2c_table.cpp b/game/mips2c/mips2c_table.cpp
+index 73d979376a14adc5fc087378b486c16f784032f0..716156f51575b528aea8ea81db458be7d9f4ab9e 100644
+--- a/game/mips2c/mips2c_table.cpp
++++ b/game/mips2c/mips2c_table.cpp
+@@ -9,6 +9,7 @@
+ #include "game/kernel/jak1/kscheme.h"
+ #include "game/kernel/jak2/kscheme.h"
+ #include "game/kernel/jak3/kscheme.h"
++#include "game/kernel/jakx/kscheme.h"
+ #include "game/runtime.h"
+ 
+ extern "C" {
+@@ -401,7 +402,137 @@ namespace shadow_add_single_tris { extern void link(); }
+ namespace shadow_add_double_tris { extern void link(); }
+ namespace shadow_execute { extern void link(); }
+ namespace method_21_cloth_system { extern void link(); }
++}
+ 
++namespace jakx {
++namespace light_hash_get_bucket_index { extern void link(); }
++namespace add_light_sphere_to_light_group { extern void link(); }
++namespace light_hash_count_items { extern void link(); }
++namespace light_hash_add_items { extern void link(); }
++namespace debug_line_clip { extern void link(); }
++namespace init_boundary_regs { extern void link(); }
++namespace draw_boundary_polygon { extern void link(); }
++namespace render_boundary_quad { extern void link(); }
++namespace render_boundary_tri { extern void link(); }
++// namespace set_sky_vf27 { extern void link(); }
++namespace generic_light_proc { extern void link(); }
++namespace generic_envmap_proc { extern void link(); }
++// namespace generic_prepare_dma_double { extern void link(); }
++namespace generic_prepare_dma_single { extern void link(); }
++namespace generic_warp_source_proc { extern void link(); }
++namespace generic_warp_dest_proc { extern void link(); }
++namespace generic_warp_dest { extern void link(); }
++namespace generic_warp_envmap_dest { extern void link(); }
++namespace generic_no_light_proc { extern void link(); }
++// namespace method_9_font_work { extern void link(); }
++// namespace draw_string_asm { extern void link(); }
++// namespace get_string_length { extern void link(); }
++namespace adgif_shader_texture_with_update { extern void link(); }
++namespace moving_sphere_triangle_intersect { extern void link(); }
++namespace collide_do_primitives { extern void link(); }
++// namespace cspace_parented_transformq_joint { extern void link(); }
++namespace foreground_check_longest_edge_asm { extern void link(); }
++namespace foreground_merc { extern void link(); }
++namespace foreground_generic_merc { extern void link(); }
++namespace live_func_curve { extern void link(); }
++namespace birth_func_curve { extern void link(); }
++namespace method_11_collide_hash { extern void link(); }
++namespace method_12_collide_hash { extern void link(); }
++namespace fill_bg_using_box_new { extern void link(); }
++namespace fill_bg_using_line_sphere_new { extern void link(); }
++namespace method_12_collide_mesh { extern void link(); }
++namespace method_14_collide_mesh { extern void link(); }
++// namespace method_15_collide_mesh { extern void link(); }
++namespace method_10_collide_shape_prim_mesh { extern void link(); }
++namespace method_10_collide_shape_prim_sphere { extern void link(); }
++namespace method_10_collide_shape_prim_group { extern void link(); }
++namespace method_11_collide_shape_prim_mesh { extern void link(); }
++namespace method_11_collide_shape_prim_sphere { extern void link(); }
++namespace method_11_collide_shape_prim_group { extern void link(); }
++namespace method_9_collide_cache_prim { extern void link(); }
++namespace method_10_collide_cache_prim { extern void link(); }
++namespace method_17_collide_cache { extern void link(); }
++namespace method_9_collide_puss_work { extern void link(); }
++namespace method_10_collide_puss_work { extern void link(); }
++// namespace method_18_grid_hash { extern void link(); }
++namespace method_19_grid_hash { extern void link(); }
++namespace method_20_grid_hash { extern void link(); }
++namespace method_22_grid_hash { extern void link(); }
++namespace method_28_sphere_hash { extern void link(); }
++// namespace method_32_sphere_hash { extern void link(); }
++// namespace method_29_sphere_hash { extern void link(); }
++namespace method_30_sphere_hash { extern void link(); }
++// namespace method_31_sphere_hash { extern void link(); }
++// namespace method_32_spatial_hash { extern void link(); }
++// namespace method_38_spatial_hash { extern void link(); }
++namespace method_35_spatial_hash { extern void link(); }
++namespace method_36_spatial_hash { extern void link(); }
++namespace method_34_spatial_hash { extern void link(); }
++namespace sparticle_motion_blur { extern void link(); }
++namespace sp_launch_particles_var { extern void link(); }
++namespace particle_adgif { extern void link(); }
++namespace sp_init_fields { extern void link(); }
++namespace sp_process_block_2d { extern void link(); }
++namespace sp_process_block_3d { extern void link(); }
++namespace method_39_nav_state { extern void link(); }
++namespace method_21_nav_engine { extern void link(); }
++namespace method_20_nav_engine { extern void link(); }
++namespace method_18_nav_engine { extern void link(); }
++namespace method_17_nav_engine { extern void link(); }
++namespace nav_state_patch_pointers { extern void link(); }
++namespace nav_dma_send_from_spr_no_flush { extern void link(); }
++namespace nav_dma_send_to_spr_no_flush { extern void link(); }
++namespace blerc_execute { extern void link(); }
++namespace setup_blerc_chains_for_one_fragment { extern void link(); }
++namespace sparticle_motion_blur_dirt { extern void link(); }
++namespace foreground_draw_hud { extern void link(); }
++namespace ripple_matrix_scale { extern void link(); }
++namespace ripple_apply_wave_table { extern void link(); }
++namespace ripple_create_wave_table { extern void link(); }
++namespace ripple_execute_init { extern void link(); }
++// namespace method_14_ocean { extern void link(); }
++// namespace method_15_ocean { extern void link(); }
++// namespace method_16_ocean { extern void link(); }
++namespace init_ocean_far_regs { extern void link(); }
++namespace draw_large_polygon_ocean { extern void link(); }
++namespace render_ocean_quad { extern void link(); }
++namespace generic_merc_do_chain { extern void link(); }
++namespace generic_merc_execute_asm { extern void link(); }
++namespace generic_merc_death { extern void link(); }
++namespace generic_merc_query { extern void link(); }
++namespace generic_translucent { extern void link(); }
++namespace high_speed_reject { extern void link(); }
++namespace mercneric_convert { extern void link(); }
++namespace generic_merc_init_asm { extern void link(); }
++namespace set_tex_offset { extern void link(); }
++namespace draw_large_polygon { extern void link(); }
++namespace render_sky_quad { extern void link(); }
++namespace render_sky_tri { extern void link(); }
++namespace method_17_sky_work { extern void link(); }
++namespace method_29_sky_work { extern void link(); }
++namespace method_30_sky_work { extern void link(); }
++namespace method_31_sky_work { extern void link(); }
++// namespace method_34_sky_work { extern void link(); }
++// namespace method_35_sky_work { extern void link(); }
++namespace method_32_sky_work { extern void link(); }
++// namespace set_sky_vf23_value { extern void link(); }
++namespace shadow_xform_verts { extern void link(); }
++namespace shadow_calc_dual_verts { extern void link(); }
++namespace shadow_scissor_edges { extern void link(); }
++namespace shadow_scissor_top { extern void link(); }
++namespace shadow_init_vars { extern void link(); }
++namespace shadow_find_facing_single_tris { extern void link(); }
++namespace shadow_find_facing_double_tris { extern void link(); }
++namespace shadow_find_single_edges { extern void link(); }
++namespace shadow_find_double_edges { extern void link(); }
++namespace shadow_add_verts { extern void link(); }
++namespace shadow_add_facing_single_tris { extern void link(); }
++namespace shadow_add_single_edges { extern void link(); }
++namespace shadow_add_double_edges { extern void link(); }
++namespace shadow_add_single_tris { extern void link(); }
++namespace shadow_add_double_tris { extern void link(); }
++namespace shadow_execute { extern void link(); }
++namespace method_21_cloth_system { extern void link(); }
+ }
+ // clang-format on
+ 
+@@ -665,7 +796,116 @@ PerGameVersion<std::unordered_map<std::string, std::vector<void (*)()>>> gMips2C
+        jak3::shadow_add_single_tris::link, jak3::shadow_add_double_tris::link}},
+      {"cloth", {jak3::method_21_cloth_system::link}}},
+     /////////// JAK X
+-    {}};
++    {{"lights",
++      {jakx::light_hash_get_bucket_index::link, jakx::add_light_sphere_to_light_group::link,
++       jakx::light_hash_count_items::link, jakx::light_hash_add_items::link}},
++     {"debug",
++      {
++          jakx::debug_line_clip::link, jakx::init_boundary_regs::link,
++          jakx::draw_boundary_polygon::link, jakx::render_boundary_quad::link,
++          //  jakx::render_boundary_tri::link, jakx::set_sky_vf27::link
++      }},
++     {"generic-effect",
++      {jakx::generic_light_proc::link, jakx::generic_envmap_proc::link,
++       //  jakx::generic_prepare_dma_double::link,
++       jakx::generic_prepare_dma_single::link, jakx::generic_warp_source_proc::link,
++       jakx::generic_warp_dest_proc::link, jakx::generic_warp_dest::link,
++       jakx::generic_warp_envmap_dest::link, jakx::generic_no_light_proc::link}},
++     //  {"font",
++     //   {jakx::method_9_font_work::link,
++     //     jakx::draw_string_asm::link,
++     //    jakx::get_string_length::link}},
++     {"texture", {jakx::adgif_shader_texture_with_update::link}},
++     {"collide-func",
++      {jakx::moving_sphere_triangle_intersect::link, jakx::collide_do_primitives::link}},
++     {"joint",
++      {
++          // jakx::cspace_parented_transformq_joint::link
++      }},
++     {"foreground",
++      {jakx::foreground_check_longest_edge_asm::link, jakx::foreground_generic_merc::link,
++       jakx::foreground_merc::link, jakx::foreground_draw_hud::link}},
++     {"particle-curves", {jakx::live_func_curve::link, jakx::birth_func_curve::link}},
++     {"collide-hash",
++      {jakx::method_11_collide_hash::link, jakx::method_12_collide_hash::link,
++       jakx::fill_bg_using_box_new::link, jakx::fill_bg_using_line_sphere_new::link}},
++     {"collide-mesh",
++      {jakx::method_12_collide_mesh::link, jakx::method_14_collide_mesh::link,
++       //  jakx::method_15_collide_mesh::link,
++       jakx::method_10_collide_shape_prim_mesh::link}},
++     {"collide-cache",
++      {jakx::method_10_collide_shape_prim_mesh::link,
++       jakx::method_10_collide_shape_prim_sphere::link,
++       jakx::method_10_collide_shape_prim_group::link,
++       jakx::method_11_collide_shape_prim_mesh::link,
++       jakx::method_11_collide_shape_prim_sphere::link,
++       jakx::method_11_collide_shape_prim_group::link, jakx::method_9_collide_cache_prim::link,
++       jakx::method_10_collide_cache_prim::link, jakx::method_17_collide_cache::link,
++       jakx::method_9_collide_puss_work::link, jakx::method_10_collide_puss_work::link}},
++     {"spatial-hash",
++      {
++          // jakx::method_18_grid_hash::link,
++          jakx::method_19_grid_hash::link, jakx::method_20_grid_hash::link,
++          jakx::method_22_grid_hash::link, jakx::method_28_sphere_hash::link,
++          // jakx::method_32_sphere_hash::link,
++          //  jakx::method_29_sphere_hash::link,
++          jakx::method_30_sphere_hash::link,
++          //  jakx::method_31_sphere_hash::link,
++          //  jakx::method_32_spatial_hash::link,
++          //  jakx::method_38_spatial_hash::link,
++          jakx::method_35_spatial_hash::link, jakx::method_36_spatial_hash::link,
++          //  jakx::method_34_spatial_hash::link
++      }},
++     {"sparticle-launcher",
++      {jakx::sparticle_motion_blur::link, jakx::sp_launch_particles_var::link,
++       jakx::particle_adgif::link, jakx::sp_init_fields::link}},
++     {"sparticle", {jakx::sp_process_block_2d::link, jakx::sp_process_block_3d::link}},
++     {"nav-engine",
++      {jakx::method_21_nav_engine::link, jakx::method_20_nav_engine::link,
++       jakx::method_18_nav_engine::link, jakx::method_17_nav_engine::link,
++       jakx::nav_state_patch_pointers::link, jakx::nav_dma_send_from_spr_no_flush::link,
++       jakx::nav_dma_send_to_spr_no_flush::link}},
++     {"nav-control", {jakx::method_39_nav_state::link}},
++     {"merc-blend-shape",
++      {jakx::blerc_execute::link, jakx::setup_blerc_chains_for_one_fragment::link}},
++     {"wvehicle-part", {jakx::sparticle_motion_blur_dirt::link}},
++     {"ripple",
++      {jakx::ripple_matrix_scale::link, jakx::ripple_apply_wave_table::link,
++       jakx::ripple_create_wave_table::link, jakx::ripple_execute_init::link}},
++     {"ocean-vu0",
++      {
++          // jakx::method_14_ocean::link,
++          // jakx::method_15_ocean::link,
++          //  jakx::method_16_ocean::link
++      }},
++     {"ocean",
++      {jakx::init_ocean_far_regs::link, jakx::draw_large_polygon_ocean::link,
++       jakx::render_ocean_quad::link}},
++     {"generic-merc",
++      {jakx::generic_merc_do_chain::link, jakx::generic_merc_execute_asm::link,
++       jakx::generic_merc_death::link, jakx::generic_merc_query::link,
++       jakx::generic_translucent::link, jakx::high_speed_reject::link,
++       jakx::mercneric_convert::link, jakx::generic_merc_init_asm::link}},
++     {"sky-tng",
++      {jakx::set_tex_offset::link, jakx::render_sky_quad::link, jakx::render_sky_tri::link,
++       jakx::method_17_sky_work::link, jakx::method_29_sky_work::link,
++       jakx::method_30_sky_work::link, jakx::method_31_sky_work::link,
++       //  jakx::method_34_sky_work::link,
++       //  jakx::method_35_sky_work::link,
++       jakx::method_32_sky_work::link,
++       //  jakx::set_sky_vf23_value::link,
++       jakx::draw_large_polygon::link}},
++     {"shadow-cpu",
++      {jakx::shadow_xform_verts::link, jakx::shadow_execute::link,
++       jakx::shadow_calc_dual_verts::link, jakx::shadow_scissor_edges::link,
++       jakx::shadow_scissor_top::link, jakx::shadow_init_vars::link,
++       jakx::shadow_find_facing_single_tris::link, jakx::shadow_find_facing_double_tris::link,
++       jakx::shadow_find_single_edges::link, jakx::shadow_find_double_edges::link,
++       jakx::shadow_add_verts::link, jakx::shadow_add_facing_single_tris::link,
++       jakx::shadow_add_single_edges::link, jakx::shadow_add_double_edges::link,
++       jakx::shadow_add_single_tris::link, jakx::shadow_add_double_tris::link}},
++     {"cloth", {jakx::method_21_cloth_system::link}}},
++};
+ 
+ #ifdef __aarch64__
+ extern "C" {
+@@ -700,6 +940,11 @@ void LinkedFunctionTable::reg(const std::string& name, u64 (*exec)(void*), u32 s
+           s7.offset + jak3_symbols::FIX_SYM_GLOBAL_HEAP,
+           ::jak3::u32_in_fixed_sym(jak3_symbols::FIX_SYM_FUNCTION_TYPE), 0x40, UNKNOWN_PP));
+       break;
++    case GameVersion::JakX:
++      jump_to_asm = Ptr<u8>(::jak3::alloc_heap_object(
++          s7.offset + jak3_symbols::FIX_SYM_GLOBAL_HEAP,
++          ::jakx::u32_in_fixed_sym(jakx_symbols::FIX_SYM_FUNCTION_TYPE), 0x40, UNKNOWN_PP));
++      break;
+     default:
+       ASSERT(false);
+   }
+diff --git a/game/sound/CMakeLists.txt b/game/sound/CMakeLists.txt
+index a25a1f1bb98e29fb6ae47406571746c64e915cb6..28d62e61db1201bb7e595f039515d7dc3a9ef302 100644
+--- a/game/sound/CMakeLists.txt
++++ b/game/sound/CMakeLists.txt
+@@ -1,4 +1,5 @@
+ set(SOUND_SOURCES
++  989snd/fakeplayer.cpp
+   989snd/player.cpp
+   989snd/midi_handler.cpp
+   989snd/ame_handler.cpp
+@@ -19,6 +20,8 @@ set(SOUND_SOURCES
+   )
+ 
+ add_library(sound STATIC ${SOUND_SOURCES})
++# upstream v0.3.9 (#4401, the decompiler extracts sound effects and music): linked into shared libraries too
++set_target_properties(sound PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ if(CMAKE_SYSTEM_NAME STREQUAL "NintendoSwitch")
+     # No cubeb backend for Switch - game/sound/989snd/player.{h,cpp} talks to libnx's audout
+     # service directly instead. See the development notes.
+diff --git a/goal_src/jak3/engine/load/loader.gc b/goal_src/jak3/engine/load/loader.gc
+index 1ae47bcf1df80e7b04f93a1155f7513ba74fd437..55e5ae572068cc31578d82c28800d9bc3ed6d2f7 100644
+--- a/goal_src/jak3/engine/load/loader.gc
++++ b/goal_src/jak3/engine/load/loader.gc
+@@ -7,13 +7,13 @@
+ 
+ (define-extern art-group-load-check (function string kheap int art-group))
+ 
+-;; +++loader:spooler-flags
++;; +++spooler-flags
+ (defenum spooler-flags
+   :bitfield #t
+   :type uint32
+   (blackout-on-stall)
+   )
+-;; ---loader:spooler-flags
++;; ---spooler-flags
+ 
+ ;; DECOMP BEGINS
+ 
+diff --git a/goal_src/jakx/kernel/gkernel-h.gc b/goal_src/jakx/kernel/gkernel-h.gc
+index 589ab72cc06226556dba7326d44eb08733831dd2..4b2856663375fe0ae507ad96de327f597e529b27 100644
+--- a/goal_src/jakx/kernel/gkernel-h.gc
++++ b/goal_src/jakx/kernel/gkernel-h.gc
+@@ -76,6 +76,43 @@
+   )
+ ;; ---gkernel-h:process-mask
+ 
++;; +++process-mask
++(defenum process-mask
++  :type uint32
++  :bitfield #t
++  (execute 0)
++  (freeze 1)
++  (pause 2)
++  (menu 3)
++  (progress 4)
++  (actor-pause 5)
++  (sleep 6)
++  (sleep-code 7)
++  (process-tree 8)
++  (heap-shrunk 9)
++  (going 10)
++  (kernel-run 11)
++  (no-kill 12)
++  (movie 13)
++  (dark-effect 14)
++  (target 15)
++
++  (sidekick 16)
++  (crate 17)
++  (collectable 18)
++  (enemy 19)
++  (camera 20)
++  (platform 21)
++  (ambient 22)
++  (entity 23)
++  (projectile 24)
++  (bot 25)
++  (death 26)
++  (vehicle 27)
++  (network 28)
++  )
++;; ---process-mask
++
+ ;; DECOMP BEGINS
+ 
+ (deftype kernel-context (basic)
+diff --git a/goal_src/jakx/kernel/gkernel.gc b/goal_src/jakx/kernel/gkernel.gc
+index 14a3e5ca7d6b91d421addcea5a9d6e030311af4f..616c112abce4ab689d2f8a777cbc284ba59390bb 100644
+--- a/goal_src/jakx/kernel/gkernel.gc
++++ b/goal_src/jakx/kernel/gkernel.gc
+@@ -2389,6 +2389,8 @@
+ 
+ (change-parent (define *mid-pool* (new 'global 'process-tree "mid-pool")) *active-pool*)
+ 
++(change-parent (define *locker-pool* (new 'global 'process-tree "locker-pool")) *active-pool*)
++
+ (change-parent (define *pusher-pool* (new 'global 'process-tree "pusher-pool")) *active-pool*)
+ (set! (-> *pusher-pool* mask) (process-mask freeze pause menu progress process-tree entity))
+ 
+diff --git a/goalc/CMakeLists.txt b/goalc/CMakeLists.txt
+index 3796f14026c5e602c64ec16dab54999f3560f821..a9b02e7c4987b4b5f1d148f2e48a8aeaf0ea294e 100644
+--- a/goalc/CMakeLists.txt
++++ b/goalc/CMakeLists.txt
+@@ -71,6 +71,7 @@ add_library(compiler
+         build_actor/jak3/build_actor.cpp
+         debugger/Debugger.cpp
+         debugger/DebugInfo.cpp
++        debugger/DebugServer.cpp
+         emitter/IGenX86.cpp
+         emitter/IGenARM64.cpp
+         listener/Listener.cpp
+diff --git a/goalc/compiler/CodeGenerator.cpp b/goalc/compiler/CodeGenerator.cpp
+index 7ede267e202fdc89a485a34e9563602abc85da07..0465ab79ee263cad28e040ca504a856b8271410d 100644
+--- a/goalc/compiler/CodeGenerator.cpp
++++ b/goalc/compiler/CodeGenerator.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include "CodeGenerator.h"
+ 
++#include <algorithm>
+ #include <stdexcept>
+ #include <unordered_set>
+ 
+@@ -19,6 +20,103 @@
+ 
+ using namespace emitter;
+ 
++namespace {
++
++void record_local_variables(const FunctionEnv* func, FunctionDebugInfo* debug) {
++  const auto& allocations = func->allocations();
++  if (!allocations.ok || allocations.ass_as_ranges.empty()) {
++    return;
++  }
++
++  // ireg id -> source name, parameters first, then anything bound in a lexical scope
++  std::unordered_map<int, std::pair<std::string, bool>> names;
++  for (const auto& [symbol, reg_val] : func->params) {
++    if (reg_val) {
++      names[reg_val->ireg().id] = {symbol.name_ptr, true};
++    }
++  }
++  for (const auto& env : func->child_envs()) {
++    auto* lexical = dynamic_cast<LexicalEnv*>(env.get());
++    if (!lexical) {
++      continue;
++    }
++    for (const auto& [symbol, reg_val] : lexical->vars) {
++      if (reg_val && names.find(reg_val->ireg().id) == names.end()) {
++        names[reg_val->ireg().id] = {symbol.name_ptr, false};
++      }
++    }
++  }
++
++  if (names.empty()) {
++    return;
++  }
++
++  const int instruction_count = int(func->code().size());
++
++  for (const auto& [ireg_id, name_info] : names) {
++    if (ireg_id < 0 || ireg_id >= int(allocations.ass_as_ranges.size()) ||
++        ireg_id >= int(func->reg_vals().size())) {
++      continue;
++    }
++    const auto& range = allocations.ass_as_ranges.at(ireg_id);
++
++    LocalVariableDebugInfo local;
++    local.name = name_info.first;
++    local.is_parameter = name_info.second;
++    local.type = func->reg_vals().at(ireg_id)->type();
++
++    for (int instr = 0; instr < instruction_count; instr++) {
++      if (!range.is_live_at_instr(instr)) {
++        continue;
++      }
++      const auto& assignment = range.get(instr);
++      if (!assignment.is_assigned()) {
++        continue;
++      }
++
++      VariableLocation here;
++      here.start_ir = instr;
++      here.end_ir = instr;
++      if (assignment.kind == Assignment::Kind::REGISTER) {
++        here.kind = VariableLocation::Kind::REGISTER;
++        here.reg = assignment.reg.id();
++      } else if (assignment.kind == Assignment::Kind::STACK) {
++        here.kind = VariableLocation::Kind::STACK;
++        // spilled variables sit at rsp + slot * 8, matching how the spill ops address them
++        here.stack_offset = allocations.get_slot_for_spill(assignment.stack_slot) * GPR_SIZE;
++      } else {
++        continue;
++      }
++
++      // extend the previous interval instead of starting a new one where nothing changed
++      if (!local.locations.empty()) {
++        auto& previous = local.locations.back();
++        if (previous.end_ir == instr - 1 && previous.kind == here.kind &&
++            previous.reg == here.reg && previous.stack_offset == here.stack_offset) {
++          previous.end_ir = instr;
++          continue;
++        }
++      }
++      local.locations.push_back(here);
++    }
++
++    if (!local.locations.empty()) {
++      debug->locals.push_back(std::move(local));
++    }
++  }
++
++  // parameters first, then alphabetically
++  std::sort(debug->locals.begin(), debug->locals.end(),
++            [](const LocalVariableDebugInfo& a, const LocalVariableDebugInfo& b) {
++              if (a.is_parameter != b.is_parameter) {
++                return a.is_parameter;
++              }
++              return a.name < b.name;
++            });
++}
++
++}  // namespace
++
+ CodeGenerator::CodeGenerator(FileEnv* env,
+                              DebugInfo* debug_info,
+                              GameVersion version,
+@@ -48,6 +146,7 @@ std::vector<u8> CodeGenerator::run(const TypeSystem* ts) {
+     for (auto& x : f->code()) {
+       rec.debug->ir_strings.push_back(x->print());
+     }
++    record_local_variables(f.get(), rec.debug);
+   }
+ 
+   // next, add all static objects.
+diff --git a/goalc/debugger/Debugger.cpp b/goalc/debugger/Debugger.cpp
+index 2cfa62113d82708bde7d423817a4206fcff0f52e..b9a483be485dfafad931857e3945f401d568d8da 100644
+--- a/goalc/debugger/Debugger.cpp
++++ b/goalc/debugger/Debugger.cpp
+@@ -7,6 +7,7 @@
+ #include "Debugger.h"
+ 
+ #include "common/goal_constants.h"
++#include "common/goos/Reader.h"
+ #include "common/log/log.h"
+ #include "common/symbols.h"
+ #include "common/util/Assert.h"
+@@ -63,6 +64,14 @@ bool Debugger::is_attached() const {
+ bool Debugger::detach() {
+   bool succ = true;
+   if (is_valid() && m_attached) {
++    if (is_halted()) {
++      if (!m_regs_valid) {
++        m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++      }
++      normalize_rip_after_break();
++      remove_breakpoints();
++      m_addr_breakpoints.clear();
++    }
+ #ifdef __linux__
+     if (!is_halted()) {
+       succ = do_break();
+@@ -226,11 +235,14 @@ InstructionPointerInfo Debugger::get_rip_info(u64 rip) {
+ 
+ std::vector<BacktraceFrame> Debugger::get_backtrace(u64 rip,
+                                                     u64 rsp,
+-                                                    std::optional<std::string> dump_path) {
++                                                    std::optional<std::string> dump_path,
++                                                    bool quiet) {
+   // TODO - it would probably be nice to decouple printing the backtrace from getting the backtrace
+   // for now, build up a string and dump it at the end (if a path is provided)
+   std::string backtrace_contents = "";
+-  lg::print("Backtrace:\n");
++  if (!quiet) {
++    lg::print("Backtrace:\n");
++  }
+   std::vector<BacktraceFrame> bt;
+ 
+   bool null_pc = rip == m_debug_context.base;
+@@ -239,7 +251,9 @@ std::vector<BacktraceFrame> Debugger::get_backtrace(u64 rip,
+ 
+     u64 next_rip = 0;
+     if (!read_memory_if_safe<u64>(&next_rip, rsp - m_debug_context.base)) {
+-      lg::print("Failed to read return address off of the stack!\n");
++      if (!quiet) {
++        lg::print("Failed to read return address off of the stack!\n");
++      }
+       return {};
+     }
+ 
+@@ -263,8 +277,10 @@ std::vector<BacktraceFrame> Debugger::get_backtrace(u64 rip,
+       this_backtrace += fmt::format("{} from {}\n", frame.rip_info.function_name,
+                                     frame.rip_info.func_debug->obj_name);
+       // we're good!
+-      auto disasm = disassemble_at_rip(frame.rip_info);
+-      this_backtrace += fmt::format("{}\n", disasm.text);
++      if (!quiet) {
++        auto disasm = disassemble_at_rip(frame.rip_info);
++        this_backtrace += fmt::format("{}\n", disasm.text);
++      }
+       u64 rsp_at_call = rsp + *frame.rip_info.func_debug->stack_usage;
+ 
+       u64 next_rip = 0;
+@@ -353,7 +369,9 @@ std::vector<BacktraceFrame> Debugger::get_backtrace(u64 rip,
+     backtrace_contents = this_backtrace + backtrace_contents;
+   }
+ 
+-  lg::print("{}\n", backtrace_contents);
++  if (!quiet) {
++    lg::print("{}\n", backtrace_contents);
++  }
+   if (dump_path) {
+     file_util::write_text_file(dump_path.value(), backtrace_contents);
+   }
+@@ -439,9 +457,7 @@ Disassembly Debugger::disassemble_at_rip(const InstructionPointerInfo& info) {
+  * Read the registers, symbol table, and instructions near rip.
+  * Print out some info about where we are.
+  */
+-void Debugger::update_break_info(std::optional<std::string> dump_path) {
+-  // todo adjust rip if break instruction????
+-
++void Debugger::reload_break_state() {
+   m_memory_map = m_listener->build_memory_map();
+   // lg::print("{}", m_memory_map.print());
+   read_symbol_table();
+@@ -450,7 +466,24 @@ void Debugger::update_break_info(std::optional<std::string> dump_path) {
+   if (regs_valid()) {
+     m_break_info = get_rip_info(m_regs_at_break.rip);
+     update_continue_info();
++  }
++}
++
++bool Debugger::refresh_break_state() {
++  if (!(is_valid() && is_attached() && is_halted())) {
++    return false;
++  }
++  if (m_regs_valid) {
++    return true;
++  }
++  reload_break_state();
++  return m_regs_valid;
++}
+ 
++void Debugger::update_break_info(std::optional<std::string> dump_path) {
++  reload_break_state();
++
++  if (regs_valid()) {
+     get_backtrace(m_regs_at_break.rip, m_regs_at_break.gprs[emitter::RSP], dump_path);
+     auto dis = disassemble_at_rip(m_break_info);
+     lg::print("{}\n", dis.text);
+@@ -493,25 +526,7 @@ bool Debugger::do_continue() {
+   }
+   ASSERT(regs_valid());
+ 
+-  if (!m_continue_info.valid) {
+-    update_continue_info();
+-  }
+-  ASSERT(m_continue_info.valid);
+-  m_regs_valid = false;
+-
+-  if (m_continue_info.subtract_1) {
+-    m_regs_at_break.rip--;
+-    auto result = xdbg::set_regs_now(m_debug_context.tid, m_regs_at_break);
+-    ASSERT(result);
+-  }
+-
+-  m_expecting_immeidate_break = false;
+-  if (!xdbg::cont_now(m_debug_context.tid)) {
+-    return false;
+-  } else {
+-    m_running = true;
+-    return true;
+-  }
++  return resume_from_break();
+ }
+ 
+ /*!
+@@ -950,13 +965,17 @@ void Debugger::watcher() {
+     if (xdbg::check_stopped(m_debug_context.tid, &signal_info)) {
+       // the target stopped!
+       m_continue_info.valid = false;
++      const bool quiet =
++          m_suppress_stop_reporting.load() && signal_info.kind == xdbg::SignalInfo::BREAK;
+ 
+       switch (signal_info.kind) {
+         case xdbg::SignalInfo::SEGFAULT:
+           printf("Target has crashed with a SEGFAULT! Run (:di) to get more information.\n");
+           break;
+         case xdbg::SignalInfo::BREAK:
+-          printf("Target has stopped. Run (:di) to get more information.\n");
++          if (!quiet) {
++            printf("Target has stopped. Run (:di) to get more information.\n");
++          }
+           break;
+         case xdbg::SignalInfo::MATH_EXCEPTION:
+           printf("Target has crashed with a MATH_EXCEPTION! Run (:di) to get more information.\n");
+@@ -994,6 +1013,11 @@ void Debugger::watcher() {
+       }
+       m_watcher_cv.notify_one();
+ 
++      if (!quiet) {
++        // let the debug server (if available) tell its client we stopped
++        fire_stop_callback(signal_info.kind);
++      }
++
+     } else {
+       // the target didn't stop.
+       std::this_thread::sleep_for(std::chrono::milliseconds(10));
+@@ -1055,6 +1079,11 @@ void Debugger::clear_signal_queue() {
+ }
+ 
+ void Debugger::add_addr_breakpoint(u32 addr) {
++  if (!is_halted()) {
++    lg::print("Cannot add a breakpoint unless the target is attached and halted.\n");
++    return;
++  }
++
+   {
+     std::unique_lock<std::mutex> lock(m_watcher_mutex);
+     auto kv = m_addr_breakpoints.find(addr);
+@@ -1083,6 +1112,11 @@ void Debugger::add_addr_breakpoint(u32 addr) {
+ }
+ 
+ void Debugger::remove_addr_breakpoint(u32 addr) {
++  if (!is_halted()) {
++    lg::print("Cannot remove a breakpoint unless the target is attached and halted.\n");
++    return;
++  }
++
+   {
+     std::unique_lock<std::mutex> lock(m_watcher_mutex);
+     update_continue_info();
+@@ -1224,3 +1258,654 @@ std::string Debugger::disassemble_x86_with_symbols(int len, u64 base_addr) const
+ 
+   return result;
+ }
++
++namespace {
++// compare the compiler's relative path with an absolute one from the editor
++bool paths_match(const std::string& compiler_path, const std::string& query) {
++  auto normalize = [](const std::string& in) {
++    std::string out = in;
++    for (auto& c : out) {
++      if (c == '\\') {
++        c = '/';
++      }
++#ifdef _WIN32
++      c = (char)std::tolower((unsigned char)c);
++#endif
++    }
++    return out;
++  };
++
++  const std::string a = normalize(compiler_path);
++  const std::string b = normalize(query);
++  if (a == b) {
++    return true;
++  }
++  const std::string& longer = a.size() >= b.size() ? a : b;
++  const std::string& shorter = a.size() >= b.size() ? b : a;
++  if (shorter.empty() || longer.size() == shorter.size()) {
++    return false;
++  }
++  if (longer.compare(longer.size() - shorter.size(), shorter.size(), shorter) != 0) {
++    return false;
++  }
++  return longer[longer.size() - shorter.size() - 1] == '/';
++}
++}  // namespace
++
++void Debugger::fire_stop_callback(xdbg::SignalInfo::Kind kind) {
++  std::function<void(xdbg::SignalInfo::Kind)> cb;
++  {
++    std::lock_guard<std::mutex> lock(m_stop_callback_mutex);
++    cb = m_stop_callback;
++  }
++  if (cb) {
++    cb(kind);
++  }
++}
++
++u64 Debugger::get_normalized_rip() const {
++  const u64 rip = m_regs_at_break.rip;
++  if (!m_context_valid) {
++    return rip;
++  }
++  if (m_addr_breakpoints.find(u32(rip - m_debug_context.base - 1)) != m_addr_breakpoints.end()) {
++    return rip - 1;
++  }
++  return rip;
++}
++
++std::optional<u32> Debugger::get_breakpoint_addr_at_stop() const {
++  if (!m_context_valid || !m_regs_valid) {
++    return {};
++  }
++  const u32 addr = u32(m_regs_at_break.rip - m_debug_context.base - 1);
++  if (m_addr_breakpoints.find(addr) != m_addr_breakpoints.end()) {
++    return addr;
++  }
++  return {};
++}
++
++std::optional<SourceLocation> Debugger::source_location_for_function_offset(
++    const FunctionDebugInfo& func,
++    u32 function_offset) const {
++  if (!m_reader) {
++    return {};
++  }
++
++  // find the last instruction at or before this offset with src info
++  int best_ir = -1;
++  int best_offset = -1;
++  for (const auto& instr : func.instructions) {
++    if (instr.kind != InstructionInfo::Kind::IR || instr.offset < 0) {
++      continue;
++    }
++    if (u32(instr.offset) > function_offset) {
++      continue;
++    }
++    if (instr.offset >= best_offset) {
++      best_offset = instr.offset;
++      best_ir = instr.ir_idx;
++    }
++  }
++
++  if (best_ir < 0 || best_ir >= int(func.code_sources.size())) {
++    return {};
++  }
++  auto info = m_reader->db.try_get_short_info(func.code_sources.at(best_ir), false);
++  if (!info) {
++    return {};
++  }
++
++  SourceLocation loc;
++  loc.filename = info->filename;
++  loc.line = info->line_idx_to_display;
++  loc.column = info->pos_in_line;
++  loc.line_text = info->line_text;
++  return loc;
++}
++
++std::optional<std::string> Debugger::get_symbol_name_for_value(u32 value) const {
++  if (value == 0) {
++    return {};
++  }
++  for (const auto& [name, sym_value] : m_symbol_name_to_value_map) {
++    if (sym_value == value) {
++      return name;
++    }
++  }
++  return {};
++}
++
++std::optional<std::string> Debugger::get_symbol_name_at_address(u32 goal_addr) const {
++  if (!m_context_valid || goal_addr == 0) {
++    return {};
++  }
++
++  const s32 symbol_tag = m_version == GameVersion::Jak1 ? 0 : 1;
++  const s32 offset = s32(goal_addr) - s32(m_debug_context.s7) - symbol_tag;
++
++  auto kv = m_symbol_offset_to_name_map.find(offset);
++  if (kv != m_symbol_offset_to_name_map.end()) {
++    return kv->second;
++  }
++  return {};
++}
++
++std::optional<std::string> Debugger::get_type_name_of_basic(u32 goal_addr) {
++  if (!is_halted() || goal_addr < (u32)BASIC_OFFSET) {
++    return {};
++  }
++
++  u32 type_ptr = 0;
++  if (!read_memory_if_safe<u32>(&type_ptr, goal_addr - BASIC_OFFSET)) {
++    return {};
++  }
++  return get_symbol_name_for_value(type_ptr);
++}
++
++std::optional<SourceLocation> Debugger::get_source_location(u32 goal_addr) {
++  if (!m_context_valid) {
++    return {};
++  }
++  auto info = get_rip_info(goal_addr + m_debug_context.base);
++  if (!info.knows_function || !info.func_debug) {
++    return {};
++  }
++  return source_location_for_function_offset(*info.func_debug, info.function_offset);
++}
++
++std::vector<ResolvedBreakpoint> Debugger::resolve_source_breakpoint(const std::string& filename,
++                                                                    int line,
++                                                                    int max_line_slide) {
++  std::vector<ResolvedBreakpoint> result;
++  if (!m_reader || !m_listener) {
++    return result;
++  }
++
++  m_memory_map = m_listener->build_memory_map();
++
++  struct Candidate {
++    const FunctionDebugInfo* func = nullptr;
++    std::string func_name;
++    std::string obj_name;
++    int line = -1;
++    int offset = -1;
++  };
++  std::vector<Candidate> candidates;
++
++  for (auto& [obj_name, debug_info] : m_debug_info) {
++    for (const auto& [func_name, func] : debug_info.functions()) {
++      Candidate best;
++      for (const auto& instr : func.instructions) {
++        if (instr.kind != InstructionInfo::Kind::IR || instr.offset < 0) {
++          continue;
++        }
++        if (instr.ir_idx < 0 || instr.ir_idx >= int(func.code_sources.size())) {
++          continue;
++        }
++        auto info = m_reader->db.try_get_short_info(func.code_sources.at(instr.ir_idx), false);
++        if (!info || !paths_match(info->filename, filename)) {
++          continue;
++        }
++        const int instr_line = info->line_idx_to_display;
++        // a breakpoint on a blank line or a comment slides forward to the next line with code
++        if (instr_line < line || instr_line > line + max_line_slide) {
++          continue;
++        }
++        if (best.line == -1 || instr_line < best.line ||
++            (instr_line == best.line && instr.offset < best.offset)) {
++          best.func = &func;
++          best.func_name = func_name;
++          best.obj_name = func.obj_name.empty() ? obj_name : func.obj_name;
++          best.line = instr_line;
++          best.offset = instr.offset;
++        }
++      }
++      if (best.func) {
++        candidates.push_back(best);
++      }
++    }
++  }
++
++  if (candidates.empty()) {
++    return result;
++  }
++
++  int chosen_line = candidates.front().line;
++  for (const auto& c : candidates) {
++    chosen_line = std::min(chosen_line, c.line);
++  }
++
++  for (const auto& c : candidates) {
++    if (c.line != chosen_line) {
++      continue;
++    }
++    ResolvedBreakpoint bp;
++    bp.line = c.line;
++    bp.function_name = c.func_name;
++    bp.object_name = c.obj_name;
++
++    listener::MemoryMapEntry entry;
++    if (m_memory_map.lookup(c.obj_name, c.func->seg, &entry)) {
++      bp.goal_addr = entry.start_addr + c.func->offset_in_seg + c.offset;
++      bp.loaded = true;
++    }
++    result.push_back(bp);
++  }
++
++  return result;
++}
++
++std::vector<LiveVariable> Debugger::get_live_variables() {
++  std::vector<LiveVariable> result;
++  if (!(is_valid() && is_attached() && is_halted()) || !m_regs_valid) {
++    return result;
++  }
++
++  auto info = get_rip_info(get_normalized_rip());
++  if (!info.knows_function || !info.func_debug || info.func_debug->locals.empty()) {
++    return result;
++  }
++
++  int current_ir = -1;
++  int best_offset = -1;
++  for (const auto& instr : info.func_debug->instructions) {
++    if (instr.kind != InstructionInfo::Kind::IR || instr.offset < 0) {
++      continue;
++    }
++    if (u32(instr.offset) <= info.function_offset && instr.offset >= best_offset) {
++      best_offset = instr.offset;
++      current_ir = instr.ir_idx;
++    }
++  }
++  if (current_ir < 0) {
++    return result;
++  }
++
++  const u64 rsp = m_regs_at_break.gprs[emitter::RSP];
++
++  for (const auto& local : info.func_debug->locals) {
++    const auto* location = local.location_at(current_ir);
++    if (!location) {
++      continue;
++    }
++
++    LiveVariable var;
++    var.name = local.name;
++    var.type = local.type;
++    var.is_parameter = local.is_parameter;
++
++    if (location->kind == VariableLocation::Kind::REGISTER) {
++      var.in_register = true;
++      var.reg = location->reg;
++    } else {
++      const u64 addr = rsp + location->stack_offset;
++      if (addr <= m_debug_context.base) {
++        continue;
++      }
++      var.stack_addr = u32(addr - m_debug_context.base);
++    }
++
++    result.push_back(var);
++  }
++
++  return result;
++}
++
++std::vector<SourceStackFrame> Debugger::get_source_stack_frames(int max_frames) {
++  std::vector<SourceStackFrame> result;
++  if (!(is_valid() && is_attached() && is_halted()) || !m_regs_valid) {
++    return result;
++  }
++
++  auto bt = get_backtrace(get_normalized_rip(), m_regs_at_break.gprs[emitter::RSP], {}, true);
++
++  for (size_t i = 0; i < bt.size() && int(result.size()) < max_frames; i++) {
++    const auto& frame = bt.at(i);
++    SourceStackFrame out;
++    out.function_name =
++        frame.rip_info.knows_function ? frame.rip_info.function_name : "(unknown function)";
++    out.object_name = frame.rip_info.knows_object ? frame.rip_info.object_name : "";
++    out.rip = frame.rip_info.real_rip;
++    out.goal_rip = frame.rip_info.goal_rip;
++    out.rsp = frame.rsp_at_rip;
++
++    if (frame.rip_info.func_debug) {
++      u32 offset = frame.rip_info.function_offset;
++      if (i > 0 && offset > 0) {
++        offset--;
++      }
++      out.source = source_location_for_function_offset(*frame.rip_info.func_debug, offset);
++    }
++
++    result.push_back(out);
++  }
++
++  return result;
++}
++
++void Debugger::place_breakpoints() {
++  if (!is_halted()) {
++    return;
++  }
++  u8 int3 = 0xcc;
++  for (auto& [addr, bp] : m_addr_breakpoints) {
++    (void)bp;
++    write_memory(&int3, 1, addr);
++  }
++}
++
++void Debugger::remove_breakpoints() {
++  if (!is_halted()) {
++    return;
++  }
++  for (auto& [addr, bp] : m_addr_breakpoints) {
++    write_memory(&bp.old_data, 1, addr);
++  }
++}
++
++bool Debugger::normalize_rip_after_break() {
++  if (!m_regs_valid || !m_context_valid) {
++    return false;
++  }
++
++  const u64 rip_goal = m_regs_at_break.rip - m_debug_context.base;
++  if (rip_goal == 0) {
++    return true;
++  }
++  if (m_addr_breakpoints.find(u32(rip_goal - 1)) == m_addr_breakpoints.end()) {
++    return true;
++  }
++
++  m_regs_at_break.rip--;
++  if (!xdbg::set_regs_now(m_debug_context.tid, m_regs_at_break)) {
++    return false;
++  }
++  m_continue_info.valid = false;
++  update_continue_info();
++  return true;
++}
++
++bool Debugger::single_step_once() {
++  if (!(is_valid() && is_attached() && is_halted())) {
++    return false;
++  }
++
++  m_continue_info.valid = false;
++  m_regs_valid = false;
++  clear_signal_queue();
++
++  if (!xdbg::single_step_now(m_debug_context.tid)) {
++    return false;
++  }
++  m_running = true;
++
++  auto info = pop_signal();
++  m_running = false;
++  if (info.kind == xdbg::SignalInfo::DISAPPEARED) {
++    return false;
++  }
++
++  m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++  return m_regs_valid;
++}
++
++bool Debugger::resume_from_break() {
++  if (!(is_valid() && is_attached() && is_halted())) {
++    return false;
++  }
++  if (!m_regs_valid) {
++    m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++    if (!m_regs_valid) {
++      return false;
++    }
++  }
++  const u64 rip_goal = m_regs_at_break.rip - m_debug_context.base;
++  auto bp_it = m_addr_breakpoints.find(u32(rip_goal));
++  if (bp_it == m_addr_breakpoints.end() && rip_goal > 0) {
++    bp_it = m_addr_breakpoints.find(u32(rip_goal - 1));
++    if (bp_it != m_addr_breakpoints.end()) {
++      m_regs_at_break.rip--;
++      if (!xdbg::set_regs_now(m_debug_context.tid, m_regs_at_break)) {
++        return false;
++      }
++    }
++  }
++
++  if (bp_it != m_addr_breakpoints.end()) {
++    const auto bp = bp_it->second;
++    const bool was_suppressed = m_suppress_stop_reporting;
++    m_suppress_stop_reporting = true;
++
++    bool ok = write_memory(&bp.old_data, 1, bp.goal_addr) && single_step_once();
++    if (ok) {
++      u8 int3 = 0xcc;
++      ok = write_memory(&int3, 1, bp.goal_addr);
++    }
++
++    m_suppress_stop_reporting = was_suppressed;
++    if (!ok) {
++      return false;
++    }
++  }
++
++  m_continue_info.valid = false;
++  m_regs_valid = false;
++  m_expecting_immeidate_break = false;
++  clear_signal_queue();
++
++  if (!xdbg::cont_now(m_debug_context.tid)) {
++    return false;
++  }
++  m_running = true;
++  return true;
++}
++
++bool Debugger::run_to_addr(u32 goal_addr) {
++  if (!is_halted()) {
++    return false;
++  }
++
++  const bool already_a_user_bp = m_addr_breakpoints.find(goal_addr) != m_addr_breakpoints.end();
++  u8 saved_byte = 0;
++
++  if (!already_a_user_bp) {
++    if (!read_memory(&saved_byte, 1, goal_addr)) {
++      return false;
++    }
++    u8 int3 = 0xcc;
++    if (!write_memory(&int3, 1, goal_addr)) {
++      return false;
++    }
++  }
++
++  bool arrived = false;
++  if (resume_from_break()) {
++    auto info = pop_signal();
++    m_running = false;
++    if (info.kind != xdbg::SignalInfo::DISAPPEARED) {
++      m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++      if (m_regs_valid) {
++        arrived = u32(m_regs_at_break.rip - m_debug_context.base - 1) == goal_addr;
++      }
++    }
++  }
++
++  if (is_halted()) {
++    bool rewound = false;
++    if (!already_a_user_bp) {
++      // take our temporary int3 back out
++      write_memory(&saved_byte, 1, goal_addr);
++      if (arrived && m_regs_valid) {
++        // it was never in m_addr_breakpoints, so rewind off it by hand
++        m_regs_at_break.rip--;
++        xdbg::set_regs_now(m_debug_context.tid, m_regs_at_break);
++        rewound = true;
++      }
++    }
++    if (!rewound) {
++      // we may have stopped on one of the user's breakpoints instead of ours
++      normalize_rip_after_break();
++    }
++  }
++
++  m_continue_info.valid = false;
++  return arrived;
++}
++
++std::optional<u64> Debugger::get_return_address_of_current_frame() {
++  if (!m_regs_valid) {
++    return {};
++  }
++  auto info = get_rip_info(get_normalized_rip());
++  if (!info.knows_function || !info.func_debug || !info.func_debug->stack_usage) {
++    return {};
++  }
++  const u64 rsp_at_call = m_regs_at_break.gprs[emitter::RSP] + *info.func_debug->stack_usage;
++  u64 ret = 0;
++  if (!read_memory_if_safe<u64>(&ret, rsp_at_call - m_debug_context.base)) {
++    return {};
++  }
++  return ret;
++}
++
++bool Debugger::do_step(StepKind kind) {
++  if (!(is_valid() && is_attached() && is_halted())) {
++    return false;
++  }
++  if (!m_regs_valid) {
++    m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++    if (!m_regs_valid) {
++      return false;
++    }
++  }
++
++  m_memory_map = m_listener->build_memory_map();
++
++  const auto start_info = get_rip_info(get_normalized_rip());
++  const FunctionDebugInfo* start_func = start_info.func_debug;
++  const u64 start_rsp = m_regs_at_break.gprs[emitter::RSP];
++  int start_line = -1;
++  if (start_func) {
++    auto loc = source_location_for_function_offset(*start_func, start_info.function_offset);
++    if (loc) {
++      start_line = loc->line;
++    }
++  }
++
++  m_suppress_stop_reporting = true;
++  bool ok = true;
++
++  if (kind == StepKind::OUT_OF) {
++    auto ret = get_return_address_of_current_frame();
++    if (ret && *ret > m_debug_context.base) {
++      ok = run_to_addr(u32(*ret - m_debug_context.base));
++    } else {
++      ok = false;
++    }
++  } else {
++    if (!normalize_rip_after_break()) {
++      m_suppress_stop_reporting = false;
++      return false;
++    }
++    remove_breakpoints();
++
++    constexpr int MAX_STEPS = 500000;
++    int steps = 0;
++
++    while (steps++ < MAX_STEPS) {
++      if (!single_step_once()) {
++        ok = false;
++        break;
++      }
++
++      const u64 rip = m_regs_at_break.rip;
++      const u64 rsp = m_regs_at_break.gprs[emitter::RSP];
++      auto info = get_rip_info(rip);
++
++      const bool in_known_goal_code = info.in_goal_mem && info.knows_function && info.func_debug;
++
++      if (!in_known_goal_code) {
++        // not in goal code, get return address from the top of the stack and get back to it
++        u64 ret = 0;
++        if (rsp > m_debug_context.base &&
++            read_memory_if_safe<u64>(&ret, rsp - m_debug_context.base) &&
++            ret > m_debug_context.base) {
++          place_breakpoints();
++          const bool got_back = run_to_addr(u32(ret - m_debug_context.base));
++          remove_breakpoints();
++          if (!got_back) {
++            // we stopped for some other reason (breakpoint or crash), that stop wins
++            break;
++          }
++          continue;
++        }
++        // can't work out where we are or how to get back; stop here rather than run away
++        break;
++      }
++
++      if (info.func_debug != start_func) {
++        if (rsp < start_rsp) {
++          // we've called into something
++          if (kind == StepKind::INTO) {
++            // settle on the first instruction in the callee with source info (the prologue
++            // usually doesn't have any)
++            int settle = 0;
++            while (settle++ < 200) {
++              auto here = get_rip_info(m_regs_at_break.rip);
++              if (here.func_debug &&
++                  source_location_for_function_offset(*here.func_debug, here.function_offset)) {
++                break;
++              }
++              if (!single_step_once()) {
++                ok = false;
++                break;
++              }
++            }
++            break;
++          }
++
++          // stepping over, the return address is on top of the stack right after the call
++          u64 ret = 0;
++          if (rsp > m_debug_context.base &&
++              read_memory_if_safe<u64>(&ret, rsp - m_debug_context.base) &&
++              ret > m_debug_context.base) {
++            place_breakpoints();
++            const bool got_back = run_to_addr(u32(ret - m_debug_context.base));
++            remove_breakpoints();
++            if (!got_back) {
++              break;
++            }
++            continue;
++          }
++          break;
++        }
++
++        // we returned out of the function we started in, that's a completed step
++        break;
++      }
++
++      // same function, are we on a new source line yet?
++      auto loc = source_location_for_function_offset(*info.func_debug, info.function_offset);
++      if (loc && loc->line != start_line) {
++        break;
++      }
++    }
++
++    place_breakpoints();
++  }
++
++  m_suppress_stop_reporting = false;
++
++  // refresh what everything else reads after a stop
++  if (ok && is_halted()) {
++    m_regs_valid = xdbg::get_regs_now(m_debug_context.tid, &m_regs_at_break);
++    if (m_regs_valid) {
++      m_break_info = get_rip_info(get_normalized_rip());
++    }
++    m_continue_info.valid = false;
++    update_continue_info();
++  }
++
++  return ok;
++}
+diff --git a/goalc/main.cpp b/goalc/main.cpp
+index dd5b36861bb3e35e5d7d38023e74e294771fd20b..ef58dec5086c4a39689751f31e2a10d3c5725b5a 100644
+--- a/goalc/main.cpp
++++ b/goalc/main.cpp
+@@ -14,6 +14,7 @@
+ 
+ #include "goalc/compiler/Compiler.h"
+ #include "goalc/emitter/InstructionSet.h"
++#include "goalc/debugger/DebugServer.h"
+ 
+ #include "fmt/color.h"
+ #include "fmt/format.h"
+@@ -38,6 +39,7 @@ int main(int argc, char** argv) {
+   std::string username = "#f";
+   std::string game = "jak1";
+   int nrepl_port = -1;
++  int debug_port = -1;
+   fs::path project_path_override;
+   fs::path iso_path_override;
+ 
+@@ -52,6 +54,10 @@ int main(int argc, char** argv) {
+   app.add_option("-u,--user", username,
+                  "Specify the username to use for your user profile in 'goal_src/user/'");
+   app.add_option("-p,--port", nrepl_port, "Specify the nREPL port.  Defaults to 8181");
++  app.add_option("--debug-port", debug_port,
++                 "Specify the port for the JSON debug server that external debuggers (such as the "
++                 "VS Code extension) connect to.  Defaults to 8128 for jak1, 8129 for jak2, 8130 "
++                 "for jak3");
+   app.add_flag("--user-auto", auto_find_user,
+                "Attempt to automatically deduce the user, overrides '--user'");
+   app.add_option("-g,--game", game, "The game name: 'jak1' or 'jak2'");
+@@ -108,6 +114,7 @@ int main(int argc, char** argv) {
+   auto startup_file = REPL::load_user_startup_file(username, game_version);
+   // Load the user's REPL config
+   auto repl_config = REPL::load_repl_config(username, game_version, nrepl_port);
++  repl_config.temp_debug_port = debug_port;
+ 
+   // Check for a custom ISO path before we instantiate the compiler.
+   if (!iso_path_override.empty()) {
+@@ -187,11 +194,27 @@ int main(int argc, char** argv) {
+   ReplServer repl_server(shutdown_callback, repl_config.get_nrepl_port());
+   bool nrepl_server_ok = repl_server.init_server(true);
+   std::thread nrepl_thread;
++
++  // Initialize the debug server socket for external debuggers to connect to
++  DebugServer debug_server(shutdown_callback, repl_config.get_debug_port());
++  bool debug_server_ok = debug_server.init_server(true);
++  std::thread debug_thread;
++
+   // the compiler may throw an exception if it fails to load its standard library.
+   try {
+     compiler = std::make_unique<Compiler>(
+         game_version, instruction_set, std::make_optional(repl_config), username,
+         std::make_unique<REPL::Wrapper>(username, repl_config, startup_file, nrepl_server_ok));
++
++    if (debug_server_ok) {
++      debug_server.set_compiler(compiler.get(), &compiler_mutex);
++      debug_thread = std::thread([&]() {
++        while (!shutdown_callback()) {
++          debug_server.run_once();
++        }
++      });
++    }
++
+     // Start nREPL Server if it spun up successfully
+     if (nrepl_server_ok) {
+       nrepl_thread = std::thread([&]() {
+@@ -220,6 +243,9 @@ int main(int argc, char** argv) {
+         compiler = std::make_unique<Compiler>(
+             game_version, instruction_set, std::make_optional(repl_config), username,
+             std::make_unique<REPL::Wrapper>(username, repl_config, startup_file, nrepl_server_ok));
++        if (debug_server_ok) {
++          debug_server.set_compiler(compiler.get(), &compiler_mutex);
++        }
+         status = ReplStatus::OK;
+       }
+       // process user input
+@@ -242,5 +268,9 @@ int main(int argc, char** argv) {
+     repl_server.shutdown_server();
+     nrepl_thread.join();
+   }
++  if (debug_server_ok) {
++    debug_server.shutdown_server();
++    debug_thread.join();
++  }
+   return 0;
+ }
+diff --git a/vendor.yaml b/vendor.yaml
+index e4ff979589bd675aecc25efa029fd8deb7ebf48b..a6306847c45c06f777bbda21e1b4b7687ce89d5a 100644
+--- a/vendor.yaml
++++ b/vendor.yaml
+@@ -43,7 +43,7 @@ third-party/sse2neon:
+   git: https://github.com/DLTcollab/sse2neon/releases/tag/v1.9.1
+   license: MIT
+ third-party/curl:
+-  git: https://github.com/curl/curl/tree/curl-8_3_0
++  git: https://github.com/curl/curl/tree/curl-8_21_0
+   license: MIT-like
+ third-party/draco:
+   git: https://github.com/google/draco

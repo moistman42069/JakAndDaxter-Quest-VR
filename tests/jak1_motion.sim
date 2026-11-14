@@ -1,0 +1,26 @@
+# Smoother frames' motion (item 18) in Jak 1 at Geyser Rock, first person: standing still, turning right with the right
+# stick, walking ahead, and walking while turning. The log's "[sim] motion <shot>" lines: standing, nothing moves;
+# turning right, the picture moves left (mean across below 0); walking ahead, it spreads from the middle (mean near 0,
+# much of it moving). The -motion.png pictures: red right, green up, from grey.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot mo-still
+4240 right_x 1
+4280 shot mo-turn-right
+4300 right_x 0
+4340 right_x -1
+4380 shot mo-turn-left
+4400 right_x 0
+4440 left_y 1
+4520 shot mo-walk
+4560 right_x 1
+4600 shot mo-walk-turn
+4620 right_x 0
+4640 left_y 0
+4700 quit 0

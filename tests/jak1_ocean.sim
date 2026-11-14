@@ -1,0 +1,28 @@
+# Jak 1's ocean and shadow in each eye (item 12): the ocean and Jak 1's shadows come from the game already on the screen,
+# as seen from between the eyes; each eye reprojects them (jak_vr.cpp reproject_matrix). On Geyser Rock in first
+# person, the head turned round to the sea and down a little (oc-<yaw>), then down at Jak's feet for his shadow
+# (oc-shadow). In the -left and -right pictures the near water must sit with the sand beside it: the same shift between
+# the eyes where they meet, no gap or seam at the shore that one eye has and the other does not.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4150 head_pitch -15
+4150 head_yaw -70
+4200 shot oc-r70
+4210 head_yaw -110
+4260 shot oc-r110
+4270 head_yaw -150
+4320 shot oc-r150
+4330 head_yaw 150
+4380 shot oc-l150
+4390 head_yaw 110
+4440 shot oc-l110
+4450 head_yaw 0
+4450 head_pitch -70
+4500 shot oc-shadow
+4510 quit 0

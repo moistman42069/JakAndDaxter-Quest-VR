@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.png binary
+*.jar binary
+*.ico binary
+# The patches go to git apply byte for byte: no line ending is ever changed in them.
+*.patch -text

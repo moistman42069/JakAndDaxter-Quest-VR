@@ -1,0 +1,76 @@
+name: Headset report (a bug, or a run that worked)
+description: Send your logs from the Quest or PC VR. Runs that worked help as much as failures.
+title: "[0.1.0] "
+labels: ["headset report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing. **Make the logs zip after playing:** on the Quest, the launcher's **Report a problem** saves one zip in `Download/JakQuestVR` on the headset; on PC, the Logs tab's **Gather the logs** saves one in `Downloads\JakQuestVR`.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Shown in the launcher.
+      value: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: headset
+    attributes:
+      label: Headset
+      options:
+        - Quest 3
+        - Quest 3S
+        - Quest Pro
+        - Quest 2
+        - PC VR (say which in "What happened")
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: game
+    attributes:
+      label: Game
+      options:
+        - Jak and Daxter (Jak 1)
+        - Jak II
+        - Jak 3
+        - The launcher (setting up, updating)
+    validations:
+      required: true
+  - type: input
+    id: disc
+    attributes:
+      label: Your disc
+      description: The launcher shows its version (US, PAL, Japanese, Korean) and its serial.
+      placeholder: "PAL, SCES-50361"
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where you were and what you were doing
+      placeholder: "Sentinel Beach, picking up the power cell"
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you saw. If it worked, say so. A video helps.
+    validations:
+      required: true
+  - type: input
+    id: settings
+    attributes:
+      label: Settings you changed
+      description: Launcher and VR menu options, or "none".
+  - type: textarea
+    id: log
+    attributes:
+      label: The logs
+      description: Drag the logs zip here.
+      placeholder: Attach the .zip file here.
+    validations:
+      required: true

@@ -1,0 +1,10 @@
+# OpenGOAL commits that are its own ARM64 backend. Precursor has its own ARM64 backend (the Quest build runs on it),
+# with a different register model, so a file only these commits changed keeps Precursor's version, and a file they
+# and other commits changed gets Precursor's version plus the other commits (tools/update_upstream.sh). Add any newer
+# OpenGOAL ARM64 backend commit here before the next update.
+de25f394394187fe800d55505a426c18139f119e arm64: Apple Silicon support (#4390)
+9e5ecef614d68b898c8f4d93620311fa39df459b goalc: arm64 vector float ops were not float ops (#4384)
+8c926caa23dbb755d807ede7d5b8a4ed61149a43 goalc: arm64 SIMD encoders emitted the wrong instructions (#4385)
+b59a6d1cf30816ec4b38bddcf5d450b453ec36f2 goalc: arm64 vector loads and stores with a register offset were wrong (#4386)
+bfc4c18adac2784f01c7dfa3451499066c1e5033 goalc: replicate tests for the majority of ARM64 non-simd cases (#4377)
+64b3bb9068c998bd01a0baef458606469cb79ba9 goalc: default to arm64 when built for ARM (#4419)

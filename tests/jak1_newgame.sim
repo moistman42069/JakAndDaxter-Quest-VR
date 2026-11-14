@@ -1,0 +1,21 @@
+# Jak 1 from boot into a new game on the simulated headset. "PRESS START" is up by about frame 2350 (the logo skips
+# only once village1 has loaded); Start opens the title menu, A takes New Game, A the first empty save slot, and the
+# opening cutscene starts. Expect panel pictures until then, eye pictures in the cutscene (through Jak's eyes by
+# default), and the cutscene seen with the head turned.
+2000 shot j1-title
+2400 menu 1
+2406 menu 0
+2650 shot j1-menu
+2700 a 1
+2706 a 0
+2950 shot j1-slots
+3000 a 1
+3006 a 0
+3300 shot j1-scene1
+3600 shot j1-scene2
+3660 head_yaw 45
+3720 shot j1-scene-left
+3780 head_yaw 0
+4200 shot j1-scene3
+4800 shot j1-scene4
+4860 quit 0

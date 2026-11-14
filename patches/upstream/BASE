@@ -1,0 +1,9 @@
+# The OpenGOAL release merged into Precursor; tools/setup.sh reads this and tools/update_upstream.sh writes it.
+# Precursor's pinned commit, plus from the release: the files in take.txt taken whole, the files in remove.txt removed,
+# and fixups.patch (the files merged by hand, and Precursor's own ARM64 backend kept over upstream's). TREE is the
+# result; the port's patches (patches/*.patch) are made against it.
+PRECURSOR=8c6f2c6eda0620d05814196feacd74ebe2d06ac3
+TAG=v0.3.9
+TAG_COMMIT=b6c8430c0b0a5cb139b939bcf0ffd25285b896c7
+URL=https://github.com/open-goal/jak-project.git
+TREE=82eb174a5e71987280667e6ad8c6e03d4ed06d6a

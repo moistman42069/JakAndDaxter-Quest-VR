@@ -1,0 +1,10 @@
+logs/
+out/
+*.iso
+*.apk
+*.log
+__pycache__/
+android/build/
+android/app/build/
+android/.gradle/
+pc/build/

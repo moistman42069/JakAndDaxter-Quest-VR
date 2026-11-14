@@ -1,0 +1,30 @@
+# Jak 1 physical melee with Fists on the right grip (on by default): to play on Geyser Rock (as jak1_down_out.sim), a
+# right hand thrown forward without the grip (no punch in the log), then the grip held (fists up, the hand closed) and
+# the hand thrown forward (a punch), swept across (a spin kick), then the left grip's fists (Jak 1's left grip is free)
+# and a left punch. Look for "[vr-pad] fists up", "punch" and "spin kick" in run.log; m-fist shows the closed hand.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot m-open
+4210 rh_z -0.4
+4220 rh_z 0
+4300 right_grip 1
+4340 shot m-fist
+4350 rh_z -0.4
+4360 rh_z 0
+4372 shot m-punch
+4450 rh_x -0.5
+4460 rh_x 0
+4472 shot m-spin
+4560 right_grip 0
+4600 left_grip 1
+4640 lh_z -0.4
+4650 lh_z 0
+4662 shot m-left
+4700 left_grip 0
+4720 quit 0

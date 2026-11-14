@@ -1,0 +1,44 @@
+# Jak II pop-in check in Haven City (LIST item 17), run with JAKVR_TEST_CONTINUE=ctysluma-start: a new game as
+# jak2_play.sim, then once Jak is first in play the game starts again in the slums; a look all round at the far city,
+# then a walk with a picture every 40 frames. Run with Max draw distance on and off to compare.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+6000 shot c2-ahead
+6060 head_yaw 90
+6130 shot c2-left
+6160 head_yaw 180
+6230 shot c2-back
+6260 head_yaw 270
+6330 shot c2-right
+6360 head_yaw 0
+6430 shot c2-walk0
+6440 left_y 1
+6480 shot c2-walk1
+6520 shot c2-walk2
+6560 shot c2-walk3
+6600 shot c2-walk4
+6640 shot c2-walk5
+6680 shot c2-walk6
+6720 shot c2-walk7
+6760 shot c2-walk8
+6800 left_y 0
+6840 shot c2-walk9
+6900 quit 0

@@ -1,0 +1,17 @@
+# "HUD follows your head" off (item 29): run with SIM_CFG at a config whose vr-options.txt has "hud-follows-head off".
+# The log's "[vr-view] the HUD stays put, placed ahead at N degrees": once at the start of play; not again for a head
+# turned 40 degrees; once more for a head turned 90 degrees (past 60 from the HUD), at about 90.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot hs-ahead
+4210 head_yaw 40
+4260 shot hs-40
+4270 head_yaw 90
+4320 shot hs-90
+4330 quit 0

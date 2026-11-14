@@ -1,0 +1,45 @@
+# Jak 1 body on the simulated headset: a new game to Geyser Rock in first person (as jak1_play.sim), then a look down at
+# his body, arms and shadow; the right hand closed (a point, then a fist), the hands out ahead; then the eyes stood
+# outside the body (view_free) to see the arms reach the controllers from the front and the side.
+2380 shot title
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot b-start
+4260 head_pitch -60
+4320 shot b-down
+4330 right_grip 1
+4330 left_thumb_touch 1
+4400 shot b-point
+4410 right_trigger 1
+4410 right_first_touch 1
+4470 shot b-fist
+4480 head_pitch 0
+4480 right_trigger 0
+4480 right_first_touch 0
+4480 rh_z -0.25
+4480 lh_z -0.25
+4480 rh_y 0.2
+4540 shot b-ahead
+4560 view_free 1
+4560 view_z 2.6
+4560 view_y 0.9
+4620 shot b-behind
+4630 rh_x 0.35
+4630 lh_x -0.35
+4630 rh_y 0.35
+4690 shot b-behind-wide
+4700 head_pitch -45
+4760 shot b-behind-down
+4770 menu 1
+4776 menu 0
+4840 shot b-pause
+4850 menu 1
+4856 menu 0
+4900 shot b-after-pause
+4910 quit 0

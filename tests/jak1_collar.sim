@@ -1,0 +1,25 @@
+# Jak 1: what of his body is near his face in first person, seen from outside (view_free): from behind and above the
+# head looking ahead, then from the right side; the head that poses the body looks straight ahead.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot c-ahead
+4210 view_free 1
+4210 view_x 0
+4210 view_y 0.25
+4210 view_z 0.45
+4210 view_yaw 0
+4210 view_pitch -25
+4270 shot c-behind
+4280 view_x 0.55
+4280 view_y 0.05
+4280 view_z -0.05
+4280 view_yaw 90
+4280 view_pitch -10
+4340 shot c-side
+4350 quit 0

@@ -1,0 +1,18 @@
+# Jak 1 Zoomer (LIST item 9), run with JAKVR_TEST_CONTINUE=firecanyon-start: a new game as jak1_play.sim, then once Jak
+# is in play the game starts again at Fire Canyon on the Zoomer. Expect "[vr] view in play: third person (the game's
+# state ...)" in run.log, pictures from behind the Zoomer, and driving ahead with the left stick.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+5400 shot z-start
+5460 left_y 1
+5640 shot z-drive1
+5820 shot z-drive2
+5900 left_y 0
+5960 shot z-stop
+6000 quit 0

@@ -1,0 +1,53 @@
+The first release: Jak and Daxter: The Precursor Legacy, Jak II and Jak 3 in VR, on Quest and on PC VR.
+
+Set up
+- Each game is made once from your own disc image (.iso): no game files come with this release. Every disc version works.
+- Each game keeps its own VR options; the launcher can set all three at once.
+
+Playing
+- First person through Jak's eyes, or the game's own camera around you; switch any time in the VR menu.
+- Your hands are Jak's: his arms follow yours, his fingers follow your grip, and his hands stop at walls and floors.
+- Body shown: see his whole body, or only some of it (body and arms, body and legs, arms and legs, arms only, legs
+  only, hands only). His hands always stay.
+- Physical melee: punch, spin kick and uppercut with your own fists, while on foot.
+- Jak II and 3: grip at your hip or over your shoulder to draw the gun, aim it with your hand, steady it with your left
+  hand on its front. Back there and let go to put it away.
+- Vibration from the game, and a buzz as a hand meets a wall or the floor.
+- Smooth or snap turning, moving where you look or where your left hand points, physical crouch, seated play.
+- Cutscenes and talks through his eyes, around you, or on a big screen.
+
+Graphics
+- Max draw distance: the whole level drawn at full detail as far as you can see, so nothing pops in.
+- Eye resolution, refresh rate, anti-aliasing, anisotropic filtering, foveated rendering and smoother frames, with
+  Performance, Balanced and Quality presets.
+
+Recommended performance options (the Graphics tab's presets set them at once)
+- Quest 2: Performance. 72 or 80 Hz, 80% eye resolution, high foveation, smoother frames and boost on, Max draw
+  distance off (turn it on if the game stays smooth where you play).
+- Quest 3 and 3S: Balanced (the defaults). The headset's own refresh rate, 100% eyes, medium foveation, smoother
+  frames and boost on, Max draw distance on, 2x anti-aliasing.
+- PC VR: Balanced, or Quality on a strong graphics card (120% eyes, 4x anti-aliasing, 16x anisotropic filtering).
+  Smoother frames, foveation and boost are the Quest's; on PC your headset's software has its own.
+- Stutters? Lower the eye resolution first, then turn Max draw distance off.
+
+The launcher
+- Graphics, VR Body and VR Controls tabs with every option of the in-game VR menu.
+- Controls for every controller: Quest Touch, Index, Vive, Windows Mixed Reality, Pico and more.
+- One button gathers the logs into a zip for a bug report.
+- Updates from the project's GitHub releases.
+
+Multiplayer (Jak 1)
+- Play together: Multiplayer is built in and on, and changes nothing until you host or join a game (turn it off in the
+  launcher's Mods; on the Quest, Jak 1's options page). The others' Jaks run in your world with their names over them,
+  and what one takes, everyone has. Every VR feature stays on for everyone, whoever hosts.
+- From the VR menu: Host a game (which save?), Join a game (a list with each host's level and power cells), Play which
+  save? (the host's progress, one of yours, or a new game), Players (the host can take one out). Games on your network
+  are found by themselves; over the internet, through a party server (party_server.py, in the PC release's
+  party-server folder) or a friend's address. Everyone needs the same release. How: MULTIPLAYER.md, beside
+  party_server.py and in the project's docs.
+- Built on Teamruns' multiplayer.
+
+Mods
+- Texture packs for all three games, on PC and Quest: add a pack's zip (OpenGOAL's own kind), turn each on or off and
+  put them in order; the game is built again with them from your disc.
+- On the Quest, Precursor's mod packages as before. How: MODS.md in the project's docs.

@@ -1,0 +1,33 @@
+# Jak 3 in a desert buggy (LIST items 9 and 17), run with JAKVR_TEST_CONTINUE=wasdoors-desert-turtle: the opening
+# skipped and a new game started as jak3_toplay.sim, then once Jak is first in play (Spargus, about frame 3000) the
+# game starts again in the desert in the buggy. Expect "[vr] view in play: third person (the game's state ...)" and
+# pictures of the far desert while driving (left stick, then X).
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+4500 shot b3-start
+4560 left_y 1
+4700 shot b3-stick1
+4840 shot b3-stick2
+4900 left_y 0
+4920 a 1
+5060 shot b3-x1
+5200 shot b3-x2
+5260 a 0
+5300 head_yaw 90
+5370 shot b3-left
+5400 head_yaw 0
+5500 quit 0

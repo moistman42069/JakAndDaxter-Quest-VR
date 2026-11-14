@@ -1,0 +1,55 @@
+# Jak II holsters on the simulated headset (run with JAKVR_TEST_GUN=1 JAKVR_BODY_TRACE=1: the gun given, each round
+# logged as "[vr-gun] a round fired"): a new game to the fortress exit (as jak2_play.sim); the right hand to the hip,
+# the right grip squeezed there (the gun drawn, no shot: "[vr-pad] holster: the right grip squeezed"), brought ahead and
+# let go (the gun stays out), a shot with the trigger, then the hand over the right shoulder, gripped and let go there
+# (the gun put away), and drawn again from the shoulder.
+# Zones (jak_vr.cpp at_holster, the hand from the head): the hip below 45 cm, 8 cm out to its side, not 25 cm ahead;
+# the shoulder above -25 cm, 2 cm behind, within 35 cm across. The right hand rests at (0.2, -0.35, -0.3).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4500 shot h-start
+4510 rh_x 0.05
+4510 rh_y -0.25
+4510 rh_z 0.3
+4530 right_grip 1
+4600 shot h-drawn-at-hip
+4610 rh_x 0
+4610 rh_y 0
+4610 rh_z 0
+4640 right_grip 0
+4700 shot h-drawn
+4710 right_trigger 1
+4716 right_trigger 0
+4760 shot h-fired
+4780 rh_x -0.2
+4780 rh_y 0.3
+4780 rh_z 0.4
+4800 right_grip 1
+4820 right_grip 0
+4900 shot h-put-away
+4910 right_grip 1
+4980 shot h-drawn-at-shoulder
+4990 right_grip 0
+4990 rh_x 0
+4990 rh_y 0
+4990 rh_z 0
+5060 shot h-end
+5080 quit 0

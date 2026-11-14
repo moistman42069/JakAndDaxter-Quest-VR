@@ -1,0 +1,51 @@
+# Jak 1 hands against the world (item 25): to play on Geyser Rock (as jak1_down_out.sim), the head turned 40 degrees
+# right toward the cliff (the stick moves him where the head looks; straight ahead the path runs on to the beach), a
+# run at it until it stops him, then the right hand pushed 30 and 60 cm on along the look into the rock, then the left.
+# Look for "[vr-body] the right hand meets the world" in run.log; w-reach and w-push show the hand held at the rock.
+# Then the right hand pushed 2.2 m down into the ground (w-floor), a slow walk on to the rock (w-close) and the reach
+# again (w-wall).
+# (The sim's hand offsets are not turned with the head: 0.6 along a look 40 degrees right is x 0.38, z -0.46.)
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4150 head_yaw -40
+4200 shot w-turned
+4200 left_y 1
+4560 left_y 0
+4620 shot w-near
+4630 rh_y 0.25
+4630 rh_x 0.19
+4630 rh_z -0.23
+4690 shot w-reach
+4700 rh_x 0.38
+4700 rh_z -0.46
+4760 shot w-push
+4770 rh_y 0
+4770 rh_x 0
+4770 rh_z 0
+4780 lh_y 0.25
+4780 lh_x 0.38
+4780 lh_z -0.46
+4840 shot w-left
+4850 lh_y 0
+4850 lh_x 0
+4850 lh_z 0
+4860 rh_y -2.2
+4920 shot w-floor
+4930 rh_y 0
+4940 left_y 0.4
+5100 left_y 0
+5110 shot w-close
+5120 rh_y 0.25
+5120 rh_x 0.38
+5120 rh_z -0.46
+5180 shot w-wall
+5190 rh_y 0
+5190 rh_x 0
+5190 rh_z 0
+5200 quit 0
