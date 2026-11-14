@@ -90,6 +90,8 @@ Status marks: [ ] not started, [~] in progress, [x] done (with how it was checke
    but no PAL type files).
 8. [ ] Installing on the Quest: decompile and compile on the headset; Jak 3 took 7.3 GB on a phone (issue 18), the Quest 3
    has 8 GB. Bring each game's install under the Quest's memory, and make a failed install say why (issues 7, 9).
+   - 5 to 8 (2026-11-14): only a headset shows these, so the 0.1.0 test release asks for them first (its notes' "Most
+     wanted", docs/HEADSET_CHECKLIST.md and the headset report form); the logs that come back decide the fixes.
 9. [~] Vehicles and minigames playable in VR: they switch to third person on their own where first person does not fit
    (Jak 1 Zoomer, Flut Flut, fishing, periscope, Billy; Jak II and 3 vehicles, turrets, JET-Board, Titan suit, races).
    In: each game's vr-first-person-ok? (pc-vr.gc) gives third person for these states. Jak 1: the Zoomer (racing),
@@ -550,9 +552,29 @@ its full-immersion features.
     inert in every one ("party: on as Player", nothing opened). Earlier the same day: two games in one party on the
     network (batch11) and over the party server with Remove (batch13), the VR menu's pages (mp_menu), Body shown in all
     three games, pop-in, the glows. What the PC cannot reach is in docs/HEADSET_CHECKLIST.md.
-32. [ ] Quest build, own application id and signing key, README crediting OpenGOAL and Precursor (ISC) and the licenses,
+32. [x] Quest build, own application id and signing key, README crediting OpenGOAL and Precursor (ISC) and the licenses,
     HEADSET_CHECKLIST, release notes. APK path and SHA-256 to the owner; nothing published unless the owner asks.
-38. [~] **A git repository like Ratchet's** (owner, 2026-11-12): JakAndDaxter-Quest-VR, with a README (what it is, the
+    - 2026-11-14, published as the first test release (the owner: "publish the release as the first test release ...
+      dont ask me for anything"): https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/tag/v0.1.0, "Jak and
+      Daxter VR 0.1.0", the latest release (not a prerelease, so both updaters see it), body docs/release-notes.md.
+    - The APK: dev.jakquest.vr 0.1.0 (versionCode 10099), minSdk 28, targetSdk 34, ARM64, the Quest's VR category on
+      the game, the OpenXR loader inside; signed with ~/.jakquestvr's key (certificate SHA-256 66390b53...d59d52a).
+      56.7 MB, SHA-256 601a809f68fcb2424b5699a932cb8e7eab8d97a0038e522db5dfc35604ebc212. Kept in
+      out/release-0.1.0 (not in git) with the Windows zip (68.2 MB, 4f1d5e14...780ec674) and SHA256SUMS.txt; GitHub's
+      digests of the uploads match.
+    - Two fixes to build it: build.gradle's gitOutput read git's output only after git ended, and `git status` on
+      Precursor's thousands of changed files filled the pipe, so both waited forever (now waitForProcessOutput);
+      Precursor's styles.xml named android:windowOptOutEdgeToEdgeEnforcement, an Android 15 (API 35) attribute the SDK
+      34 build cannot link (taken out: with targetSdk 34 edge-to-edge is never enforced). 16 minutes from clean, offline.
+    - The PC release (tools/build_pc_release.py): the launcher's self-test passes; no game files in the zip.
+38. [x] **A git repository like Ratchet's** (owner, 2026-11-12): JakAndDaxter-Quest-VR, with a README (what it is, the
     three games, what it adds, setup from your own discs, building), description, CREDITS, licenses, setup scripts,
     Precursor as a submodule with our changes as patches. Local first; created on GitHub and pushed only when the owner
     says.
+    - 2026-11-14: https://github.com/moistman42069/JakAndDaxter-Quest-VR, public, Ratchet's topics (opengoal and
+      jak-and-daxter in place of openrac and ratchet-and-clank), issues on with the headset report form. The first
+      commit (ea569f5) holds everything but Precursor, which is the submodule at 8c6f2c6e (on Precursor's master).
+      patches/ regenerated (0001: 2010 files, 19.4 MB, now with Teamruns' asio, WebSocket++ and miniaudio; 0002 the
+      OpenXR headers): applied to the merged base they give exactly the working tree's tree (c508219d). .gitattributes
+      as Ratchet's, with the patches kept byte for byte (*.patch -text). Commits as Ratchet's, under the owner's GitHub
+      noreply address.
