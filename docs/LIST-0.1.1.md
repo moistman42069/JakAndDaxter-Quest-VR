@@ -321,7 +321,7 @@ Quest's paths it reaches.
     Checked on the PC sim (batch 35, build 33, tests/jak1_scene_view.sim): in the opening scene the hold switched to
     through his eyes (`[vr-pad] scenes are seen through his eyes now: the left menu button held`, the view to his eyes)
     and back (`... around you now`, the view to the game's camera).
-27. [~] **Every mapping and function in all three games, and a clean build** (the owner: "make sure all mappings and
+27. [x] **Every mapping and function in all three games, and a clean build** (the owner: "make sure all mappings and
     functions work in all games, and just be sure this next build is as cleaned up as can be"). Go through the
     controls table (CONTROLS.md) in each game on the simulated headset before the release builds.
     Checked on the PC sim (batch 35, build 33, tests/jak1_buttons.sim, jak2_buttons.sim, jak3_buttons.sim): in all
@@ -344,7 +344,8 @@ Quest's paths it reaches.
     round (`[vr-gun] a round fired`), the right stick's click put him on the board and the same click took him off
     (target-board-get-on, target-board-get-off), and the left grip then made Jak II's Dark Jak (target-darkjak-get-on)
     and Jak 3's change (target-powerjak-get-on). Every mapping of CONTROLS.md's play rows has now been seen working in
-    all three games on the sim. The clean build is the release builds' own, once every item is done.
+    all three games on the sim. The clean build: the 0.1.1 release builds (the APK and the Windows zip, from build 49
+    and the APK's own build of the runtime), published 2026-11-16.
 28. [x] **The d-pad: make sure it works, and feel it** (the owner, 2026-11-15: "i also couldnt tell if dpad was
     activating. maybe make it so when i use dpad inputs, the controller stick vibrates when moved in a direction ...
     just make sure d pad actually works"). Done in the code: a quick pulse in that stick's hand as a direction goes in
