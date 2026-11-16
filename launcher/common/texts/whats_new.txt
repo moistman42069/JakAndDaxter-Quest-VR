@@ -1,7 +1,18 @@
-0.1.1: fixes for the first players' reports, and a pass over how Jak's body feels around you. Still a test release:
-please keep sending your logs.
+0.1.2: smoother updates, out the same day as 0.1.1 (its notes below). Still a test release: please keep sending
+your logs.
 
-Games prepared with 0.1.0 need preparing again (Quest: Prepare again; PC: the launcher builds them again by itself).
+Coming from 0.1.1: nothing to prepare again. 0.1.2 does not change the game code, so your games play as they are.
+Coming from 0.1.0: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game, in place
+of PLAY IN VR until you press it; a few minutes, no disc image needed). Your saves and options are kept.
+
+Changed
+- PC: from now on an update asks you to build a game again only when it changes the game code, as the Quest's
+  launcher already does. Before, every new version asked for it.
+- Corrected: 0.1.1's notes said the PC launcher builds the games again by itself. You press Build it again on each.
+
+0.1.1: fixes for the first players' reports, and a pass over how Jak's body feels around you.
+
+Games prepared with 0.1.0 need preparing again (Quest: Prepare again; PC: Build it again on each game).
 Your saves and options are kept.
 
 Fixed

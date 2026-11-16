@@ -1,0 +1,6 @@
+# The game code of each PC release (tools/build_pc_release.py): its version, the game data version and
+# the SHA-256 of its game\data. A release lists the ones before it with the same two in
+# game\data\game-code.txt, so a game built by one of them is not built again after the update.
+0.1.0 1 3b14c9488f55ef18524e826cfa768c1c5dc73da941793cd8bfffcd40437b68db
+0.1.1 2 cffeda3ac2603189dc82062268f0a3e160198c63c3ceb1d209d6d7ba79c0090d
+0.1.2 2 cffeda3ac2603189dc82062268f0a3e160198c63c3ceb1d209d6d7ba79c0090d

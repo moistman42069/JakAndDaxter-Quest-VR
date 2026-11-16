@@ -5,8 +5,9 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.1](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** the fixes for the
-> first players' reports on 0.1.0, and a pass over how Jak's body feels around you. It is still a test release, tested
+> **Test release [0.1.2](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** 0.1.1's fixes for the
+> first players' reports on 0.1.0 and its pass over how Jak's body feels around you, and from 0.1.2 updates that leave
+> your games as they are when their game code has not changed. It is still a test release, tested
 > on a PC with a simulated headset, and its main purpose is still to collect logs. Whatever happens, please send yours:
 > the [release notes](docs/release-notes.md) say how. [docs/LIST-0.1.1.md](docs/LIST-0.1.1.md) says what changed and
 > how each part was checked ([docs/LIST-0.1.0.md](docs/LIST-0.1.0.md) for the first release).

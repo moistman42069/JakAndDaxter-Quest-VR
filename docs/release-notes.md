@@ -1,4 +1,4 @@
-> ⚠️ **Second test release.** 0.1.0's first players sent their logs, videos and reports from SteamVR, Meta Horizon Link and the Quest; 0.1.1 fixes what they found and makes Jak's body feel more like yours. Everything here was built and tested on a PC with a simulated headset, so some things will still be off. **Please keep sending your logs** (**Send your log** below says how), whether something broke or everything worked.
+> ⚠️ **Third test release: 0.1.2 makes updating smoother, on top of 0.1.1 (out the same day, its notes below).** 0.1.0's first players sent their logs, videos and reports from SteamVR, Meta Horizon Link and the Quest; 0.1.1 fixes what they found and makes Jak's body feel more like yours, and 0.1.2 lets an update leave your games as they are when their game code has not changed. Everything here was built and tested on a PC with a simulated headset, so some things will still be off. **Please keep sending your logs** (**Send your log** below says how), whether something broke or everything worked.
 
 **The Jak and Daxter trilogy in VR: Jak and Daxter: The Precursor Legacy, Jak II and Jak 3, standalone on Meta Quest and on PC VR.** The games run natively through [OpenGOAL](https://opengoal.dev)'s decompiled code, by way of [Precursor](https://github.com/thebardockgames/Precursor), OpenGOAL's Android port. You need your own disc images. **No game files are included.**
 
@@ -6,16 +6,16 @@
 
 | File | For |
 | --- | --- |
-| `JakQuestVR-0.1.1.apk` | Meta Quest 2, 3, 3S and Pro (standalone) |
-| `JakQuestVR-0.1.1-windows.zip` | PC VR on Windows 10 or 11 (SteamVR, Meta Horizon Link, Air Link, Virtual Desktop, any OpenXR runtime) |
+| `JakQuestVR-0.1.2.apk` | Meta Quest 2, 3, 3S and Pro (standalone) |
+| `JakQuestVR-0.1.2-windows.zip` | PC VR on Windows 10 or 11 (SteamVR, Meta Horizon Link, Air Link, Virtual Desktop, any OpenXR runtime) |
 | `SHA256SUMS.txt` | The files' SHA-256 |
 
-## Updating from 0.1.0
+## Updating
 
-**Each game has to be prepared again once** (the VR layer's code inside the games changed). **Your saves and options are kept.**
+Let the launcher update itself (it offers 0.1.2 on its own), or install over your version: on the Quest, install `JakQuestVR-0.1.2.apk` over it; on PC, unzip 0.1.2 over your folder. On the Quest, do not uninstall first: your games and saves go with the app. **Your saves and options are kept** either way.
 
-- **Quest:** install `JakQuestVR-0.1.1.apk` over 0.1.0 (or let the launcher update itself), then **Prepare again** on each game's page. Do not uninstall first: your games and saves go with the app.
-- **PC:** unzip 0.1.1 over your 0.1.0 folder (or let the launcher update itself). The launcher builds each game again by itself the first time you press **PLAY IN VR**; it takes a few minutes.
+- **From 0.1.1: nothing to prepare again.** 0.1.2 does not change the game code, so your games play as they are, on the Quest and on PC.
+- **From 0.1.0: each game has to be prepared again once** (0.1.1 changed the VR layer's code inside the games). **Quest:** **Prepare again** on each game's page. **PC:** press **Build it again** on each game (it shows in place of **PLAY IN VR** until then); it builds from the disc you set the game up with, so no disc image is needed, and takes a few minutes.
 
 ## Send your log
 
@@ -25,6 +25,13 @@ This is the most useful thing you can do with this release.
 - **PC:** the launcher's **Logs** tab, **Gather the logs**, makes one zip in **Downloads\JakQuestVR** and opens the folder.
 
 Post it in a [**headset report**](https://github.com/moistman42069/JakAndDaxter-Quest-VR/issues/new?template=headset-report.yml) with your headset, the game, your disc's version, where you were and what happened (or that it worked). A video helps. [HEADSET_CHECKLIST.md](https://github.com/moistman42069/JakAndDaxter-Quest-VR/blob/main/docs/HEADSET_CHECKLIST.md) lists everything worth trying, with the log line that shows each worked.
+
+## What's new in 0.1.2
+
+- **Smoother updates on PC.** From now on, the PC launcher asks you to build a game again only when an update changes the game code (or how the games must be built), as the Quest's launcher already does. Before, every new version asked for it, even when nothing in the games had changed. The launcher's log zip says which version built each game.
+- **Corrected:** 0.1.1's notes said the PC launcher builds each game again by itself the first time you press **PLAY IN VR**. It does not: after an update that needs it, each game shows **Build it again** in place of **PLAY IN VR** until you press it.
+
+Nothing else changed from 0.1.1: the games, the VR layer and the Quest app are the same as in 0.1.1.
 
 ## What's new in 0.1.1
 
@@ -74,7 +81,7 @@ Everything 0.1.0 brought (the VR view, the controls, the body, combat, multiplay
 ## Install on Quest
 
 1. Put your Quest in **Developer Mode** (in the Meta Horizon app on your phone).
-2. Get `JakQuestVR-0.1.1.apk` onto the headset and install it: download it in the Quest's browser (or email it to yourself and download it there) and open it from the **Files** app, or sideload it with SideQuest.
+2. Get `JakQuestVR-0.1.2.apk` onto the headset and install it: download it in the Quest's browser (or email it to yourself and download it there) and open it from the **Files** app, or sideload it with SideQuest.
 3. Open **Jak and Daxter VR** from your Library's **Unknown Sources**.
 4. Copy your disc images (`.iso`, PS2 discs only) to the headset's **Download** folder with a PC, and add each game in the launcher. **The headset builds each game from your disc once: this takes a while and several GB of space (Jak 3 the most). Keep the headset on charge.**
 5. Choose a game and play.
@@ -83,7 +90,7 @@ Everything 0.1.0 brought (the VR view, the controls, the body, combat, multiplay
 
 ## Install on PC
 
-1. Download `JakQuestVR-0.1.1-windows.zip` and unzip it anywhere you can write (not Program Files). Keep the `JakDaxterVR` folder together. Nothing is installed into Windows.
+1. Download `JakQuestVR-0.1.2-windows.zip` and unzip it anywhere you can write (not Program Files). Keep the `JakDaxterVR` folder together. Nothing is installed into Windows.
 2. Open `JakDaxterVR.exe`. Windows may warn about an app from the internet it does not know: **More info**, then **Run anyway**.
 3. On the **Play** tab, **Set up from your disc image...** under each game, and pick its `.iso`. Each game is made from your disc once; it takes a few minutes.
 4. Start your headset's PC VR software (SteamVR, Meta Horizon Link, Virtual Desktop, ...), then press **PLAY IN VR**.
@@ -92,7 +99,7 @@ Your set-up, saves and options are kept in `%LOCALAPPDATA%\JakQuestVR`, so updat
 
 ## What we tested
 
-On a Windows PC with a simulated headset and controllers (scripts in `tests/`), with a PAL Jak 1, a US Jak II and a PAL Jak 3, each fix against the report it answers, then the moves, menus, guns and scenes it could reach in all three games. The Quest app's runtime was compiled for the Quest's chip and this APK built, but not run on a Quest. [LIST-0.1.1.md](https://github.com/moistman42069/JakAndDaxter-Quest-VR/blob/main/docs/LIST-0.1.1.md) says how each item was checked.
+On a Windows PC with a simulated headset and controllers (scripts in `tests/`), with a PAL Jak 1, a US Jak II and a PAL Jak 3, each fix against the report it answers, then the moves, menus, guns and scenes it could reach in all three games. The Quest app's runtime was compiled for the Quest's chip and this APK built, but not run on a Quest. [LIST-0.1.1.md](https://github.com/moistman42069/JakAndDaxter-Quest-VR/blob/main/docs/LIST-0.1.1.md) says how each item was checked, and [LIST-0.1.2.md](https://github.com/moistman42069/JakAndDaxter-Quest-VR/blob/main/docs/LIST-0.1.2.md) 0.1.2's.
 
 ## Known limits
 

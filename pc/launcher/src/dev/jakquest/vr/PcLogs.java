@@ -65,8 +65,13 @@ final class PcLogs {
             String game = VrOptions.GAMES[i];
             s.append(VrOptions.GAME_NAMES[i]).append(": ");
             switch (PcSetup.status(paths, game)) {
-                case READY: s.append("set up"); break;
-                case OUTDATED: s.append("set up with ").append(PcPaths.read(paths.readyMark(game)).trim())
+                case READY:
+                    s.append("set up");
+                    if (!PcBuild.VERSION.equals(PcSetup.builtBy(paths, game))) {
+                        s.append(" (built by ").append(PcSetup.builtBy(paths, game)).append(", the same game code)");
+                    }
+                    break;
+                case OUTDATED: s.append("set up with ").append(PcSetup.builtBy(paths, game))
                     .append(", to build again"); break;
                 default: s.append("not set up"); break;
             }

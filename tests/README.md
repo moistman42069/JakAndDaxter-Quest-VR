@@ -157,3 +157,6 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
   `java -cp <classes>;<out> dev.jakquest.vr.TexturePacksTest <an empty scratch folder>` (23 checks).
 - Browse mods' lists (launcher/common ModList.java) the same way: `tests/java/dev/jakquest/vr/ModListTest.java`,
   `java -cp <classes>;<out> dev.jakquest.vr.ModListTest <an empty scratch folder>` (20 checks, no network).
+- The PC launcher's "build it again" after an update (pc/launcher PcSetup.newSources, 0.1.2) the same way:
+  `tests/java/dev/jakquest/vr/GameCodeTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.GameCodeTest <an empty scratch
+  folder>` (19 checks: the game code of 0.1.0, 0.1.1 and later marks against a release's game\data\game-code.txt).

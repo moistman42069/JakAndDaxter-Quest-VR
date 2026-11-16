@@ -62,6 +62,74 @@ def version() -> str:
     return v
 
 
+# The game code a release's games are built from (its game\data): a SHA-256 of it, the game data version (the Quest's
+# build.gradle gameDataVersion, raised when the compiler or the runtime change how a game must be built) and the
+# releases before it with the same two, from pc/game-code.txt. The launcher builds a game again after an update only
+# when the game code or the game data version differ from what the game was built with (PcSetup.newSources), as the
+# Quest's launcher does with its toolchain's hash; before 0.1.2 every new release asked for it. (0.1.2)
+GAME_CODE_RECORD = PC / "game-code.txt"
+GAME_CODE_FILE = "game-code.txt"
+
+
+def game_data_version() -> int:
+    gradle = (PRECURSOR / "scripts/android-port/apk/app/build.gradle").read_text(encoding="utf8")
+    found = re.search(r"^def gameDataVersion = (\d+)\s*$", gradle, re.M)
+    if not found:
+        sys.exit("build.gradle has no `def gameDataVersion = N`")
+    return int(found.group(1))
+
+
+def game_code_id(entries) -> str:
+    """The SHA-256 of a game\\data: each file's path from it and the SHA-256 of its bytes, in path order."""
+    sha = hashlib.sha256()
+    for rel, data in sorted(entries, key=lambda e: e[0]):
+        if rel == GAME_CODE_FILE:
+            continue
+        sha.update(rel.encode("utf8") + b"\0" + hashlib.sha256(data()).digest())
+    return sha.hexdigest()
+
+
+def folder_entries(root: Path):
+    return [(p.relative_to(root).as_posix(), p.read_bytes) for p in root.rglob("*") if p.is_file()]
+
+
+def zip_entries(z: zipfile.ZipFile, prefix: str = f"{PACKAGE_NAME}/game/data/"):
+    return [(i.filename[len(prefix):], (lambda i=i: z.read(i))) for i in z.infolist()
+            if i.filename.startswith(prefix) and not i.is_dir()]
+
+
+def read_record() -> list:
+    rows = []
+    if GAME_CODE_RECORD.is_file():
+        for line in GAME_CODE_RECORD.read_text(encoding="utf8").splitlines():
+            parts = line.split()
+            if len(parts) == 3 and not line.startswith("#"):
+                rows.append((parts[0], int(parts[1]), parts[2]))
+    return rows
+
+
+def write_record(ver: str, data: int, code: str) -> None:
+    rows = [r for r in read_record() if r[0] != ver] + [(ver, data, code)]
+    rows.sort(key=lambda r: tuple(int(n) for n in r[0].split(".")))
+    with GAME_CODE_RECORD.open("w", encoding="utf8", newline="\n") as out:
+        out.write("# The game code of each PC release (tools/build_pc_release.py): its version, the game data version and\n"
+                  "# the SHA-256 of its game\\data. A release lists the ones before it with the same two in\n"
+                  "# game\\data\\game-code.txt, so a game built by one of them is not built again after the update.\n")
+        for r in rows:
+            out.write(f"{r[0]} {r[1]} {r[2]}\n")
+
+
+def write_game_code(data_folder: Path, ver: str) -> None:
+    code = game_code_id(folder_entries(data_folder))
+    data = game_data_version()
+    same = [r[0] for r in read_record() if r[2] == code and r[1] == data and r[0] != ver]
+    with (data_folder / GAME_CODE_FILE).open("w", encoding="utf8", newline="\n") as out:
+        out.write(f"id {code}\ndata {data}\nsame {' '.join(same)}\n")
+    write_record(ver, data, code)
+    print(f"game code {code}, game data version {data}; the same in: {' '.join(same) or 'no release before'}",
+          flush=True)
+
+
 def java_tool(name: str) -> Path:
     home = Path(os.environ.get("JAVA_HOME") or "C:/RACQuest/toolchain/jdk17")
     tool = home / "bin" / f"{name}.exe"
@@ -190,6 +258,7 @@ def package(ver: str) -> Path:
     for dll in vc_runtime():
         shutil.copy2(dll, game / dll.name.lower())
     copy_template(game / "data")
+    write_game_code(game / "data", ver)
 
     # The launcher's texts: the shared What's new, the controls and credits as the repository has them, the notices.
     texts = folder / "texts"
@@ -243,4 +312,10 @@ def package(ver: str) -> Path:
 
 
 if __name__ == "__main__":
-    package(version())
+    if len(sys.argv) == 5 and sys.argv[1] == "--record-zip":
+        # An earlier release's game code into pc/game-code.txt from its zip: --record-zip <zip> <version> <data>.
+        with zipfile.ZipFile(sys.argv[2]) as z:
+            write_record(sys.argv[3], int(sys.argv[4]), game_code_id(zip_entries(z)))
+        print(GAME_CODE_RECORD.read_text(encoding="utf8"))
+    else:
+        package(version())

@@ -1316,6 +1316,11 @@ public final class PcLauncher {
         if (!new File(paths.template(), "game/graphics/opengl_renderer/shaders").isDirectory()) {
             wrong.add("game/data/game/graphics/opengl_renderer/shaders is missing");
         }
+        PcSetup.GameCode code = PcSetup.gameCode(paths);
+        if (!code.id.matches("[0-9a-f]{64}") || !code.data.matches("[0-9]+")) {
+            wrong.add("game/data/game-code.txt is missing or has no id and data version (an update would build every "
+                + "game again)");
+        }
         return wrong;
     }
 

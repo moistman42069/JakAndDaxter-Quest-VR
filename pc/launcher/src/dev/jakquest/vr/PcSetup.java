@@ -56,9 +56,74 @@ final class PcSetup {
             ? Status.READY : Status.OUTDATED;
     }
 
-    /** The game was built with an older release's sources. */
+    /**
+     * This release's game code (game\data\game-code.txt, written by tools/build_pc_release.py): the SHA-256 of the game
+     * sources it builds games from, the game data version (raised when the compiler or the runtime change how a game
+     * must be built) and the releases before it with the same two. Empty when the file is not there (a build of the
+     * launcher from the repository): then every new release builds the games again, as before 0.1.2.
+     */
+    static final class GameCode {
+        final String id;
+        final String data;
+        final List<String> same;
+
+        GameCode(String text) {
+            String id = "", data = "";
+            List<String> same = new ArrayList<>();
+            for (String line : text.split("\\R")) {
+                String[] words = line.trim().split("\\s+");
+                if (words.length >= 2 && words[0].equals("id")) {
+                    id = words[1];
+                } else if (words.length >= 2 && words[0].equals("data")) {
+                    data = words[1];
+                } else if (words[0].equals("same")) {
+                    for (int i = 1; i < words.length; i++) {
+                        same.add(words[i]);
+                    }
+                }
+            }
+            this.id = id;
+            this.data = data;
+            this.same = same;
+        }
+    }
+
+    static GameCode gameCode(PcPaths paths) {
+        return new GameCode(PcPaths.read(new File(paths.template(), "game-code.txt")));
+    }
+
+    /** The release that built the game: its ready mark's first line. */
+    static String builtBy(PcPaths paths, String game) {
+        return PcPaths.read(paths.readyMark(game)).split("\\R", 2)[0].trim();
+    }
+
+    /**
+     * The game was built from other game code than this release's. Its ready mark names the release that built it, and
+     * since 0.1.2 that release's game code and game data version; a mark of 0.1.0 or 0.1.1 has the release alone, which
+     * counts as this release's game code when the release is in its list of the same.
+     */
     static boolean newSources(PcPaths paths, String game) {
-        return !PcBuild.VERSION.equals(PcPaths.read(paths.readyMark(game)).trim());
+        String mark = PcPaths.read(paths.readyMark(game));
+        String built = mark.split("\\R", 2)[0].trim();
+        if (PcBuild.VERSION.equals(built)) {
+            return false;
+        }
+        GameCode now = gameCode(paths);
+        if (now.id.isEmpty()) {
+            return true;
+        }
+        GameCode then = new GameCode(mark);
+        if (!then.id.isEmpty()) {
+            return !(then.id.equals(now.id) && then.data.equals(now.data));
+        }
+        return !now.same.contains(built);
+    }
+
+    /** The ready mark of a game built now: this release, and its game code when it has one. */
+    static String readyMark(PcPaths paths) {
+        GameCode now = gameCode(paths);
+        return now.id.isEmpty() ? PcBuild.VERSION
+            : PcBuild.VERSION + "\nid " + now.id + "\ndata " + now.data + "\n";
     }
 
     /** Sets `game` up from the disc image `iso` (null: build again from the disc extracted before). */
@@ -170,7 +235,7 @@ final class PcSetup {
             throw new IOException("The set-up stopped (" + code + "): " + STATE.line + " The whole of it is in " + log
                 + ". Is the disc image " + VrOptions.GAME_NAMES[index(game)] + "?");
         }
-        Files.write(paths.readyMark(game).toPath(), PcBuild.VERSION.getBytes(StandardCharsets.UTF_8));
+        Files.write(paths.readyMark(game).toPath(), readyMark(paths).getBytes(StandardCharsets.UTF_8));
     }
 
     /** The release's sources copied into the data folder when this version's are not there yet (an update). */
