@@ -1,0 +1,18 @@
+# Jak 1: the menu pointer on the save slots (LIST-0.1.1 item 19; the owner: "the save select screen on jak 1"). Start
+# opens the title menu, A takes New Game, and the slots come up; the right hand turns up 28 degrees (from its rest 35 cm
+# under the eyes, the dot onto the first slot near the top of the panel 1.6 m ahead) and its trigger clicks. Expect
+# "[vr-pointer] a click on the game's menu: Cross" in run.log and the opening scene starting (0.1.0: no row there for
+# the pointer, so the click did nothing). At the rest pitch the dot is between the slot and "Continue without saving",
+# on no row: no Cross there.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+2950 shot p-slots
+2960 hand_pitch 27
+2970 hand_pitch 28
+2990 shot p-slots-dot
+3000 right_trigger 1
+3006 right_trigger 0
+3400 shot p-after
+3500 quit 0

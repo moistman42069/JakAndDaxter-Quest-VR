@@ -1,0 +1,41 @@
+# Jak II d-pad with a controller that has no thumb rest (Vive wands, Index, WMR: "no_thumb_rest 1"), run with
+# JAKVR_TEST_GUN=1: a new game to the fortress exit (as jak2_gun.sim), then the left hand held up by the side of the
+# head (35 cm up and 30 cm back from its rest: in the head's d-pad place) and the left stick pushed right, down, left
+# and up, each let go between. Expect "[vr-pad] d-pad <way> (the left stick)" four times and the guns changing
+# ("[vr-gun] the gun switched"). LIST-0.1.1 items 15 and 28.
+0 no_thumb_rest 1
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4500 shot h-start
+4500 lh_y 0.35
+4500 lh_z 0.3
+4520 left_x 1
+4540 left_x 0
+4600 left_y -1
+4620 left_y 0
+4680 left_x -1
+4700 left_x 0
+4760 left_y 1
+4780 left_y 0
+4800 lh_y 0
+4800 lh_z 0
+4820 shot h-end
+4900 quit 0

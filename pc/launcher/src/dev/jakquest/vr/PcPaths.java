@@ -107,6 +107,9 @@ final class PcPaths {
     File updates() { return new File(home, "updates"); }
     /** Texture packs the player added (TexturePacks), each game's in its own folder. */
     File texturePacks() { return new File(home, "texture-packs"); }
+    /** The mod lists' copies from before (ModList), and where a mod's file is downloaded before it is added. */
+    File modLists() { return new File(home, "mod-lists"); }
+    File modDownloads() { return new File(home, "mod-downloads"); }
     File prefs(String name) { return new File(home, name + ".properties"); }
     File launcherLog() { return new File(home, "launcher.log"); }
 

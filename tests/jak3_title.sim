@@ -1,0 +1,18 @@
+# Jak 3's opening and title (LIST-0.1.1 items 5 and 6; Vixel: the title screen has no text in VR, and the opening's
+# "view fight between 1st person view and where camera should be ... alot of flickering"). A first boot plays the
+# opening at once: shots of it, then Y skips it to the title, shots of the title (the eyes and the panel), A into its
+# menu, a shot. Expect the title's text on the panel, and in the log no run of "[vr-cam]" lines switching between first
+# and third person through the opening (log_camera logs each switch).
+200 shot t3-open-1
+330 shot t3-open-2
+460 shot t3-open-3
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1100 shot t3-title-1
+1300 shot t3-title-2
+1500 a 1
+1506 a 0
+1650 shot t3-menu
+1700 quit 0

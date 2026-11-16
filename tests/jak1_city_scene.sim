@@ -1,0 +1,58 @@
+# Jak 1: a scene of the underwater city (Lost Precursor City) or Rock Village's elevator down to it (LIST-0.1.1 item
+# 43, a player: "got to under water city and a certain cutscene seemingly broke the game"). Run with
+# JAKVR_TEST_CONTINUE=<continue point>, JAKVR_TEST_WARP=<the scene's trigger>, QUEST_SIM_ALIGN=10000 and
+# JAKVR_STATE_TRACE=1: a new game, the continue, then Jak put a metre over the trigger (frame 10000 is that moment);
+# he lands on it (the buttons he rides) and dives onto it (a full jump, then X, Square in the air, twice near the top:
+# the game takes the dive only once he rises slower than 6.5 m/s; the floor buttons are pressed by the dive).
+# Pictures each second through the scene; then the left stick forward, to see him walk again and the view his.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot cs-warp
+10050 a 1
+10070 a 0
+10074 x 1
+10078 x 0
+10088 x 1
+10092 x 0
+10160 shot cs-1
+10220 shot cs-2
+10280 shot cs-3
+10340 shot cs-4
+10400 shot cs-5
+10460 shot cs-6
+10520 shot cs-7
+10580 shot cs-8
+10640 shot cs-9
+10700 shot cs-10
+10760 shot cs-11
+10820 shot cs-12
+10880 shot cs-13
+10940 shot cs-14
+11000 shot cs-15
+11060 shot cs-16
+11120 shot cs-17
+11180 shot cs-18
+11240 shot cs-19
+11300 shot cs-20
+11360 shot cs-21
+11420 shot cs-22
+11480 shot cs-23
+11540 shot cs-24
+11600 shot cs-25
+11660 shot cs-26
+11720 shot cs-27
+11780 shot cs-28
+11840 shot cs-29
+11900 shot cs-30
+12000 left_y 1
+12090 shot cs-walk1
+12180 shot cs-walk2
+12200 left_y 0
+12300 shot cs-end
+12360 quit 0

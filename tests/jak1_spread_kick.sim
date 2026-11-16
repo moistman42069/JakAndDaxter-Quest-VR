@@ -1,0 +1,39 @@
+# Jak 1 spin kick by spreading your arms (0.1.1 item 12; "Spin kick by spreading your arms" is off to start, so run with
+# SIM_CFG=C:\JakQuest\sim\gkcfg-spread, whose OpenGOAL/jak1/settings/vr-options.txt says `spread-spin-kick 1`): to play on
+# Geyser Rock (as jak1_melee.sim), both arms out wide at shoulder height (each hand 65 cm out from the head, 25 cm
+# below the eyes) and held: one spin kick, not more while held; arms back in, out again: a second. No grip is held, so
+# Fists on the right grip lets no hand speed hit: each "spin kick" in run.log is the spread. Look for two
+# "[vr-pad] spin kick: the arms spread".
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 rh_x 0.45
+4200 rh_y 0.1
+4200 rh_z 0.25
+4200 lh_x -0.45
+4200 lh_y 0.1
+4200 lh_z 0.25
+4300 rh_x 0
+4300 rh_y 0
+4300 rh_z 0
+4300 lh_x 0
+4300 lh_y 0
+4300 lh_z 0
+4400 rh_x 0.45
+4400 rh_y 0.1
+4400 rh_z 0.25
+4400 lh_x -0.45
+4400 lh_y 0.1
+4400 lh_z 0.25
+4500 rh_x 0
+4500 rh_y 0
+4500 rh_z 0
+4500 lh_x 0
+4500 lh_y 0
+4500 lh_z 0
+4560 quit 0

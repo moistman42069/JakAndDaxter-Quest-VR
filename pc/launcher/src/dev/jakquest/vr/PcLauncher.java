@@ -80,6 +80,12 @@ public final class PcLauncher {
     private File logsZip;
     private String presetNote = "";
     private String modsNote = "";
+    /** The mod lists once read (ModList: by Browse mods, or as the launcher starts with Automatic checks on). */
+    private volatile ModList modList;
+    private volatile boolean modListBusy;
+    /** The game Browse mods shows, and whether its flat-screen mods are shown too. */
+    private int browseGame = 0;
+    private boolean browseFlat = false;
     /** Multiplayer's name and party server as typed (party.txt). */
     private String partyName = "", partyServer = "";
     private volatile Process game;
@@ -162,6 +168,9 @@ public final class PcLauncher {
         }
         showWhatsNewOnce();
         PcUpdater.maybeCheck(paths, () -> SwingUtilities.invokeLater(this::redrawIfPlay));
+        if (PcUpdater.automatic(paths)) {
+            readModList();  // for the texture packs' Update buttons, as Ratchet's launcher does
+        }
     }
 
     private void close() {
@@ -748,15 +757,22 @@ public final class PcLauncher {
         return card;
     }
 
-    // ---- Mods: Multiplayer built in (VrOptions.MODS, with its switch) and texture packs (TexturePacks) ----
+    // ---- Mods: what works here, Multiplayer built in (VrOptions.MULTIPLAYER, with its switch), texture packs
+    // (TexturePacks, each with On / Off and Update) and Browse mods (ModList: this project's list and jakmods.dev's) ----
 
     private void showMods() {
         Card about = card();
         about.add(text("Mods", 18, PcArtwork.ACCENT, true));
-        about.add(text("Multiplayer comes built in and on: it changes nothing in Jak 1 until you host or join a game, "
-            + "and turned off here it is out of the game altogether. Texture packs, OpenGOAL's own mods, are added from "
-            + "their zip for each game; the game is then built again with them from your disc (extracted before, no disc "
-            + "needed, a few minutes). A change counts from the game's next start.", 13, PcArtwork.MUTED, false));
+        about.add(text("What works in Jak and Daxter Quest VR:", 14, PcArtwork.INK, true));
+        about.add(text("•  Multiplayer (Jak 1) comes built in and on: it changes nothing until you host or join a "
+            + "game, and turned off here it is out of the game altogether.", 13, PcArtwork.MUTED, false));
+        about.add(text("•  Texture packs (all three games): new pictures in place of the game's own. Add one from "
+            + "Browse mods at the bottom, or from a pack's .zip you have. The game is then built again with them from "
+            + "your disc (extracted before, no disc needed, a few minutes).", 13, PcArtwork.MUTED, false));
+        about.add(text("•  The mods in the OpenGOAL launcher and on jakmods.dev (new gameplay, levels, randomizers) "
+            + "are whole games of their own made for a flat screen: they cannot run in VR. Browse mods lists them as "
+            + "Flat screen only, with their page, so you can see what there is.", 13, PcArtwork.MUTED, false));
+        about.add(text("A change counts from the game's next start.", 13, PcArtwork.MUTED, false));
         if (!modsNote.isEmpty()) {
             about.add(text(modsNote, 13, PcArtwork.ACCENT, false));
         }
@@ -796,6 +812,7 @@ public final class PcLauncher {
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             page.add(packsCard(i));
         }
+        page.add(browseCard());
     }
 
     /** Multiplayer's name and party server (party.txt; game/party.cpp reads them as the game starts). */
@@ -841,14 +858,24 @@ public final class PcLauncher {
         card.add(text("Texture packs: " + VrOptions.GAME_NAMES[index], 16, PcArtwork.INK, true));
         List<TexturePacks.Pack> packs = TexturePacks.list(root, game);
         if (packs.isEmpty()) {
-            card.add(text("None added. A pack higher in the list wins where two change the same picture.", 13,
-                PcArtwork.MUTED, false));
+            card.add(text("None added. Add one from Browse mods below, or from a pack's .zip. A pack higher in the list "
+                + "wins where two change the same picture.", 13, PcArtwork.MUTED, false));
         }
+        ModList lists = modList;
         for (TexturePacks.Pack p : packs) {
             card.add(PcWidgets.gap(6));
             card.add(text(p.line(), 14, PcArtwork.INK, true));
             if (!p.description.isEmpty()) {
                 card.add(text(p.description, 12, PcArtwork.MUTED, false));
+            }
+            ModList.Entry newer = lists == null ? null : lists.newer(p.from, p.version);
+            if (newer != null) {
+                JPanel update = row(6);
+                update.setBorder(new EmptyBorder(4, 0, 0, 0));
+                Btn take = new Btn("Update to " + newer.version, true, () -> addFromList(game, newer, p));
+                take.setEnabled(!locked);
+                update.add(weighted(take, 1f));
+                card.add(update);
             }
             JPanel buttons = row(6);
             buttons.setBorder(new EmptyBorder(4, 0, 0, 0));
@@ -931,6 +958,188 @@ public final class PcLauncher {
                 SwingUtilities.invokeLater(this::redraw);
             }
         }, "texture-pack").start();
+    }
+
+    /** The mod lists read again in the background (ModList.fetch never throws: its problems say what failed). */
+    private void readModList() {
+        if (modListBusy) {
+            return;
+        }
+        modListBusy = true;
+        new Thread(() -> {
+            ModList read = ModList.fetch(paths.modLists(), "JakQuestVR-launcher/" + PcBuild.VERSION);
+            modList = read;
+            modListBusy = false;
+            log("mod lists read: " + read.entries.size() + " mods" + (read.problems.isEmpty() ? ""
+                : "; " + String.join(" ", read.problems)));
+            SwingUtilities.invokeLater(() -> {
+                if (tab == 5) {
+                    redraw();
+                }
+            });
+        }, "mod-lists").start();
+    }
+
+    /** Browse mods: each game's mods in the lists, what each is here, and Add or Update for the texture packs. */
+    private Card browseCard() {
+        Card card = card();
+        card.add(text("Browse mods", 16, PcArtwork.INK, true));
+        card.add(text("This project's own mod list (texture packs and mods made for VR) and jakmods.dev's (the list the "
+            + "OpenGOAL launcher's Mods reads), read when you ask" + (PcUpdater.automatic(paths)
+                ? " and as the launcher starts (Automatic checks, on the Play tab)" : "") + ".", 13, PcArtwork.MUTED,
+            false));
+        ModList lists = modList;
+        JPanel buttons = row(6);
+        buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
+        Btn read = new Btn(modListBusy ? "Reading the mod lists..." : lists == null ? "Browse mods" : "Check again",
+            lists == null, () -> {
+                readModList();
+                redraw();
+            });
+        read.setEnabled(!modListBusy);
+        buttons.add(weighted(read, 1f));
+        buttons.add(weighted(new Btn("Open jakmods.dev", false, () -> browse(ModList.COMMUNITY_SITE)), 1f));
+        buttons.add(weighted(new Btn("About mods here", false, () -> browse(ModList.OURS_PAGE)), 1f));
+        card.add(buttons);
+        if (lists == null) {
+            return card;
+        }
+        for (String problem : lists.problems) {
+            card.add(text(problem, 13, PcArtwork.ACCENT, false));
+        }
+        card.add(text("Read at " + new SimpleDateFormat("HH:mm").format(new Date(lists.readAt)) + ".", 12,
+            PcArtwork.MUTED, false));
+        JPanel games = row(6);
+        games.setBorder(new EmptyBorder(8, 0, 0, 0));
+        String[] shortNames = {"Jak 1", "Jak II", "Jak 3"};
+        for (int i = 0; i < VrOptions.GAMES.length; i++) {
+            final int index = i;
+            Btn b = new Btn(shortNames[i], false, () -> {
+                browseGame = index;
+                browseFlat = false;
+                redraw();
+            });
+            if (i == browseGame) {
+                b.chosen();
+            }
+            games.add(weighted(b, 1f));
+        }
+        card.add(games);
+        String game = VrOptions.GAMES[browseGame];
+        boolean locked = packBusy || PcSetup.STATE.running;
+        List<ModList.Entry> flat = new ArrayList<>();
+        int shown = 0;
+        for (ModList.Entry e : lists.forGame(game)) {
+            if (e.kind == ModList.Kind.FLAT_SCREEN) {
+                flat.add(e);
+                continue;
+            }
+            shown++;
+            card.add(PcWidgets.gap(8));
+            card.add(text(e.line(), 14, PcArtwork.INK, true));
+            card.add(text(e.kindLabel() + "  ·  " + e.from() + (e.published.length() >= 10 ? "  ·  "
+                + e.published.substring(0, 10) : ""), 12, PcArtwork.ACCENT, false));
+            if (!e.description.isEmpty()) {
+                card.add(text(e.description, 12, PcArtwork.MUTED, false));
+            }
+            String why = e.whyNot(false);
+            if (why != null) {
+                card.add(text(why, 12, PcArtwork.MUTED, false));
+            }
+            JPanel acts = row(6);
+            acts.setBorder(new EmptyBorder(4, 0, 0, 0));
+            if (why == null && e.kind == ModList.Kind.TEXTURE_PACK) {
+                TexturePacks.Pack have = null;
+                for (TexturePacks.Pack p : TexturePacks.list(paths.texturePacks(), game)) {
+                    if (p.from.equals(e.ref())) {
+                        have = p;
+                    }
+                }
+                final TexturePacks.Pack old = have;
+                Btn take;
+                if (have == null) {
+                    take = new Btn("Add", true, () -> addFromList(game, e, null));
+                    take.setEnabled(!locked);
+                } else if (lists.newer(e.ref(), have.version) != null) {
+                    take = new Btn("Update to " + e.version, true, () -> addFromList(game, e, old));
+                    take.setEnabled(!locked);
+                } else {
+                    take = new Btn("Added", false, () -> { });
+                    take.setEnabled(false);
+                }
+                acts.add(weighted(take, 1f));
+            }
+            acts.add(weighted(new Btn("Its page", false, () -> browse(e.page)), 1f));
+            card.add(acts);
+        }
+        if (shown == 0) {
+            card.add(PcWidgets.gap(6));
+            card.add(text("No texture packs or VR mods for " + shortNames[browseGame] + " in the lists yet. A pack's "
+                + ".zip you have can be added above (Add a texture pack).", 13, PcArtwork.MUTED, false));
+        }
+        if (!flat.isEmpty()) {
+            card.add(PcWidgets.gap(10));
+            card.add(text(flat.size() + " of OpenGOAL's own mods for " + shortNames[browseGame] + " are flat screen "
+                + "only: whole games of their own, without VR. Play them with the OpenGOAL launcher.", 13,
+                PcArtwork.MUTED, false));
+            JPanel toggle = row(6);
+            toggle.setBorder(new EmptyBorder(4, 0, 0, 0));
+            toggle.add(weighted(new Btn(browseFlat ? "Hide them" : "Show them", false, () -> {
+                browseFlat = !browseFlat;
+                redraw();
+            }), 1f));
+            card.add(toggle);
+            if (browseFlat) {
+                for (ModList.Entry e : flat) {
+                    card.add(PcWidgets.gap(6));
+                    card.add(text(e.line() + "  ·  Flat screen only", 13, PcArtwork.INK, true));
+                    if (!e.description.isEmpty()) {
+                        String d = e.description.length() > 220 ? e.description.substring(0, 217) + "..." : e.description;
+                        card.add(text(d, 12, PcArtwork.MUTED, false));
+                    }
+                    JPanel acts = row(6);
+                    acts.setBorder(new EmptyBorder(2, 0, 0, 0));
+                    acts.add(weighted(new Btn("Its page", false, () -> browse(e.page)), 1f));
+                    card.add(acts);
+                }
+            }
+        }
+        return card;
+    }
+
+    /** A texture pack from a mod list: downloaded, then added (or, with old, put in old's place: Update). */
+    private void addFromList(String game, ModList.Entry entry, TexturePacks.Pack old) {
+        if (packBusy) {
+            return;
+        }
+        packBusy = true;
+        modsNote = "Downloading " + entry.line() + "...";
+        redraw();
+        new Thread(() -> {
+            File file = null;
+            try {
+                file = ModList.download(entry, "JakQuestVR-launcher/" + PcBuild.VERSION, paths.modDownloads());
+                modsNote = "Adding " + entry.line() + "...";
+                SwingUtilities.invokeLater(this::redraw);
+                String name = entry.key + ".zip";
+                TexturePacks.Pack p;
+                try (java.io.InputStream in = new java.io.FileInputStream(file)) {
+                    p = old == null ? TexturePacks.add(paths.texturePacks(), game, in, name, entry)
+                        : TexturePacks.update(paths.texturePacks(), game, old.id, in, name, entry);
+                }
+                modsNote = (old == null ? "Added " : "Updated to ") + p.line() + ".";
+                log("texture pack " + (old == null ? "added" : "updated") + " for " + game + " from " + entry.ref()
+                    + " " + entry.version + ": " + p.id);
+            } catch (IOException e) {
+                modsNote = "Could not add " + entry.name + ": " + e.getMessage();
+            } finally {
+                if (file != null && file.isFile() && !file.delete()) {
+                    file.deleteOnExit();
+                }
+                packBusy = false;
+                SwingUtilities.invokeLater(this::redraw);
+            }
+        }, "mod-download").start();
     }
 
     private void saveParty() {

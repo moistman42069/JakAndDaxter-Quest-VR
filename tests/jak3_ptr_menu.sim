@@ -1,0 +1,52 @@
+# Jak 3: the menu pointer on the title's menu (LIST-0.1.1 item 19), as tests/jak2_ptr_menu.sim. A first boot plays the
+# opening (Y skips it to the title), A opens the title's menu; the right hand turns from high to low, a shot at each
+# height (the row under the dot is picked), then the dot back on the lowest row (Quit, at 7 degrees: the middle of its
+# bar; at 0 the dot is under the menu, where the trigger picks nothing, sim b37 ptr3) and the trigger: its Yes / No
+# footer. Then at 4, 0 and -4 degrees the dot to the left half (12 degrees: Yes) and the right half (-4: No), a shot
+# each (JAKVR_POINTER_TRACE=1 logs the dot against the footer's middle), and last the trigger on No at 4 degrees, which
+# closes the question (a click on Yes would quit the game). Sim b38: the footer's middle at y 290.8 of the game's
+# screen, the dot on it at 4 degrees (y 293.5), the highlight following it to Yes and No; at 0 the dot is under the
+# question's bar (y 323.6) and a click there finds no row.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1650 shot km-main
+1670 hand_pitch 30
+1700 shot km-p30
+1710 hand_pitch 20
+1740 shot km-p20
+1750 hand_pitch 10
+1780 shot km-p10
+1790 hand_pitch 0
+1820 shot km-p0
+1830 hand_pitch -10
+1860 shot km-pm10
+1870 hand_pitch -20
+1900 shot km-pm20
+1901 hand_pitch 7
+1910 right_trigger 1
+1916 right_trigger 0
+1970 shot km-exit-asked
+1975 hand_pitch 4
+1980 hand_yaw 12
+2010 shot km-exit-4-yes
+2020 hand_yaw -4
+2050 shot km-exit-4-no
+2055 hand_pitch 0
+2060 hand_yaw 12
+2090 shot km-exit-0-yes
+2100 hand_yaw -4
+2130 shot km-exit-0-no
+2135 hand_pitch -4
+2140 hand_yaw 12
+2170 shot km-exit-m4-yes
+2180 hand_yaw -4
+2210 shot km-exit-m4-no
+2215 hand_pitch 4
+2230 right_trigger 1
+2236 right_trigger 0
+2290 shot km-exit-closed
+2330 quit 0

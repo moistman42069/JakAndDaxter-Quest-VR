@@ -1,0 +1,31 @@
+# Jak 3: Adaptive cutscenes on a new game's opening (LIST-0.1.1 items 32 and 6; Vixel: "view fight between 1st person
+# view and where camera should be ... alot of flickering"). To the title and into a new game as jak3_toplay.sim, then
+# the opening left to play: the log's "[vr-cam]" lines say each time the view changed (few, never back and forth in a
+# second), and "[vr-cam] adaptive cutscenes:" why. A shot every 10 seconds.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3300 shot o3-1
+3900 shot o3-2
+4500 shot o3-3
+5100 shot o3-4
+5700 shot o3-5
+6300 shot o3-6
+6900 shot o3-7
+7500 shot o3-8
+8100 shot o3-9
+8700 shot o3-10
+9300 shot o3-11
+9900 shot o3-12
+10000 quit 0

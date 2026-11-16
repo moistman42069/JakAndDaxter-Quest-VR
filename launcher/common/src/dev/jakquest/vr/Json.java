@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JSON for the PC's launcher, which has no org.json: objects read as LinkedHashMap (their keys in order), arrays as
- * ArrayList, numbers as BigDecimal, null as null. Writing indents by two spaces, as org.json's toString(2) does for the
- * headset's plugins.json.
+ * JSON for the PC's launcher, which has no org.json, and for the mod lists both launchers read (ModList, 0.1.1, so the
+ * PC and the Quest read them the same way): objects read as LinkedHashMap (their keys in order), arrays as ArrayList,
+ * numbers as BigDecimal, null as null. Writing indents by two spaces, as org.json's toString(2) does for the headset's
+ * plugins.json.
  */
 final class Json {
     private final String text;

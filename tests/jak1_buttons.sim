@@ -1,0 +1,73 @@
+# Jak 1: every pad button in play (LIST-0.1.1 item 27; the owner: "make sure all mappings and functions work in all
+# games"), made by C:\JakQuest\sim\make_buttons.sh. Into play as jak1_arm_poses.sim, then from frame 4200: A (jump), B (spin kick),
+# X (punch), the left trigger (crouch), A then X in the air (the dive), the left trigger and X (the
+# uppercut), the stick ahead and X (a running punch), the left stick's click (L3), Y (Triangle) twice (Jak 1's
+# look-around and out of it), the menu button (pause, then again once the menu is open: Jak II and 3 take no Start
+# while it opens; play again once it has gone), the right grip at the hip (Jak II and 3: the gun drawn from its holster) and the right
+# trigger (fired), the right stick's click twice (R2: Jak II and 3's JET-Board, on and off again), then the left grip
+# (L2: Jak II and 3's Dark Jak, which takes no board; Jak II's test aid gives him dark eco; Jak 1 fists). Run with
+# JAKVR_STATE_TRACE=1 (Jak II and 3 also JAKVR_TEST_GUN=1 JAKVR_TEST_BOARD=1 JAKVR_BODY_TRACE=1); expect in run.log the
+# states target-jump, target-attack, target-running-attack, target-duck-stance, target-flop, target-attack-uppercut,
+# "[vr-pad] Start", Jak II and 3's "[vr-gun] a round fired", target-board-start, Jak II's target-darkjak-get-on and
+# Jak 3's target-powerjak-get-on.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot b-start
+4220 a 1
+4226 a 0
+4300 b 1
+4306 b 0
+4400 x 1
+4406 x 0
+4500 left_trigger 1
+4560 shot b-duck
+4580 left_trigger 0
+4660 a 1
+4666 a 0
+4680 x 1
+4686 x 0
+4840 left_trigger 1
+4870 x 1
+4876 x 0
+4920 left_trigger 0
+5000 left_y 1
+5060 x 1
+5066 x 0
+5100 left_y 0
+5160 left_click 1
+5166 left_click 0
+5220 y 1
+5226 y 0
+5280 y 1
+5286 y 0
+5300 menu 1
+5306 menu 0
+5360 shot b-pause
+5620 menu 1
+5626 menu 0
+5800 rh_x 0.05
+5800 rh_y -0.25
+5800 rh_z 0.3
+5830 right_grip 1
+5870 rh_x 0
+5870 rh_y 0
+5870 rh_z 0
+5900 shot b-gun
+5910 right_grip 0
+5940 right_trigger 1
+5946 right_trigger 0
+6020 right_click 1
+6026 right_click 0
+6100 shot b-board
+6160 right_click 1
+6166 right_click 0
+6260 left_grip 1
+6320 left_grip 0
+6400 shot b-dark
+6460 quit 0

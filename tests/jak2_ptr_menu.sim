@@ -1,0 +1,49 @@
+# Jak II: the menu pointer on the title's menu (LIST-0.1.1 item 19; the owner: "i want the pointer to be able to
+# interact with all menus"). Start, then A once the title is ready (as jak2_melee.sim), opens its menu; the right hand
+# turns from high to low (the dot down the panel 1.6 m ahead), a shot at each height: the row under the dot is the one
+# picked (highlighted). Then the dot back on the lowest row (Quit Game; at -20 it is under the menu, where the trigger
+# picks nothing) and the trigger: its Yes / No line comes up under it. Then at 4, 2 and 0 degrees (the line is a little
+# under the row's name: JAKVR_POINTER_TRACE=1 logs the dot against the line's middle) the dot to the left half (12
+# degrees: Yes) and the right half (-4: No; -12 is past the line's end), a shot each, and last the trigger on No, which
+# closes the question (a click on Yes would quit the game).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3100 shot jm-main
+3120 hand_pitch 30
+3150 shot jm-p30
+3160 hand_pitch 20
+3190 shot jm-p20
+3200 hand_pitch 10
+3230 shot jm-p10
+3240 hand_pitch 0
+3270 shot jm-p0
+3280 hand_pitch -10
+3310 shot jm-pm10
+3320 hand_pitch -20
+3350 shot jm-pm20
+3360 hand_pitch 0
+3380 right_trigger 1
+3386 right_trigger 0
+3440 shot jm-exit-asked
+3445 hand_pitch 4
+3450 hand_yaw 12
+3480 shot jm-exit-4-yes
+3490 hand_yaw -4
+3520 shot jm-exit-4-no
+3525 hand_pitch 2
+3530 hand_yaw 12
+3560 shot jm-exit-2-yes
+3570 hand_yaw -4
+3600 shot jm-exit-2-no
+3605 hand_pitch 0
+3610 hand_yaw 12
+3640 shot jm-exit-0-yes
+3650 hand_yaw -4
+3680 shot jm-exit-0-no
+3685 hand_pitch 2
+3700 right_trigger 1
+3706 right_trigger 0
+3760 shot jm-exit-closed
+3800 quit 0

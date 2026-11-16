@@ -144,15 +144,17 @@ public final class VrOptions {
                     + "is what it is set to in its settings.",
             new String[] {"The headset's own", "72 Hz", "80 Hz", "90 Hz", "120 Hz"},
             new String[] {"0", "72", "80", "90", "120"}, "0"));
-    public static final Option SPACE_WARP = atStart(toggle("space-warp", "Smoother frames (AppSW)",
+    // Off to start since 0.1.1 (owner: it flickered the title screen); its key changed from 0.1.0's "space-warp" (on to
+    // start then), so a file 0.1.0 wrote starts off too.
+    public static final Option SPACE_WARP = atStart(toggle("smoother-frames", "Smoother frames (AppSW)",
             "The Quest makes every other frame from how everything moved (Meta's Application SpaceWarp), so the game "
-                    + "draws half of them. Fast moves can smear a little at the edges of things. On a PC your headset's "
-                    + "own smoothing does this.",
-            true));
+                    + "draws half of them, at half the headset's rate. Fast moves can smear a little at the edges of "
+                    + "things. Off in menus and on the title screen. On a PC your headset's own smoothing does this.",
+            false));
     public static final Option FOVEATION = atStart(choice("foveation", "Foveated rendering",
             "Draws the edges of each eye's picture at a lower resolution, where the lenses blur it anyway, so the "
                     + "middle keeps its detail and the game runs faster. High saves the most. On a PC it does nothing.",
-            new String[] {"Off", "Low", "Medium", "High"}, new String[] {"0", "1", "2", "3"}, "2"));
+            new String[] {"Off", "Low", "Medium", "High", "Highest"}, new String[] {"0", "1", "2", "3", "4"}, "2"));
     public static final Option BOOST = atStart(toggle("cpu-gpu-boost", "CPU and GPU boost",
             "The Quest runs its processors at the highest speed it lets a game ask for, so fewer frames are missed. "
                     + "Uses more battery and the headset gets warmer. On a PC it does nothing.",
@@ -168,8 +170,26 @@ public final class VrOptions {
     public static final Option ANISOTROPY = atStart(choice("anisotropy", "Anisotropic filtering",
             "Keeps floors and walls sharp at a low angle. 16x is the games' own.",
             new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"}, "16"));
+    // ---- Performance (0.1.1; each off to start: the owner, "optional and off by default of course") ----
+    public static final Option FRAME_RATE = choice("frame-rate", "Game frame rate",
+            "How often the game draws a new picture. 60 is how the games were made. The headset's: a new picture for "
+                    + "every frame the headset shows, the smoothest and the most work. Half the headset's: half the "
+                    + "work, and the headset turns each picture to your head in between (36 a second at 72 Hz).",
+            new String[] {"60", "The headset's", "Half the headset's"}, new String[] {"0", "1", "2"}, "0");
+    public static final Option DYNAMIC_RESOLUTION = toggle("dynamic-resolution", "Dynamic resolution",
+            "The eyes are drawn a little smaller while the headset is not keeping up with the game, and back at "
+                    + "full size when it is. Eye resolution is the size it starts from.",
+            false);
+    public static final Option PS2_DETAIL = toggle("ps2-detail", "PS2 detail",
+            "Far-off things, effects and shadows drawn as the PlayStation 2 drew them: faster, with some pop-in as "
+                    + "you come near. While it is on, Max draw distance does nothing.",
+            false);
+    public static final Option SHARPEN = atStart(choice("sharpening", "Sharpening",
+            "The Quest sharpens the picture as it shows it, so a lower Eye resolution keeps its edges. On a PC it "
+                    + "does nothing.",
+            new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, "0"));
     public static final Option[] GRAPHICS = {RESOLUTION, REFRESH, SPACE_WARP, FOVEATION, BOOST, MAX_DRAW, MSAA,
-            ANISOTROPY};
+            ANISOTROPY, FRAME_RATE, DYNAMIC_RESOLUTION, PS2_DETAIL, SHARPEN};
 
     // ---- VR Body: the view, the body and the HUD ----
     public static final Option VIEW = choice("first-person", "View",
@@ -179,14 +199,21 @@ public final class VrOptions {
     public static final Option CUTSCENES = choice("cutscenes", "Cutscenes",
             "How scenes are seen: through his eyes where he is in them, in VR around you, or on a big screen.",
             new String[] {"Through his eyes", "Around you", "On a screen"}, new String[] {"0", "1", "2"}, "0");
+    public static final Option ADAPTIVE = toggle("adaptive-cutscenes", "Adaptive cutscenes",
+            "A scene seen through his eyes goes around you by itself while Jak is not really in it (the opening "
+                    + "titles, a ride, a shot of somewhere else), and back through his eyes when he is.", true);
     public static final Option TALKS = toggle("first-person-in-talks", "Talks in first person",
             "A talk during play seen from his eyes too, rather than the game's camera around you.", true);
+    public static final Option VEHICLES = toggle("first-person-vehicles", "First person in vehicles",
+            "On the Zoomer, the JET-Board, in cars, turrets, slides, the Titan suit and on the flut flut: seen from his "
+                    + "eyes too, the view turning with what he rides. Off: the game's camera around you there.", false);
     public static final Option SEATED = toggle("seated", "Seated play",
             "For playing sitting down: the view at his eyes whatever your height.", false);
     public static final Option VIEW_HEIGHT = number("view-height", "View height",
             "Raises or lowers the view in first person.", -40, 40, 5, " cm", 0);
     public static final Option WORLD_SCALE = number("world-scale", "World scale",
-            "First person: more makes the world bigger around you.", 50, 200, 5, "%", 100);
+            "First person: 100% is life size, Jak as tall as you. More makes the world bigger around you (145% is "
+                    + "how 0.1.0 looked).", 50, 200, 5, "%", 100);
     public static final Option THIRD_SCALE = number("third-person-scale", "Third person world scale",
             "Third person: the size the world is seen at.", 50, 200, 5, "%", 100);
     public static final Option BODY = toggle("body", "Body",
@@ -196,6 +223,14 @@ public final class VrOptions {
             new String[] {"Whole body", "Body and arms", "Body and legs", "Arms and legs", "Arms only", "Legs only",
                     "Hands only"},
             new String[] {"0", "1", "2", "3", "4", "5", "6"}, "0");
+    public static final Option HIDE_ARMS_NEAR_EYES = toggle("hide-arms-near-eyes", "Hide arms near your eyes",
+            "An arm brought up close to your face fades out of the view, its hand staying.", false);
+    public static final Option FADE_BODY = toggle("fade-body-near-eyes", "Fade body near your eyes",
+            "A leg kicked up by your face, and his body in a roll, a flip or a dive, fade out of the view and back, "
+                    + "smoothly, so nothing of him blocks what you are looking at.", true);
+    public static final Option KEEP_UPRIGHT = toggle("keep-body-upright", "Keep your body upright",
+            "His body stays upright under your head whatever move he makes, his legs still stepping where the game "
+                    + "puts his feet. Off: it turns and tips as the game moves him.", true);
     public static final Option FINGERS = toggle("fingers", "Finger tracking",
             "His fingers follow yours on the controllers: a fist, a point, a thumbs up.", true);
     public static final Option PREDICT = toggle("predict-hands", "Hands without lag",
@@ -221,8 +256,8 @@ public final class VrOptions {
     public static final Option HUD_FOLLOWS = toggle("hud-follows-head", "HUD follows your head",
             "On, the HUD moves with your head. Off, it stays put ahead of you, and moves only when you look well away.",
             true);
-    public static final Option[] VR_BODY = {VIEW, CUTSCENES, TALKS, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
-            BODY_SHOWN, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
+    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
+            BODY_SHOWN, HIDE_ARMS_NEAR_EYES, FADE_BODY, KEEP_UPRIGHT, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
             HUD_DISTANCE, HUD_HEIGHT, HUD_FOLLOWS};
 
     // ---- VR Controls: turning, the d-pad, the hands in a fight, vibration ----
@@ -251,16 +286,27 @@ public final class VrOptions {
             "Punch to punch, sweep a hand across to spin kick, punch upward from a crouch to uppercut.", true);
     public static final Option MELEE_GRIP = toggle("melee-grip", "Fists on the right grip",
             "Hold the right grip to make fists: only fists hit, so moving your hands never hits by accident. Its old "
-                    + "button (the JET-Board) moves to the right stick click.",
+                    + "button (the JET-Board) moves to the right stick click. The left grip makes the left fist too "
+                    + "(in Jak II and 3 it is still Dark Jak's button).",
             true);
+    public static final Option STICK_CLICK_MENU = toggle("stick-click-menu", "Stick click as menu button",
+            "When SteamVR keeps the left menu button (Touch controllers there), the left stick's click is the menu "
+                    + "button: Start, held a second the view or the VR menu. Off: it stays L3.", true);
     public static final Option MELEE_SPEED = number("melee-speed", "Melee speed",
             "How fast a hand must move to hit, in tenths of a metre a second (25: 2.5 m/s).", 10, 50, 5, "", 25);
+    public static final Option SPREAD_SPIN_KICK = toggle("spread-spin-kick", "Spin kick by spreading your arms",
+            "Hold both arms out wide at your sides, as a T, for a spin kick. Bring them in for the next.", false);
     public static final Option HAND_AIM = toggle("hand-aim", "Aim with your hand",
             "The gun, and Jak 1's yellow eco, go where your hand points.", true);
     public static final Option TWO_HAND = guns(toggle("two-hand-grip", "Two-hand grip",
             "The left hand on the gun's front steadies and aims it.", true));
     public static final Option HOLSTER = guns(toggle("holster-draw", "Draw from hip or shoulder",
             "Grip at your hip or over your shoulder to draw the gun; back there and let go to put it away.", true));
+    public static final Option HOLSTER_SIZE = guns(number("holster-size", "Holster size",
+            "How big the places at your hips and over your shoulders are, where a grip draws the gun.", 50, 200, 10,
+            "%", 130));
+    public static final Option HOLSTER_ON_FOOT = guns(toggle("holster-on-foot", "Holsters only on foot",
+            "In a car, on the board or a turret, a grip at your hip or shoulder stays the game's own button.", true));
     public static final Option GUN_ANGLE = guns(number("gun-angle", "Gun angle",
             "The gun tilted up or down from the controller.", -45, 45, 5, " degrees", 0));
     public static final Option VIBRATION = toggle("vibration", "Vibration", "The controllers buzz.", true);
@@ -268,8 +314,13 @@ public final class VrOptions {
             "How hard every buzz is.", 25, 200, 25, "%", 100);
     public static final Option WORLD_VIBRATION = toggle("world-vibration", "Vibration on walls and floors",
             "A buzz as a hand meets a wall or the floor, harder the harder you press.", true);
-    public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, MENU_HAND, MELEE, MELEE_GRIP,
-            MELEE_SPEED, HAND_AIM, TWO_HAND, HOLSTER, GUN_ANGLE, VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION};
+    public static final Option DPAD_BUZZ = toggle("dpad-buzz", "Buzz on d-pad presses",
+            "A quick pulse in the stick's hand each time a d-pad direction goes in.", true);
+    public static final Option GUN_SWITCH_BUZZ = guns(toggle("gun-switch-buzz", "Buzz on gun switch",
+            "A quick pulse in the gun's hand as you change guns.", true));
+    public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
+            STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
+            HOLSTER_ON_FOOT, GUN_ANGLE, VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, GUN_SWITCH_BUZZ};
 
     /** The launcher's tabs of options, in order. */
     public static final String[] TAB_NAMES = {"Graphics", "VR Body", "VR Controls"};
@@ -379,7 +430,7 @@ public final class VrOptions {
                 m.put("max-draw-distance", "off");
                 m.put("msaa", "1");
                 m.put("anisotropy", "4");
-                m.put("space-warp", "on");
+                // (Smoother frames is left as the player has it: off to start since 0.1.1, as it flickers some screens)
                 m.put("cpu-gpu-boost", "on");
                 break;
             case 2:

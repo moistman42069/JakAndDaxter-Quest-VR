@@ -1,0 +1,33 @@
+# Jak 1: the opening scene through Jak's eyes (LIST-0.1.1 item 8; Vixel: "your mostly looking away from what is
+# happening in the story"). A new game (as jak1_scene_view.sim) into the opening scene, seen through his eyes (the
+# default), the head held still looking ahead; a shot of the eyes and of the game's own camera (the panel) every few
+# seconds. Expect the eyes to face where his body faces in the scene (his main joint), so what the game's camera shows
+# is mostly ahead or beside, not behind. The opening's logos run to about frame 4900; the story's first scene (the
+# boat to Misty Island) after them, so the shots go on to frame 9000. Then the scene is skipped as the other tests do.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3200 shot sf-1
+3400 shot sf-2
+3600 shot sf-3
+3800 shot sf-4
+4000 shot sf-5
+4300 shot sf-6
+4600 shot sf-7
+4900 shot sf-8
+5300 shot sf-5300
+5700 shot sf-5700
+6100 shot sf-6100
+6500 shot sf-6500
+6900 shot sf-6900
+7300 shot sf-7300
+7700 shot sf-7700
+8100 shot sf-8100
+8500 shot sf-8500
+9000 shot sf-9000
+9050 y 1
+9056 y 0
+9200 quit 0

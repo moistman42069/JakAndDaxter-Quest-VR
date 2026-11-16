@@ -1,0 +1,22 @@
+# Jak 1: an arm brought up to the face in first person (LIST-0.1.1 item 20; the owner: "the body also seems to get in
+# the way"): a new game to Geyser Rock (as jak1_play.sim), then the right hand brought from its rest to 12 cm ahead of
+# the eyes and back. Expect "[vr-body] the right arm cut out of the eyes" then "... back in the eyes", the picture with
+# the hand up showing the hand and no sleeve across the view.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot an-start
+4260 rh_x -0.2
+4260 rh_y 0.35
+4260 rh_z 0.18
+4330 shot an-hand-up
+4400 rh_x 0
+4400 rh_y 0
+4400 rh_z 0
+4470 shot an-hand-down
+4500 quit 0

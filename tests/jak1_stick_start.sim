@@ -1,0 +1,21 @@
+# The left stick's click as the menu button when the runtime binds no left menu button (SteamVR with Touch
+# controllers; 0.1.1 list item 4). Expect in run.log: "[vr-pad] Start: the left stick's click pressed" once, at the
+# title's PRESS START; the VR menu opened by the click held a second over the title's menu ("the left menu button held
+# in a menu") and closed by the next click; and no Start from the two sticks clicked together (a recentre).
+1 menu_unbound 1
+900 shot title
+1200 left_click 1
+1206 left_click 0
+1500 shot after-start
+1800 left_click 1
+1890 left_click 0
+1950 shot vr-menu
+2100 left_click 1
+2106 left_click 0
+2250 shot vr-menu-closed
+2400 left_click 1
+2403 right_click 1
+2412 left_click 0
+2413 right_click 0
+2600 shot after-recentre
+2700 quit 0

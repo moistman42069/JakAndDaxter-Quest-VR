@@ -1,0 +1,23 @@
+# Jak 1: objects that look different in each eye (LIST-0.1.1 item 7; Vixel: "bad on doors, left eye seems bad version
+# while right eye looks fine ... mostly precursor objects but a few lanterns also", the door on Geyser Rock). Run with
+# JAKVR_TEST_CONTINUE=training-warp: a new game (as jak1_play.sim), then Geyser Rock's warp gate; the head turned round
+# a quarter at a time, the eyes shot at each. Compare each left and right picture: the same objects, the same look.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4600 shot ed-0
+4620 head_yaw 90
+4680 shot ed-90
+4700 head_yaw 180
+4760 shot ed-180
+4780 head_yaw 270
+4840 shot ed-270
+4860 head_yaw 0
+4870 head_pitch -20
+4930 shot ed-down
+4950 quit 0

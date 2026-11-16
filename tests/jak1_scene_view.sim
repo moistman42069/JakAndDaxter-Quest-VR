@@ -1,0 +1,19 @@
+# Jak 1: the left menu button held in a scene switches how scenes are seen (0.1.1 item 26; the owner: "couldnt find the
+# button to switch to third person in the middle of cutscenes"). A new game (as jak1_melee.sim) into the opening scene,
+# the menu button held 1.5 s: "[vr-pad] scenes are seen around you now"; held again: "... through his eyes now". No
+# Start from either hold (no pause). Then the scene is skipped as the other tests do.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3100 menu 1
+3210 menu 0
+3220 shot scene-around
+3260 menu 1
+3370 menu 0
+3380 shot scene-eyes
+3420 y 1
+3426 y 0
+3600 quit 0

@@ -1,0 +1,55 @@
+# Jak 1: walking straight (LIST-0.1.1 item 37, a player: "I allways look like I am walking diagonal when I press
+# forward ... In all 3 games"). A new game to Geyser Rock (as jak1_play.sim), then the left stick held straight
+# forward: looking ahead, looking down at the body, and again with the head turned 60 degrees to the left. Jak must
+# go where the head looks and his body must face that way: "[vr-body] main" in the log (JAKVR_BODY_TRACE=1) has the way he
+# moves and the way his hips face against the view, twice a second. Last, the stick a little off straight (x 0.1, y 1,
+# a thumb six degrees off): he goes six degrees off the look, not twenty-five (0.1.0 added the dead zone to each axis).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot ws-start
+4210 left_y 1
+4330 shot ws-ahead
+4340 head_pitch -55
+4400 shot ws-down
+4410 head_pitch 0
+4420 left_y 0
+4440 head_yaw 60
+4470 left_y 1
+4560 shot ws-yaw60
+4570 head_pitch -55
+4630 shot ws-yaw60-down
+4640 head_pitch 0
+4650 left_y 0
+4660 head_yaw 0
+4700 left_x 1
+4800 shot ws-right
+4810 left_x 0
+4830 left_x 0.1
+4830 left_y 1
+4930 shot ws-offaxis
+4940 left_x 0
+4940 left_y 0
+# the tilts turned round (the cliff is ahead by now): back over the sand, the head tilted to a shoulder
+4945 head_yaw 180
+4950 head_pitch -40
+4950 head_roll 12
+4960 left_y 1
+5060 shot ws-tilt-down
+5070 left_y 0
+5070 head_pitch 0
+5070 head_roll 0
+5080 head_pitch 35
+5080 head_roll -12
+5090 left_y 1
+5190 shot ws-tilt-up
+5200 left_y 0
+5200 head_pitch 0
+5200 head_roll 0
+5205 head_yaw 0
+5220 quit 0

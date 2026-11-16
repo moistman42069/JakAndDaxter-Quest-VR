@@ -32,10 +32,27 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 
 ## Performance options (launcher's Graphics tab, as Ratchet & Clank Quest VR's)
 
-- **Smoother frames (AppSW)**, on: `[openxr] smoother frames (Application SpaceWarp): on, motion ...`. Turn your head
-  and run: no tearing at edges. Off: `[openxr] smoother frames: off`.
+- **Smoother frames (AppSW)**, off to start since 0.1.1 (the title screen flickered with it): `[openxr] smoother frames:
+  off`. Turned on to try: `[openxr] smoother frames (Application SpaceWarp): on, motion ...`; turn your head and run,
+  and say whether anything flickers or tears. 0.1.1 changed how it is given (the PC cannot show it: this is the check
+  that matters most). The log should say `[vr-view] the game at 36 frames a second (the headset shows 72)`, then
+  `[vr-view] smoother frames: the headset makes the frames between from here` once in play and `none made here` on
+  the title, in a menu and through a load. Look for: the title and the menus steady (none there); no flicker as a
+  scene cuts or the game hitches; the game at its right speed (0.1.0 ran it slow with this on); things that move by
+  themselves (enemies, Jak in third person) may still show a double edge, since only the view's own motion is given.
+- **Game frame rate** (0.1.1, 60 to start): **Half the headset's**: `the game at 36 frames a second`, half the work,
+  the head still turns smoothly, moving things step a little; **The headset's**: `the game at 72 frames a second`
+  (90 or 120 at those refresh rates), the smoothest. In each, Jak runs and jumps as far as at 60, and scenes keep
+  their sound in step.
+- **Dynamic resolution** (0.1.1, off to start): in a heavy place (Haven City, Spargus) `[vr-perf] dynamic resolution:
+  the eyes at 90% (frames were shown late)` and lower, down to 60%, and back up a step every few seconds where it is
+  light. Say whether the changes of sharpness are seen, and whether it ever goes up and down over and over.
+- **PS2 detail** (0.1.1, off to start): far-off things and effects drawn as the PS2 drew them; note the `[vr-perf]`
+  frames with it on and off in the same place, and how much pops in.
+- **Sharpening** (0.1.1, off to start; next start): `[openxr] sharpening: normal` or `strong`; with a lower Eye
+  resolution the edges should stay crisp. If the log says the headset does not offer it, nothing changes.
 - **Foveated rendering**: `[openxr] foveated rendering:` names the level. The edges of the view a little softer at
-  High, sharp at Off.
+  High, sharp at Off; **Highest** (0.1.1) softer again, for the most frames.
 - **CPU and GPU boost**: `[openxr] performance levels: CPU and GPU ...`.
 - **Refresh rate** and **Eye resolution**: `[openxr] refresh rate ...` and the eye size in `[openxr] eye ...`.
 - **Max draw distance**, on: across Sandover, Haven City and Jak 3's desert nothing should pop in near you. Off for
@@ -44,15 +61,69 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 ## Hands, body and haptics
 
 - **The d-pad**: the left thumb resting on its rest makes the right stick the d-pad (Jak 1's warp gate, Jak II and 3's
-  gun choice). Controllers without a thumb rest sensor: the left hand by the head instead.
+  gun choice). Controllers without a thumb rest sensor: the left hand by the head instead. Since 0.1.1 each direction
+  pulses in that hand (`[vr-pad] d-pad up (the right stick)` and so on), the thumb rest a light one as it takes the
+  stick, and Jak II and 3's gun change pulses in the gun's hand (`[vr-gun] the gun switched`): say whether each is
+  felt, and whether the d-pad ever fails to go in. Off with **Buzz on d-pad presses** and **Buzz on gun switch**.
+- **The menu pointer** (0.1.1): Jak 1's save and load files and its yes / no questions, each game's On / Off rows and
+  Yes / No questions (point at a side, then the trigger), Jak 1's sliders, and a long list (Jak 1's options, Jak II and
+  3's game options) scrolling while the dot rests on its top or bottom row.
+- **The stick in Jak 1's menus** (0.1.1): on the title, the left stick down to Load Game and A: the load screen, not a
+  new game (`[vr-pad] d-pad down (a stick in Jak 1's menu)`), with the hand pointing at the menu or not. The same with
+  the stick in Jak II and 3's menus (they read it themselves).
+- **A scene's view** (0.1.1): hold the menu button a second in a scene: through Jak's eyes, then around you, and back
+  (`[vr-pad] scenes are seen ...`).
+- **Spin kick by spreading your arms** (off to start, 0.1.1): turn it on, hold both arms out as a T: one spin kick.
+- **First person in vehicles** (off to start, 0.1.1): turn it on, get on the Zoomer, the board or in a car: the view is
+  from Jak's seat and turns with the vehicle. Off: third person there as before.
 - **Fingers**: touch and lift the buttons, trigger and grip: Jak's fingers curl and point with yours.
-- **Hands at the world**: put a hand into a wall or the floor: it stops there with a short buzz.
+- **Hands at the world**: put a hand into a wall or the floor: it stops there with a short buzz. 0.1.1: lay the palm
+  on a wall or the ground and the fingers settle on to it; point the fingers into it and they fold; draw the hand
+  back and they open again, each finger by itself and without a snap.
+- **Jak 1's wrist straps** (0.1.1): the loose ends at his wrists hang down whichever way the hand is turned, swing as
+  you shake it and come to rest, and lie on the ground or a wall instead of going through.
+- **Walking straight** (0.1.1): push the left stick forward: Jak goes where you look, with the head level, looking
+  down and tilted. A thumb a little off straight goes that little off, not a wide diagonal.
+- **Adaptive cutscenes** (0.1.1, on to start): Jak 1's opening is around you until Jak stands at the silo, then through
+  his eyes (`[vr-cam] adaptive cutscenes: ...`); a scene never flips back and forth. Off: every scene as Cutscene view
+  says.
+- **A roll** (the left trigger while running): say how it looks and feels in first person.
 - **Melee** (Fists on the right grip): hold the right grip and punch (`[vr-pad] punch: ...`), sweep across for the spin
   kick (`[vr-pad] spin kick: ...`), crouch for real and punch up for the uppercut (`[vr-pad] uppercut: ...`). Jak 1
-  with yellow eco: the shot leaves the punching hand.
+  with yellow eco: the shot leaves the punching hand. 0.1.1: the left grip makes the left fist in Jak II and 3 too
+  (`[vr-pad] fists up: the left grip`), and before Jak has a gun a fist made low at the hip is a fist, not a holster.
+- **First person in vehicles**, also on Jak 1's and II's slides and at the turrets (0.1.1, with the switch on).
 - **Jak II and 3's gun**: grip at the hip or over the shoulder draws it (`[vr-pad] holster: ...`), let go there puts it
-  away; it aims where the hand points; the left hand on it steadies it. Each gun's shot kicks the hand.
+  away; it aims where the hand points; the left hand on it steadies it. Each gun's shot kicks the hand. The VR menu's
+  **Holster size** (130% to start since 0.1.1): at 100% the places of 0.1.0, at 200% easy to find, at 50% only right
+  at the hip or behind the shoulder; say whether 130% draws the gun when you did not mean it (a fist low at your side).
 - **Body shown**: try each choice in the VR menu (Whole body to Hands only): what you see of Jak changes, nothing else.
+- **Arms by the face** (0.1.1): bring a hand up close in front of your eyes, then over your head and across your face:
+  Jak's hand bends at the wrist and his forearm comes up from below (or beside the head), never through your eyes, and
+  his arm never vanishes. Move fast and roll the wrist: the elbow follows without flicking side to side. **Hide arms
+  near your eyes** (off to start) fades out an arm that still comes within 16 cm of the eyes.
+- **Life size** (0.1.1): World scale 100% (the new start): Jak is as tall as you, his hands and the gun a person's
+  size, the world as big as a real one around you. 145% is how 0.1.0 looked (you a giant, the hands twice as big):
+  say which feels right, and whether 100% makes jumps and ledges read well.
+- **His body under you** (0.1.1, **Keep your body upright** and **Fade body near your eyes**, both on to start): punch,
+  spin kick, uppercut (button and for real), jump, high jump, long jump, dive, roll, crouch. Look down in each: his
+  body stays upright under your head, nothing of him in front of your eyes; a leg kicked up by your face, and his body
+  in a roll, a flip or a dive, fades out and back smoothly, never a pop (`[vr-body] ... fades out of the eyes` /
+  `comes back to the eyes`). Crouched (the button, and crouching for real), look down: his knees in front of you over
+  his feet and his body leaning forward as a person's in a squat, never his legs under the ground or his belt in your
+  face. Turn your head without moving: his hips stay, then follow past about 35 degrees. Run and
+  turn: his hips face where he runs, but never more than about 60 degrees from where you look. Each switch off: as
+  0.1.0 (the body as the game's animation has it; nothing faded).
+- **Jak 1's look-around** (Triangle in play): the view stays where Jak is (not ahead of him), his body still; Triangle
+  again leaves it.
+- **Jak 1's Lost Precursor City** (0.1.1): Rock Village's elevator down (the ride's scene, then the city drawn round
+  you at the bottom), the blue eco launchers in the helix room (Sunken B: no crash on entering), the floor buttons that
+  raise the square platforms (dive on them: the scene, then play), the pipe game's three buttons at the back of the
+  room (dive on one: the pipes' scene, then Jak free to move), the helix button and the room's way out. A crash names
+  the process in the log (`kmalloc: !alloc mem in heap for #<process ...>`).
+- **Jak 1's scenes through his eyes** (0.1.1): the opening and a talk to the Sage: you face where Jak faces in the scene,
+  what happens in front of you.
+- **Jak 3's gun magazine** (0.1.1): draw the gun: its ammo stays on the gun as you move it.
 - **Vibration**: the game's own rumble (a hit, a Zoomer crash) and the VR actions' buzzes, at Vibration strength 100
   and 50.
 
@@ -68,8 +139,16 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
   host and join there as above.
 - **Multiplayer: Off** in the launcher: nothing of it in the game, and the VR menu's rows say "Turn it on first".
 
-## Mods (Quest)
+## Mods (Quest; the PC launcher's Mods tab the same)
 
+- The Mods section starts by saying what works here (Multiplayer, texture packs, Quest mod packages) and that
+  OpenGOAL's own mods are flat screen only.
+- **Browse mods**: both lists read (this project's and jakmods.dev's), "Read at ..." under them; Jak 1 / Jak II / Jak 3
+  each show their mods; **Show them** lists OpenGOAL's own mods as Flat screen only, each with **Its page**. Without a
+  network: a plain line saying a list could not be read, and the copy from before when there is one.
+- **Add** a texture pack from the list: it shows under Texture packs, from its list, and the button says **Added**. A
+  newer version in the list: the pack's card and the list both offer **Update to ...**, and it keeps its place and its
+  On / Off.
 - **Texture packs**: a game's options page, Mods, **Add a texture pack (.zip)** (an OpenGOAL launcher pack), then
   **Prepare again** and the disc image: the game's pictures changed. Turn it off and prepare again: the game's own.
 - **Mod packages** (Precursor's): import one, enable it with the game closed, play, disable it.

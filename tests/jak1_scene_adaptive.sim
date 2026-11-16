@@ -1,0 +1,24 @@
+# Jak 1: Adaptive cutscenes on the opening (LIST-0.1.1 item 32; the owner: "auto switch to 3rd person in cutscenes
+# where jak/daxter aren't really in the scene properly, and then switch back when they are. Like for the intro cutscenes
+# of jak 1"). A new game (as jak1_scene_face.sim) into the opening, not skipped: the titles are seen around you, from
+# the game's camera (the log: "[vr-cam] adaptive cutscenes: around you (...)"), and the scenes after them through
+# Jak's eyes where he stands in them. A shot of the left eye and the panel every 15 seconds.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3300 shot ad-1
+4200 shot ad-2
+5100 shot ad-3
+6000 shot ad-4
+6900 shot ad-5
+7800 shot ad-6
+8700 shot ad-7
+9600 shot ad-8
+10500 shot ad-9
+11400 shot ad-10
+12300 shot ad-11
+13200 shot ad-12
+13300 quit 0

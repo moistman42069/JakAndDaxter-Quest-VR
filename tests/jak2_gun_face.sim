@@ -1,0 +1,52 @@
+# Jak II: the gun brought up to the eyes (LIST-0.1.1 items 20 and 24), run with JAKVR_TEST_GUN=1 JAKVR_BODY_TRACE=1 and
+# C:\JakQuest\sim\gkcfg-hide (Hide arms near your eyes on). A new game to the fortress exit (as jak2_holster.sim), the
+# gun drawn at the hip, then the right hand 12 cm before the eyes: the gun's hand does not pitch (the gun stays where
+# the controller points), so its forearm comes near the eyes and, with the option on, is cut out of them: expect
+# "[vr-body] the right arm cut out of the eyes", then "... back in the eyes" with the hand back at its rest. The left
+# hand is brought up the same way at the end (no gun: it pitches, its forearm stays clear, no cut).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4500 shot gf-start
+4510 rh_x 0.05
+4510 rh_y -0.25
+4510 rh_z 0.3
+4530 right_grip 1
+4610 rh_x 0
+4610 rh_y 0
+4610 rh_z 0
+4640 right_grip 0
+4700 shot gf-drawn
+4720 rh_x -0.2
+4720 rh_y 0.35
+4720 rh_z 0.18
+4800 shot gf-gun-up
+4830 rh_x 0
+4830 rh_y 0
+4830 rh_z 0
+4900 shot gf-gun-down
+4920 lh_x 0.2
+4920 lh_y 0.35
+4920 lh_z 0.18
+5000 shot gf-left-up
+5030 lh_x 0
+5030 lh_y 0
+5030 lh_z 0
+5100 quit 0

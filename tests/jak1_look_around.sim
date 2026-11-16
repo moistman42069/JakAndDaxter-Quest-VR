@@ -1,0 +1,32 @@
+# Jak 1: Triangle's look-around in first person (LIST-0.1.1 item 27). The game stops working out Jak's joints there
+# (ja-channel-set! 0), and 0.1.0's body pose built on its own output each frame: his neck read back metres off and the
+# view went 0.8 m ahead of him (sim b26 buttons1). Into play as jak1_buttons.sim, then Y (Triangle) into the
+# look-around, the menu button (pause) and again, Y out of it, and a walk. Run with JAKVR_STATE_TRACE=1
+# JAKVR_BODY_TRACE=1; expect target-look-around, "[vr-body] the game left N bones as posed last frame", then "the game
+# makes his bones again", the "[vr-cam]" lines' eyes within a metre of Jak throughout, and the view by him (not 0.8 m
+# ahead).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot l-start
+4220 y 1
+4226 y 0
+4400 shot l-in
+4600 shot l-in2
+4700 menu 1
+4706 menu 0
+4760 shot l-pause
+4800 menu 1
+4806 menu 0
+4900 shot l-after
+5000 y 1
+5006 y 0
+5100 left_y 1
+5200 left_y 0
+5260 shot l-walk
+5300 quit 0

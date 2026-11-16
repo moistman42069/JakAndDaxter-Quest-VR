@@ -1,0 +1,40 @@
+# Jak 1: the stick beside a resting menu pointer (a player's report, 2026-11-16: "load game is new game ... only jak 1";
+# the owner: "they may be confusing it with the input just clicking something else by accident"). Start opens the
+# title menu; the right hand points up into it (the dot on a row near the top) and shakes a little, as a hand held
+# still on a headset does (0.3 degrees, every 4 frames); the left stick down twice moves the highlight two rows; then
+# A. Expect the highlight to stay where the stick put it (p-stick, p-stick-held) and A to pick that row (p-after): to
+# 0.1.1 the shake counted as a move of the dot, which chose its row back from the stick. Run with
+# JAKVR_POINTER_TRACE=1.
+2400 menu 1
+2406 menu 0
+2700 hand_pitch 16
+2760 shot p-dot
+2764 hand_pitch 16.3
+2768 hand_pitch 16
+2772 hand_pitch 16.3
+2776 hand_pitch 16
+2780 left_y -1
+2790 left_y 0
+2792 hand_pitch 16.3
+2796 hand_pitch 16
+2800 hand_pitch 16.3
+2804 hand_pitch 16
+2810 left_y -1
+2820 left_y 0
+2822 hand_pitch 16.3
+2826 hand_pitch 16
+2830 shot p-stick
+2834 hand_pitch 16.3
+2838 hand_pitch 16
+2842 hand_pitch 16.3
+2846 hand_pitch 16
+2850 hand_pitch 16.3
+2854 hand_pitch 16
+2858 hand_pitch 16.3
+2862 hand_pitch 16
+2870 shot p-stick-held
+2880 a 1
+2886 a 0
+3100 shot p-after
+3200 hand_pitch 0
+3300 quit 0

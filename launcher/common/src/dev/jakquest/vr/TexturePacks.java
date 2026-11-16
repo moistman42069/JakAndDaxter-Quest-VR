@@ -42,10 +42,12 @@ public final class TexturePacks {
         public final int pictures;
         public final long bytes;
         public final String stamp;  // when it was added: changes the build if the same id is added again
+        /** The mod list's entry it came from (ModList.Entry.ref()), or "" for one added from a file. */
+        public final String from;
         public boolean on;
 
         Pack(String id, String name, String author, String version, String description, int pictures, long bytes,
-                String stamp, boolean on) {
+                String stamp, String from, boolean on) {
             this.id = id;
             this.name = name;
             this.author = author;
@@ -54,6 +56,7 @@ public final class TexturePacks {
             this.pictures = pictures;
             this.bytes = bytes;
             this.stamp = stamp;
+            this.from = from;
             this.on = on;
         }
 
@@ -87,7 +90,7 @@ public final class TexturePacks {
             if (!new File(folder, REPLACEMENTS).isDirectory()) continue;
             String[] about = readAbout(new File(folder, ABOUT));
             out.add(new Pack(parts[0], about[0].isEmpty() ? parts[0] : about[0], about[1], about[2], about[3],
-                    parseInt(about[4]), parseLong(about[5]), about[6], parts[1].equals("on")));
+                    parseInt(about[4]), parseLong(about[5]), about[6], about[7], parts[1].equals("on")));
         }
         return out;
     }
@@ -120,6 +123,28 @@ public final class TexturePacks {
         if (validId(id)) deleteTree(new File(gameFolder(root, game), id));
     }
 
+    /**
+     * A pack replaced by a mod list's newer version (its Update button): the new one takes the old one's place in the
+     * list and its on or off, and the old one goes. Nothing changes when the new zip cannot be added.
+     */
+    public static Pack update(File root, String game, String oldId, InputStream zip, String fileName,
+            ModList.Entry entry) throws IOException {
+        Pack added = add(root, game, zip, fileName, entry);
+        List<Pack> packs = list(root, game);
+        Pack old = null, fresh = null;
+        for (Pack p : packs) {
+            if (p.id.equals(oldId)) old = p;
+            if (p.id.equals(added.id)) fresh = p;
+        }
+        if (old == null || fresh == null) return fresh != null ? fresh : added;
+        packs.remove(fresh);
+        fresh.on = old.on;
+        packs.set(packs.indexOf(old), fresh);
+        writeList(root, game, packs);
+        if (validId(oldId)) deleteTree(new File(gameFolder(root, game), oldId));
+        return fresh;
+    }
+
     // ---- adding one ----
 
     /**
@@ -128,6 +153,15 @@ public final class TexturePacks {
      * Throws with the player's words when it is not a texture pack for this game.
      */
     public static Pack add(File root, String game, InputStream zip, String fileName) throws IOException {
+        return add(root, game, zip, fileName, null);
+    }
+
+    /**
+     * As add(), for a pack from a mod list (ModList): its entry kept with it (for its Update button), and the list's
+     * name, authors, version and words used where the pack's own metadata.json has none.
+     */
+    public static Pack add(File root, String game, InputStream zip, String fileName, ModList.Entry entry)
+            throws IOException {
         File games = gameFolder(root, game);
         if (!games.isDirectory() && !games.mkdirs()) throw new IOException("Cannot make " + games);
         String id = freeId(games, fileName);
@@ -175,19 +209,31 @@ public final class TexturePacks {
             throw new IOException("No pictures for " + gameName(game) + " in it (" + REPLACEMENTS + "): is it a texture "
                     + "pack for this game?");
         }
+        // OpenGOAL's texture-pack metadata.json (its launcher's schemas/texture-packs/v1): name, authors (one string),
+        // version, description; "author" too, as some packs have it.
         String name = jsonString(metadata, "name");
+        String author = jsonString(metadata, "authors");
+        if (author.isEmpty()) author = jsonString(metadata, "author");
+        String version = jsonString(metadata, "version");
+        String description = jsonString(metadata, "description");
+        if (entry != null) {
+            if (name.isEmpty()) name = entry.name;
+            if (author.isEmpty()) author = entry.authors;
+            if (!entry.version.isEmpty()) version = entry.version;  // the list's version is what Update compares
+            if (description.isEmpty()) description = entry.description;
+        }
         if (name.isEmpty()) name = baseName(fileName);
         String stamp = Long.toString(System.currentTimeMillis());
-        writeAbout(new File(partial, ABOUT), new String[] {clean(name, 60), clean(jsonString(metadata, "author"), 40),
-            clean(jsonString(metadata, "version"), 20), clean(jsonString(metadata, "description"), 300),
-            Integer.toString(count), Long.toString(bytes), stamp});
+        writeAbout(new File(partial, ABOUT), new String[] {clean(name, 60), clean(author, 40), clean(version, 20),
+            clean(description, 300), Integer.toString(count), Long.toString(bytes), stamp,
+            entry == null ? "" : clean(entry.ref(), 200)});
         if (!partial.renameTo(folder)) {
             deleteTree(partial);
             throw new IOException("Cannot make " + folder);
         }
         List<Pack> packs = list(root, game);
         packs.removeIf(p -> p.id.equals(id));
-        Pack pack = new Pack(id, clean(name, 60), "", "", "", count, bytes, stamp, true);
+        Pack pack = new Pack(id, clean(name, 60), "", "", "", count, bytes, stamp, "", true);
         packs.add(0, pack);
         writeList(root, game, packs);
         for (Pack p : list(root, game)) {
@@ -336,10 +382,10 @@ public final class TexturePacks {
         }
     }
 
-    /** name, author, version, description, pictures, bytes, stamp */
+    /** name, author, version, description, pictures, bytes, stamp, from (0.1.1; "" in 0.1.0's) */
     private static String[] readAbout(File file) {
         List<String> lines = readLines(file);
-        String[] out = new String[7];
+        String[] out = new String[8];
         for (int i = 0; i < out.length; i++) out[i] = i < lines.size() ? lines.get(i) : "";
         return out;
     }
