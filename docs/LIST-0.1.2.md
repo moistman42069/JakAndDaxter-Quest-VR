@@ -47,3 +47,20 @@ changed (so nothing is prepared again coming from 0.1.1). The rest of item 1 is 
    launcher builds them again by itself". Actually the player presses **Build it again** (PLAY IN VR is not shown
    until then). Done in 0.1.2: its release notes and What's new (which keep 0.1.1's, out the same day) say so, with a
    "Corrected" line, and say what an update from 0.1.1 or from 0.1.0 needs. 0.1.1's own release page left as it was.
+3. [ ] **Performance: pitched, waiting on the owner** (the owner, 2026-11-16: "is there no way to go ahead and boost the
+   native framerate of the game by default? just asking", then "is the launcher/game in general optimized to the max
+   potential? if theres anything you think we missed that could make the game run better, just pitch it to me before
+   we do anything"). Nothing done; the pitch, most worth it first:
+   - Read the headset logs first: every log has `[vr-perf]` lines (frames a second, the frame's period, the wait, the
+     work, the most), so a 0.1.2 log from a Quest and from a PC shows whether the game or the eyes are the limit.
+   - Game frame rate the headset's by default (it is an option since 0.1.1, 60 to start: "off by default", the
+     owner's rule for performance options): smoother, but the game's work rises with the rate (72 to 120 a second);
+     on PC likely fine, on the Quest not known for Jak II and 3 until a headset log shows it. Runtime only: nothing to
+     prepare again. Saved options keep the player's own choice unless changed once, as AppSW was.
+   - Both eyes in one pass (multiview): each eye now replays the whole frame's drawing (opengl.cpp, draw_passes); one
+     pass would take much of the drawing's CPU work off the Quest. The biggest job: every renderer's shaders.
+   - Smoother frames (AppSW) and Dynamic resolution on by default on the Quest, once a headset shows 0.1.1's AppSW
+     rework has no flicker.
+   - Max draw distance on the Quest (on by default, the owner's: everything drawn, shadows too): the costliest
+     setting; measure what it costs there.
+   - Preparing a game faster: item 1's "only what changed".
