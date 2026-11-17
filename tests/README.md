@@ -48,6 +48,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_BODY_TRACE=2` | As 1, and each frame by its number: his body's big parts from the eyes (`frame N parts:`), his spine as the game sent it (each joint's size and how far from the one under it: a stretch of his body shows), the eyes, root, view's ease and lean, the neck and its base posed and as the game had them; as drawn, the head's shrink point in the left eye's camera; and as the frame is sent to be drawn, how far the neck base's bone and the camera moved after they were posed and placed. Jak 1 also: the head point as his skinning matrices are made (bones.gc), with the camera and neck base then. |
 | `JAKVR_BODY_TRACE=3` | As 1, and each frame each hand's fingers (`[vr-body] the right fingers`: each finger's curl, how far the world moved it, how many surfaces the hand is at), to see them steady. |
 | `JAKVR_CLOCK_TRACE=1` | Jak II and 3: the game's clocks every 60 of its frames (`clock:` lines), to see it keep time at half rate. |
+| `JAKVR_FEEL_TRACE=1` | 0.1.4's Extra vibration: every buzz it gives (`[vr-feel] step (1 0; Extra vibration: The whole world)`, a pickup's first number its pickup type), not only the first of each kind. The simulated headset's own `[sim] haptic hand` lines show what reached the hands. |
 | `JAKVR_TEST_HUD=1` | The HUD kept on screen in play (each game's show-hud), for the HUD tests. |
 | `JAKVR_TEST_PILLS=1` | Jak 3: five seconds into play, dark eco pills made 6 m from Jak and set to fade 4 seconds later (`[vr-test] eco pills ...`), the state the arena's crash was in (LIST-0.1.1 item 23). |
 | `JAKVR_POINTER_TRACE=1` | Jak II and 3: the menu pointer's dot against each two-way line (Yes / No, On / Off) as it moves or clicks (`[vr-ptr] two-way line: ...`), its middle and the menu's transition. |
@@ -153,6 +154,18 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
 - Performance options: any script with gkcfg-half (the log says "the game at 36 frames a second (the headset shows
   72)"; with `JAKVR_TEST_LATE` the `[vr-perf] dynamic resolution` lines) or gkcfg-warp (`[vr-view] smoother frames`
   and the simulated headset's own count of the motion it was given, marked to skip or shown again).
+
+## The checks added in 0.1.4
+
+- Extra vibration (C:\JakQuest\sim\batch28c.sh, `JAKVR_FEEL_TRACE=1`): `feel1`, `feel2`, `feel3` (each game's
+  `jakN_actions` on gkcfg-feel, The whole world: steps, jumps, landings, rolls, attacks), `feeloff` (Off: no
+  `[vr-feel]` line at all), `feelpick` (`jak1_play` on the defaults, Pickups: no step or move buzzes), `feelorb`
+  (`JAKVR_TEST_WARP=money`: Jak dropped onto Geyser Rock's first orb, `small pickup (5 0; ...)`), `feelcrate`
+  (`JAKVR_TEST_WARP=crate` with an offset, the actions beside a crate; its kick does not break it: Geyser Rock's
+  crates are iron) and `feelflop` (`jak1_crate_flop`, `JAKVR_TEST_WARP=crate`: the dive onto the crate breaks it,
+  `hit (0 0; ...)`, and its scout fly, `big pickup (8 0; ...)`).
+- The Quest's driver notes (LIST-0.1.4 item 10): `ocean` (`jak1_ocean`, the sea and Jak's shadow, before and after);
+  a repeated driver message is written 3 times, then at the 10th, 100th ... with `(the 10th time)`.
 
 ## Without a game
 

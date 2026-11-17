@@ -1,0 +1,29 @@
+# 0.1.4 (LIST-0.1.4 items 2 and 3): Extra vibration's hit and pickups on Geyser Rock's iron crate. Run with
+# JAKVR_TEST_WARP=crate (Jak a metre over the first crate) and JAKVR_FEEL_TRACE=1 on gkcfg-feel: into play as
+# jak1_actions.sim, then a jump and the dive (X in the air) onto the crate, twice, then an uppercut beside it. Look for
+# "[vr-feel] hit (0 0; ...)" (the dive breaks it: an iron crate takes only a dive or an uppercut, not a kick) and its scout fly, "[vr-feel] big pickup (8 0; ...)".
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot c-start
+4300 a 1
+4306 a 0
+4318 x 1
+4324 x 0
+4340 shot c-dive
+4500 a 1
+4506 a 0
+4518 x 1
+4524 x 0
+4540 shot c-dive2
+4700 left_trigger 1
+4740 x 1
+4746 x 0
+4760 left_trigger 0
+4800 shot c-end
+4900 quit 0

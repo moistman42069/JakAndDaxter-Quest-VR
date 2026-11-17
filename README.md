@@ -5,14 +5,14 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.3](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** Jak II multiplayer
-> (the community's Jak and Daxter II Multiplayer mod, built in), fixes for the players' reports on 0.1.1 and 0.1.2, the
-> menus' pointer on every row, a crosshair for the guns, first person in every vehicle, performance options, and
-> texture packs on a tab of their own with Import. It is still a test release, tested on a PC with a simulated headset,
-> and its main purpose is still to collect logs. Whatever happens, please send yours: the
-> [release notes](docs/release-notes.md) say how. [docs/LIST-0.1.3.md](docs/LIST-0.1.3.md) says what changed and how
-> each part was checked ([LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases
-> before).
+> **Test release [0.1.4](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** a quick vibration
+> update. **Extra vibration** lets you feel what you collect, or the whole world (each step, jump, landing, punch and
+> hit); the Quest's graphics start as a tested Quest 3 runs them; and the Quest launcher's **Save log** now saves
+> everything a bug report needs. It is still a test release, tested on a PC with a simulated headset, and its main
+> purpose is still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say
+> how. [docs/LIST-0.1.4.md](docs/LIST-0.1.4.md) says what changed and how each part was checked
+> ([LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md)
+> for the releases before).
 
 ## Built on OpenGOAL
 

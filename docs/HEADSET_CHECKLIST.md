@@ -1,8 +1,10 @@
 # Headset checklist
 
 What the PC tests cannot reach, to try on the Quest (and the PC VR items on a real PC headset). Each line: what to do,
-and what shows it worked. The launcher's **Report a problem** makes one zip of the logs in Download/JakQuestVR on the
-headset (PC: the Logs tab's **Gather the logs**, in Downloads\JakQuestVR). What the simulated headset already showed
+and what shows it worked. The launcher's **Settings**, **Log**, **Save log** saves one text file with everything (from
+0.1.4: each game's options, last crash and newest logs, the preparation's and the app's own log), and **Report a
+problem** one zip of the logs in Download/JakQuestVR on the headset (PC: the Logs tab's **Gather the logs**, in
+Downloads\JakQuestVR). What the simulated headset already showed
 is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 
 ## First, every session
@@ -32,8 +34,12 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 
 ## Performance options (launcher's Graphics tab, as Ratchet & Clank Quest VR's)
 
-- **Smoother frames (AppSW)**, off to start since 0.1.1 (the title screen flickered with it): `[openxr] smoother frames:
-  off`. Turned on to try: `[openxr] smoother frames (Application SpaceWarp): on, motion ...`; turn your head and run,
+- **0.1.4's Quest start** (a tested Quest 3's Graphics): a game with no options saved yet starts at 120 Hz (`[openxr]
+  refresh rate 120 Hz`, or the most a headset offers up to it), Smoother frames on, High foveation, `[openxr]
+  performance levels: CPU and GPU sustained high`, anti-aliasing and anisotropic filtering off, `[openxr] sharpening:
+  normal`. On a Quest 2 or 3S, note the `[vr-perf]` lines with it, and say whether Balanced or Performance plays better.
+- **Smoother frames (AppSW)**, off to start from 0.1.1 to 0.1.3 (the title screen flickered with it), on to start on the
+  Quest from 0.1.4: `[openxr] smoother frames (Application SpaceWarp): on, motion ...`; turn your head and run,
   and say whether anything flickers or tears. 0.1.1 changed how it is given (the PC cannot show it: this is the check
   that matters most). The log should say `[vr-view] the game at 36 frames a second (the headset shows 72)`, then
   `[vr-view] smoother frames: the headset makes the frames between from here` once in play and `none made here` on
@@ -65,6 +71,15 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
   pulses in that hand (`[vr-pad] d-pad up (the right stick)` and so on), the thumb rest a light one as it takes the
   stick, and Jak II and 3's gun change pulses in the gun's hand (`[vr-gun] the gun switched`): say whether each is
   felt, and whether the d-pad ever fails to go in. Off with **Buzz on d-pad presses** and **Buzz on gun switch**.
+- **Extra vibration** (0.1.4; the VR menu's Controls, the launchers' VR Controls). **Pickups** (to start): collect an
+  orb, eco, a power cell or a scout fly (Jak II and 3: ammo, a gun, a skull gem): a light tick, a longer buzz, a
+  strong one. **The whole world**: walk and run (each step in that foot's hand, firmer running), jump, land, roll,
+  punch and kick, hit an enemy or a crate (the punching hand), and stand near an explosion or a boss's stomp (a shake
+  by how big). The log names the first of each kind in a run: `[vr-feel] small pickup (6 0; Extra vibration:
+  Pickups)` (the number is the game's pickup type), `eco`, `big pickup`, `step`, `jump`, `landing`, `roll`, `attack`,
+  `hit`, `shake (<cm> <ticks>; ...)`. Say whether any is too strong, too weak or too often (a step on every frame, a
+  buzz that never stops), and that **Off** feels as 0.1.3, **Vibration off** stops them all and **Vibration strength**
+  scales them. In multiplayer the other players' steps and pickups should not buzz your hands.
 - **The menu pointer** (0.1.1): Jak 1's save and load files and its yes / no questions, each game's On / Off rows and
   Yes / No questions (point at a side, then the trigger), Jak 1's sliders, and a long list (Jak 1's options, Jak II and
   3's game options) scrolling while the dot rests on its top or bottom row.

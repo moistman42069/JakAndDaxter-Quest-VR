@@ -28,6 +28,24 @@ public final class VrOptions {
 
     public enum Kind { TOGGLE, CHOICE, NUMBER }
 
+    /**
+     * 0.1.4: this is the Quest's launcher (Android's virtual machine calls itself Dalvik, its vendor The Android
+     * Project), not the PC's. The Quest starts with the owner's own Graphics (their Quest 3's vr-options.txt, 2026-11-16:
+     * "make the graphics options i set in the launcher ... the new default too"), the PC with 0.1.3's, as the game's own
+     * defaults (game/vr/vr_options.h).
+     */
+    public static final boolean QUEST =
+            android(System.getProperty("java.vm.name", ""), System.getProperty("java.vendor", ""));
+
+    static boolean android(String vm, String vendor) {
+        return vm.toLowerCase(java.util.Locale.ROOT).contains("dalvik")
+                || vendor.toLowerCase(java.util.Locale.ROOT).contains("android");
+    }
+
+    private static String onQuest(String quest, String pc) {
+        return QUEST ? quest : pc;
+    }
+
     /** One option: a row in a launcher tab and a line of vr-options.txt. */
     public static final class Option {
         public final String key, label, help;
@@ -143,22 +161,25 @@ public final class VrOptions {
             "How many times a second the headset shows a frame. Higher is smoother and costs more. The headset's own "
                     + "is what it is set to in its settings.",
             new String[] {"The headset's own", "72 Hz", "80 Hz", "90 Hz", "120 Hz"},
-            new String[] {"0", "72", "80", "90", "120"}, "0"));
-    // Off to start since 0.1.1 (owner: it flickered the title screen); its key changed from 0.1.0's "space-warp" (on to
-    // start then), so a file 0.1.0 wrote starts off too.
+            new String[] {"0", "72", "80", "90", "120"}, onQuest("120", "0")));
+    // Off to start since 0.1.1 (owner: it flickered the title screen; from 0.1.1 it is off on the title and its menus);
+    // its key changed from 0.1.0's "space-warp" (on to start then), so a file 0.1.0 wrote starts as this one does. On
+    // the Quest on to start from 0.1.4 (the owner's), as High foveation, boost off, no anti-aliasing or anisotropic
+    // filtering, Normal sharpening and 120 Hz (the most the headset has up to that).
     public static final Option SPACE_WARP = atStart(toggle("smoother-frames", "Smoother frames (AppSW)",
             "The Quest makes every other frame from how everything moved (Meta's Application SpaceWarp), so the game "
                     + "draws half of them, at half the headset's rate. Fast moves can smear a little at the edges of "
                     + "things. Off in menus and on the title screen. On a PC your headset's own smoothing does this.",
-            false));
+            QUEST));
     public static final Option FOVEATION = atStart(choice("foveation", "Foveated rendering",
             "Draws the edges of each eye's picture at a lower resolution, where the lenses blur it anyway, so the "
                     + "middle keeps its detail and the game runs faster. High saves the most. On a PC it does nothing.",
-            new String[] {"Off", "Low", "Medium", "High", "Highest"}, new String[] {"0", "1", "2", "3", "4"}, "2"));
+            new String[] {"Off", "Low", "Medium", "High", "Highest"}, new String[] {"0", "1", "2", "3", "4"},
+            onQuest("3", "2")));
     public static final Option BOOST = atStart(toggle("cpu-gpu-boost", "CPU and GPU boost",
             "The Quest runs its processors at the highest speed it lets a game ask for, so fewer frames are missed. "
                     + "Uses more battery and the headset gets warmer. On a PC it does nothing.",
-            true));
+            !QUEST));
     public static final Option MAX_DRAW = atStart(toggle("max-draw-distance", "Max draw distance",
             "Everything drawn as far as you can see, at its highest detail: enemies, crates, people, effects, the "
                     + "level and the sea, so nothing pops in as you come near. Costs some frame rate. Off: the game's own "
@@ -166,10 +187,11 @@ public final class VrOptions {
             true));
     public static final Option MSAA = atStart(choice("msaa", "Anti-aliasing",
             "Smooths jagged edges. Cheap for the graphics chip, and well worth it in VR.",
-            new String[] {"Off", "2x", "4x"}, new String[] {"1", "2", "4"}, "2"));
+            new String[] {"Off", "2x", "4x"}, new String[] {"1", "2", "4"}, onQuest("1", "2")));
     public static final Option ANISOTROPY = atStart(choice("anisotropy", "Anisotropic filtering",
             "Keeps floors and walls sharp at a low angle. 16x is the games' own.",
-            new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"}, "16"));
+            new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"},
+            onQuest("1", "16")));
     // ---- Performance (0.1.1, off to start then; 0.1.3, the owner: "do EVERYTHING that can boost performance and have
     // them as options in the launcher ... leave on the ones you see best for performance by default") ----
     // 0.1.3: Automatic to start, under a new key ("frame-rate" was 0.1.1's, 60 to start), so a file an older release
@@ -201,7 +223,7 @@ public final class VrOptions {
     public static final Option SHARPEN = atStart(choice("sharpening", "Sharpening",
             "The Quest sharpens the picture as it shows it, so a lower Eye resolution keeps its edges. On a PC it "
                     + "does nothing.",
-            new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, "0"));
+            new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, onQuest("1", "0")));
     public static final Option[] GRAPHICS = {RESOLUTION, REFRESH, SPACE_WARP, FOVEATION, BOOST, MAX_DRAW, MSAA,
             ANISOTROPY, FRAME_RATE, DYNAMIC_RESOLUTION, SHARE_EYE_WORK, SHOW_PERFORMANCE, PS2_DETAIL, SHARPEN};
 
@@ -367,10 +389,15 @@ public final class VrOptions {
             "A quick pulse in the stick's hand each time a d-pad direction goes in.", true);
     public static final Option GUN_SWITCH_BUZZ = guns(toggle("gun-switch-buzz", "Buzz on gun switch",
             "A quick pulse in the gun's hand as you change guns.", true));
+    // 0.1.4 (LIST-0.1.4 item 1; game/vr/vr_options.h extra_vibration, the in-game VR menu's same row)
+    public static final Option EXTRA_VIBRATION = choice("extra-vibration", "Extra vibration",
+            "Pickups: a buzz for each orb, eco, cell and the like you collect. The whole world: also each step, jump,"
+            + " landing, roll, punch and kick, each hit, and the world's shakes.",
+            new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "1");
     public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
             HOLSTER_ON_FOOT, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
-            VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, GUN_SWITCH_BUZZ};
+            VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, EXTRA_VIBRATION, GUN_SWITCH_BUZZ};
 
     /** The launcher's tabs of options, in order. */
     public static final String[] TAB_NAMES = {"Graphics", "VR Body", "VR Controls"};
@@ -503,7 +530,7 @@ public final class VrOptions {
                 m.put("foveation", "3");
                 m.put("max-draw-distance", "off");
                 m.put("msaa", "1");
-                m.put("anisotropy", "4");
+                m.put("anisotropy", onQuest("1", "4"));  // 0.1.4: the Quest starts at Off now
                 // (Smoother frames is left as the player has it: off to start since 0.1.1, as it flickers some screens)
                 m.put("cpu-gpu-boost", "on");
                 break;

@@ -57,10 +57,22 @@ final class PcLogs {
     static String summary(PcPaths paths) {
         StringBuilder s = new StringBuilder();
         s.append("Jak and Daxter VR (PC) ").append(PcBuild.VERSION).append('\n');
+        s.append("Gathered: ").append(new Date()).append('\n');  // 0.1.4
         s.append("Windows: ").append(System.getProperty("os.name")).append(' ').append(System.getProperty("os.version"))
             .append(' ').append(System.getProperty("os.arch")).append('\n');
         s.append("Java: ").append(System.getProperty("java.version")).append('\n');
         s.append("Processors: ").append(Runtime.getRuntime().availableProcessors()).append('\n');
+        // 0.1.4 (the owner: the logs should "provide everything you need"): the PC's memory
+        try {
+            java.lang.management.OperatingSystemMXBean os = java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+            if (os instanceof com.sun.management.OperatingSystemMXBean) {
+                com.sun.management.OperatingSystemMXBean m = (com.sun.management.OperatingSystemMXBean) os;
+                s.append("Memory: ").append(m.getTotalMemorySize() >> 20).append(" MB, ")
+                    .append(m.getFreeMemorySize() >> 20).append(" MB free now\n");
+            }
+        } catch (RuntimeException | LinkageError ignored) {
+            // not this Java's
+        }
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             String game = VrOptions.GAMES[i];
             s.append(VrOptions.GAME_NAMES[i]).append(": ");

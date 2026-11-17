@@ -99,7 +99,11 @@ The owner: "i want you to work through EVERYTHING and just publish it as a new r
 2. Item 24 ("intro for jak 3 was upside down") stays open: not reproduced on the sim; the log line for an upside-down
    still view is in. Look again only with a new report or log.
 3. Players' reports and logs on 0.1.3, as they come (Vixel's Discord only when the owner says), then the next list.
-4. Cleanup, shown to the owner, nothing deleted (their go first): C:\JakQuest\sim b44 to b81 pictures (about 21 GB) and
+4. (Done after the release, the owner's go: 7337 pictures of b44 to b81 (22.3 GB; their logs kept), b70's two dumps,
+   javatest012-016, mp_stage, mp_backup, the Jak II mod's download, renderhome, javac-out, the unused gkcfg-* copies
+   (cs1, cs2, faroff, hud, mdoff, rides3p, tp; every one a sim or script names is kept), the old sim copies,
+   batch28c.sh.b64, TexturePacks.java.b81, build056-065 scripts and mp2d.sh; C: 58 to 79 GB free. Kept: ps_body.txt,
+   b47's dump, out/release-*.) The list as shown: C:\JakQuest\sim b44 to b81 pictures (about 21 GB) and
    b70's crash dumps; javatest012 to 016; mp_stage (31 MB), mp_backup (20 MB); C:\JakQuest\downloads\jak2-multiplayer
    (196 MB); the gkcfg-* copies; *.b63, *.b75, *.b78, *.b79, *.b80 sim copies, batch28c.sh.b64, ps_body.txt (keep while
    ptrset2/3 are used), TexturePacks.java.b81; build056 to build065 scripts, mp2d.sh; renderhome, javac-out.

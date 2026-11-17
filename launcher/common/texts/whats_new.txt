@@ -1,3 +1,30 @@
+0.1.4: more vibration. Still a test release: please keep sending your logs.
+
+0.1.4 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game:
+from 0.1.3 it builds again only what changed, from an older version a few minutes). Your saves and options are kept.
+
+New
+- Extra vibration (the VR menu's Controls, the launcher's VR Controls), three choices:
+  - Off: the vibration as in 0.1.3.
+  - Pickups (to start): also a buzz for each thing you collect: a light tick for an orb, an eco pill, ammo or a
+    skull gem, a longer one for eco, a strong one for a power cell, a scout fly, a gun or a crystal.
+  - The whole world: pickups, and each step (in the foot's hand), each jump, landing, roll and slide, each punch,
+    kick, dive and flip, each hit that lands, and the world's shakes (explosions, quakes, bosses).
+  Vibration strength sets how hard these are too, and Vibration off turns them off with the rest.
+- Logs (Settings, Log): Save log writes everything for a bug report in one file: the app and the headset, each game's
+  options, its last crash, the start and the end of its newest log and the run before, the preparation's messages and
+  the app's own log. No saves or game files. Report a problem still makes its zip.
+
+Changed
+- The Quest's Graphics start as a player's tested Quest 3 has them: Refresh rate 120 Hz (or the most your headset
+  has), Smoother frames on, Foveated rendering High, CPU and GPU boost off, Anti-aliasing and Anisotropic filtering off,
+  Sharpening Normal. For a game with no options saved yet: options you set are kept. Balanced sets these. The PC's
+  are as before.
+
+Fixed
+- Quest: the game's log no longer fills with the graphics chip's notes (thousands of lines by the sea), so the lines
+  that matter are kept and less is written in play.
+
 0.1.3: Jak II multiplayer, and fixes for the players' reports on 0.1.2. Still a test release: please keep sending
 your logs.
 
