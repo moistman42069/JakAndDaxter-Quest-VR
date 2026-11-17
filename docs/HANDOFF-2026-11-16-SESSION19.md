@@ -2,7 +2,7 @@
 
 Read this first, then docs/LIST-0.1.4.md (the list, each item's state and how it was checked), then
 docs/HANDOFF-2026-11-16-SESSION18.md ("0.1.3 released": the release steps, which hold for 0.1.4). 0.1.3 is published
-(v0.1.3, latest). Nothing of 0.1.4 is committed, built for release or published: the owner has not asked for it yet.
+(v0.1.3, latest). 0.1.4 is published too (v0.1.4, latest, 2026-11-17): see "0.1.4 released" below.
 
 ## The owner's asks this session (0.1.4)
 
@@ -79,6 +79,9 @@ The owner: "Publish 0.1.4". Steps as 0.1.3's:
   072ab988...22d6 (pc/game-code.txt), the zip's Jak II version "0.3.1-jakvr.0.1.4", JakQuestVR-0.1.4-windows.zip
   SHA-256 d34229bf0bcfecdefcd6a0461b6f500613a0745e971270a8ea6cf701956c27ab. out/release-0.1.4 with SHA256SUMS.txt.
 - make_patch.sh: 2975 files, 33,436,866 bytes. Commit, push, `gh release create v0.1.4`.
+- **Published:** https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/tag/v0.1.4 ("Jak and Daxter VR
+  0.1.4", latest, not a prerelease, body docs/release-notes.md; the APK, the Windows zip and SHA256SUMS.txt, GitHub's
+  digests the same as above). Commit b214eaf on main, pushed.
 
 ## Next, in order
 
