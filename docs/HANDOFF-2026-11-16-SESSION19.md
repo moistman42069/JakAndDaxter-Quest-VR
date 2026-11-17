@@ -1,8 +1,8 @@
 # Handoff, 2026-11-16, Session 19
 
 Read this first, then docs/LIST-0.1.4.md (the list, each item's state and how it was checked), then
-docs/HANDOFF-2026-11-16-SESSION18.md ("0.1.3 released": the release steps, which hold for 0.1.4). 0.1.3 is published
-(v0.1.3, latest). 0.1.4 is published too (v0.1.4, latest, 2026-11-17): see "0.1.4 released" below.
+docs/HANDOFF-2026-11-16-SESSION18.md ("0.1.3 released": the release steps, which hold for 0.1.4). 0.1.3 and 0.1.4 are published
+(v0.1.4 the latest, 2026-11-17: see "0.1.4 released" below).
 
 ## The owner's asks this session (0.1.4)
 
