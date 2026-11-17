@@ -18,6 +18,8 @@ decompilation of the trilogy, the GOAL compiler and the native runtime the games
 | Christopher M. Kohlhoff / [asio](https://think-async.com/Asio/) | Networking for the multiplayer (Teamruns' websocket, the parties). Boost Software License 1.0. |
 | Peter Thorson / [WebSocket++](https://github.com/zaphoyd/websocketpp) | The websocket server Teamruns' app talks to. BSD-3-Clause. |
 | David Reid / [miniaudio](https://miniaud.io) | The taunts' sounds (Teamruns). Public domain or MIT No Attribution. |
+| [himstan / Jak and Daxter 2 Multiplayer](https://github.com/himstan/Jak-And-Daxter-2-Multiplayer) and its contributors | Jak II's multiplayer, built in from 0.1.3 (on to start, and it changes nothing until a player hosts or joins): co-op for up to 8 players, Jak or Daxter, late joining, the city's traffic and enemies kept the same for everyone, the lobby, skins and name tags. Merged into Jak II and changed by this port (its sessions on plain TCP and UDP, no Steam, VR for every player). ISC License, as OpenGOAL's. |
+| Thomas Bernard / [miniupnpc and libnatpmp](https://miniupnp.tuxfamily.org) | Jak II's multiplayer opens the host's port on the router. BSD-3-Clause. |
 | Khronos Group | The OpenXR headers and loader. Apache-2.0 OR MIT. |
 | [moistman42069](https://github.com/moistman42069) and this project's development and testing | The VR port: the VR layer, its hooks into OpenGOAL, each game's GOAL side, the launcher, packaging and device testing. |
 | Players and bug reporters | Logs and reports from headsets. Private logs and identifying details are not published. |

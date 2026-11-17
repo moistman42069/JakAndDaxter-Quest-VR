@@ -59,6 +59,12 @@ def version() -> str:
     v = (ROOT / "VERSION").read_text(encoding="utf8").strip()
     if not re.fullmatch(r"\d+\.\d+\.\d+", v):
         sys.exit(f"VERSION is {v!r}, not 1.2.3")
+    # Jak II multiplayer's compatibility identity (0.1.3): only games of the same release join each other, the PC's and
+    # the Quest's alike (goal_src/jak2/engine/mods/mod-settings.gc *mod-version-text*, "<the mod's>-jakvr.<VERSION>").
+    mod_settings = (PRECURSOR / "goal_src/jak2/engine/mods/mod-settings.gc").read_text(encoding="utf8")
+    found = re.search(r'\(define \*mod-version-text\* "([^"]*)"\)', mod_settings)
+    if not found or not found.group(1).endswith(f"-jakvr.{v}"):
+        sys.exit(f"Jak II's *mod-version-text* is {found.group(1) if found else None!r}: make it end in -jakvr.{v}")
     return v
 
 
@@ -119,12 +125,28 @@ def write_record(ver: str, data: int, code: str) -> None:
             out.write(f"{r[0]} {r[1]} {r[2]}\n")
 
 
+def compiler_id() -> str:
+    """0.1.3: the SHA-256 of the compiler's and decompiler's own sources (Precursor's goalc, decompiler and common C and
+    C++, each file's path and the SHA-256 of its bytes): the launcher compiles everything again, and decompiles again,
+    when it differs from what a game was built with (PcSetup), else only what changed."""
+    entries = []
+    for part in ("goalc", "decompiler", "common"):
+        root = PRECURSOR / part
+        for p in root.rglob("*"):
+            if p.is_file() and p.suffix in (".cpp", ".h", ".hpp", ".c", ".cc", ".inc"):
+                entries.append((p.relative_to(PRECURSOR).as_posix(), p.read_bytes))
+    sha = hashlib.sha256()
+    for rel, data in sorted(entries, key=lambda e: e[0]):
+        sha.update(rel.encode("utf8") + b"\0" + hashlib.sha256(data()).digest())
+    return sha.hexdigest()
+
+
 def write_game_code(data_folder: Path, ver: str) -> None:
     code = game_code_id(folder_entries(data_folder))
     data = game_data_version()
     same = [r[0] for r in read_record() if r[2] == code and r[1] == data and r[0] != ver]
     with (data_folder / GAME_CODE_FILE).open("w", encoding="utf8", newline="\n") as out:
-        out.write(f"id {code}\ndata {data}\nsame {' '.join(same)}\n")
+        out.write(f"id {code}\ndata {data}\ncompiler {compiler_id()}\nsame {' '.join(same)}\n")
     write_record(ver, data, code)
     print(f"game code {code}, game data version {data}; the same in: {' '.join(same) or 'no release before'}",
           flush=True)

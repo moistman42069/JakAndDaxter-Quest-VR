@@ -1,0 +1,104 @@
+# Jak II: each kind of settings row by the pointer (LIST-0.1.3 item 1), with JAKVR_POINTER_TRACE=1, on the settings copy
+# C:\JakQuest\sim\gkcfg-ptrset (it changes them, then changes them back). The title's menu as jak2_ptr_scroll.sim (the
+# dot on Options at 10 degrees, the trigger; on the Options menu's first row at 20, the trigger: Game Options). Jak II's
+# pages (4:3) show 5 rows of 40 from y 112 of the 416-high screen: pitch 24.1, 19.5, 14.6, 9.45, 4.2 (pitch
+# atan((0.35 + (0.5 - y / 416) * 1.26) / 1.3)); a row is 40 to 472 across: its middle yaw 8.75, its left third (x 110)
+# 27.6, its right third (x 400) -11.8. A row being changed takes a click on its left or right third as a step that way
+# (held: again every 0.09 s after 0.4 s), in its middle as done (pc-vr.gc vr-ptr-zone-click!).
+# - Subtitles (On / Off, the third row): the dot onto it, a click (being changed), a click on the right third, on the
+#   left third (back), in the middle (done).
+# - The stick down three rows (the page moves on one), the dot onto Subtitle Language (now the fourth row shown): the
+#   same clicks.
+# - B back, the stick down to Sound Options, A; the second row (a volume): a click, the trigger held 70 frames on the
+#   right third (up some steps), then 70 on the left third (back down), a click in the middle (done). B back.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3100 shot jps-main
+3110 hand_yaw 8.75
+3120 hand_pitch 10
+3160 right_trigger 1
+3166 right_trigger 0
+3260 shot jps-options
+3270 hand_pitch 20
+3320 right_trigger 1
+3326 right_trigger 0
+3420 shot jps-page
+3430 hand_pitch 14.6
+3470 shot jps-row2
+3480 right_trigger 1
+3486 right_trigger 0
+3540 shot jps-row2-sel
+3550 hand_yaw -11.8
+3580 right_trigger 1
+3586 right_trigger 0
+3640 shot jps-row2-right
+3650 hand_yaw 27.6
+3680 right_trigger 1
+3686 right_trigger 0
+3740 shot jps-row2-left
+3750 hand_yaw 8.75
+3780 right_trigger 1
+3786 right_trigger 0
+3840 shot jps-row2-done
+3850 hand_pitch -35
+3900 left_y -1
+3910 left_y 0
+3940 left_y -1
+3950 left_y 0
+3980 left_y -1
+3990 left_y 0
+4050 shot jps-stick
+4060 hand_pitch 9.45
+4100 shot jps-row4
+4110 right_trigger 1
+4116 right_trigger 0
+4170 shot jps-row4-sel
+4180 hand_yaw -11.8
+4210 right_trigger 1
+4216 right_trigger 0
+4270 shot jps-row4-right
+4280 hand_yaw 27.6
+4310 right_trigger 1
+4316 right_trigger 0
+4370 shot jps-row4-left
+4380 hand_yaw 8.75
+4410 right_trigger 1
+4416 right_trigger 0
+4470 shot jps-row4-done
+4480 hand_pitch -35
+4500 b 1
+4506 b 0
+4620 shot jps-options2
+4640 left_y -1
+4650 left_y 0
+4680 left_y -1
+4690 left_y 0
+4720 shot jps-options3
+4750 a 1
+4756 a 0
+4870 shot jps-sound
+4880 hand_pitch 19.5
+4920 shot jps-vol
+4930 right_trigger 1
+4936 right_trigger 0
+4990 shot jps-vol-sel
+5000 hand_yaw -11.8
+5030 right_trigger 1
+5090 shot jps-vol-held
+5100 right_trigger 0
+5160 shot jps-vol-up
+5170 hand_yaw 27.6
+5200 right_trigger 1
+5270 right_trigger 0
+5330 shot jps-vol-down
+5340 hand_yaw 8.75
+5370 right_trigger 1
+5376 right_trigger 0
+5430 shot jps-vol-done
+5440 hand_pitch -35
+5460 b 1
+5466 b 0
+5580 shot jps-options4
+5640 quit 0

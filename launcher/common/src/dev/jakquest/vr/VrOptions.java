@@ -170,15 +170,29 @@ public final class VrOptions {
     public static final Option ANISOTROPY = atStart(choice("anisotropy", "Anisotropic filtering",
             "Keeps floors and walls sharp at a low angle. 16x is the games' own.",
             new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"}, "16"));
-    // ---- Performance (0.1.1; each off to start: the owner, "optional and off by default of course") ----
-    public static final Option FRAME_RATE = choice("frame-rate", "Game frame rate",
-            "How often the game draws a new picture. 60 is how the games were made. The headset's: a new picture for "
-                    + "every frame the headset shows, the smoothest and the most work. Half the headset's: half the "
-                    + "work, and the headset turns each picture to your head in between (36 a second at 72 Hz).",
-            new String[] {"60", "The headset's", "Half the headset's"}, new String[] {"0", "1", "2"}, "0");
-    public static final Option DYNAMIC_RESOLUTION = toggle("dynamic-resolution", "Dynamic resolution",
+    // ---- Performance (0.1.1, off to start then; 0.1.3, the owner: "do EVERYTHING that can boost performance and have
+    // them as options in the launcher ... leave on the ones you see best for performance by default") ----
+    // 0.1.3: Automatic to start, under a new key ("frame-rate" was 0.1.1's, 60 to start), so a file an older release
+    // wrote starts at Automatic; a player's own The headset's or Half the headset's is kept (read).
+    public static final Option FRAME_RATE = choice("game-frame-rate", "Game frame rate",
+            "How often the game draws a new picture. Automatic: a new picture for every frame the headset shows while "
+                    + "the game keeps up, and 60 a second while it does not (tried again now and then). 60 is how the "
+                    + "games were made. The headset's: always the headset's rate, the smoothest and the most work. Half "
+                    + "the headset's: half the work, and the headset turns each picture to your head in between.",
+            new String[] {"Automatic", "60", "The headset's", "Half the headset's"}, new String[] {"3", "0", "1", "2"},
+            "3");
+    // 0.1.3: on to start, under a new key (0.1.1's "dynamic-resolution" was off to start)
+    public static final Option DYNAMIC_RESOLUTION = toggle("dynamic-resolution-on", "Dynamic resolution",
             "The eyes are drawn a little smaller while the headset is not keeping up with the game, and back at "
                     + "full size when it is. Eye resolution is the size it starts from.",
+            true);
+    public static final Option SHARE_EYE_WORK = toggle("share-eye-work", "Share work between eyes",
+            "The second eye uses what the processor worked out for the first eye's picture of the same frame (the "
+                    + "colors of the level's light and what is in view), so each frame is less work. Looks the same.",
+            true);
+    public static final Option SHOW_PERFORMANCE = toggle("show-performance", "Show performance",
+            "A small line low in your view: frames a second (of the headset's), the game's pictures a second, each "
+                    + "picture's work in milliseconds (average / most) and the eyes' resolution.",
             false);
     public static final Option PS2_DETAIL = toggle("ps2-detail", "PS2 detail",
             "Far-off things, effects and shadows drawn as the PlayStation 2 drew them: faster, with some pop-in as "
@@ -189,7 +203,7 @@ public final class VrOptions {
                     + "does nothing.",
             new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, "0"));
     public static final Option[] GRAPHICS = {RESOLUTION, REFRESH, SPACE_WARP, FOVEATION, BOOST, MAX_DRAW, MSAA,
-            ANISOTROPY, FRAME_RATE, DYNAMIC_RESOLUTION, PS2_DETAIL, SHARPEN};
+            ANISOTROPY, FRAME_RATE, DYNAMIC_RESOLUTION, SHARE_EYE_WORK, SHOW_PERFORMANCE, PS2_DETAIL, SHARPEN};
 
     // ---- VR Body: the view, the body and the HUD ----
     public static final Option VIEW = choice("first-person", "View",
@@ -204,9 +218,27 @@ public final class VrOptions {
                     + "titles, a ride, a shot of somewhere else), and back through his eyes when he is.", true);
     public static final Option TALKS = toggle("first-person-in-talks", "Talks in first person",
             "A talk during play seen from his eyes too, rather than the game's camera around you.", true);
-    public static final Option VEHICLES = toggle("first-person-vehicles", "First person in vehicles",
+    // 0.1.3 (the owner: "make that the new default"): on to start, under a new key, so a file an older release wrote
+    // (where it was off to start) starts on too
+    public static final Option VEHICLES = toggle("first-person-vehicles-on", "First person in vehicles",
             "On the Zoomer, the JET-Board, in cars, turrets, slides, the Titan suit and on the flut flut: seen from his "
-                    + "eyes too, the view turning with what he rides. Off: the game's camera around you there.", false);
+                    + "eyes too, the view turning with what he rides. Off: the game's camera around you there.", true);
+    // 0.1.3 (the owner: "add options to adjust angle/positioning as needed"): the view in a vehicle, first person
+    public static final Option VEHICLE_HEIGHT = number("vehicle-view-height", "Vehicle view height",
+            "First person in a vehicle: raises or lowers the view from his eyes there. His body stays in his seat.",
+            -50, 50, 5, " cm", 0);
+    public static final Option VEHICLE_FORWARD = number("vehicle-view-forward", "Vehicle view forward",
+            "First person in a vehicle: the view ahead of his eyes (towards where it goes) or behind them.",
+            -50, 50, 5, " cm", 0);
+    public static final Option VEHICLE_TILT = number("vehicle-view-tilt", "Vehicle view tilt",
+            "First person in a vehicle: looking straight ahead you see this far down (more of the road, the board "
+                    + "under you), or up with less than 0. 0 keeps the horizon level.",
+            -30, 30, 5, " degrees", 0);
+    // 0.1.3 (a player on Jak 3's leaper lizard: "shakes camera to point where you can't see where your going")
+    public static final Option STEADY_RIDE = toggle("steady-ride-view", "Steady view when riding",
+            "First person in a vehicle or on an animal (Jak 3's leaper lizards, the flut flut): the view stays in his "
+                    + "seat, facing where the ride goes, without each bounce and shake of the ride. Off: the view "
+                    + "follows his head's every bob.", true);
     public static final Option SEATED = toggle("seated", "Seated play",
             "For playing sitting down: the view at his eyes whatever your height.", false);
     public static final Option VIEW_HEIGHT = number("view-height", "View height",
@@ -256,7 +288,8 @@ public final class VrOptions {
     public static final Option HUD_FOLLOWS = toggle("hud-follows-head", "HUD follows your head",
             "On, the HUD moves with your head. Off, it stays put ahead of you, and moves only when you look well away.",
             true);
-    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
+    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, VEHICLE_HEIGHT, VEHICLE_FORWARD,
+            VEHICLE_TILT, STEADY_RIDE, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
             BODY_SHOWN, HIDE_ARMS_NEAR_EYES, FADE_BODY, KEEP_UPRIGHT, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
             HUD_DISTANCE, HUD_HEIGHT, HUD_FOLLOWS};
 
@@ -285,9 +318,10 @@ public final class VrOptions {
     public static final Option MELEE = toggle("hand-melee", "Physical melee",
             "Punch to punch, sweep a hand across to spin kick, punch upward from a crouch to uppercut.", true);
     public static final Option MELEE_GRIP = toggle("melee-grip", "Fists on the right grip",
-            "Hold the right grip to make fists: only fists hit, so moving your hands never hits by accident. Its old "
-                    + "button (the JET-Board) moves to the right stick click. The left grip makes the left fist too "
-                    + "(in Jak II and 3 it is still Dark Jak's button).",
+            "Hold the right grip to make fists: only fists hit, so moving your hands never hits by accident. The left "
+                    + "grip makes the left fist too. On foot the grips' old buttons move to the stick clicks: the right "
+                    + "grip's (the JET-Board) to the right stick, the left grip's (Dark Jak; in Jak 3 hold it and the "
+                    + "right stick picks Light Jak's powers) to the left stick.",
             true);
     public static final Option STICK_CLICK_MENU = toggle("stick-click-menu", "Stick click as menu button",
             "When SteamVR keeps the left menu button (Touch controllers there), the left stick's click is the menu "
@@ -309,6 +343,21 @@ public final class VrOptions {
             "In a car, on the board or a turret, a grip at your hip or shoulder stays the game's own button.", true));
     public static final Option GUN_ANGLE = guns(number("gun-angle", "Gun angle",
             "The gun tilted up or down from the controller.", -45, 45, 5, " degrees", 0));
+    // 0.1.3 the gun's crosshair (LIST-0.1.3 item 27; game/vr/crosshair.h, the in-game VR menu's same rows)
+    public static final Option CROSSHAIR = guns(choice("crosshair", "Crosshair",
+            "A mark on whatever your shot would hit first, the same size however far. First person, aiming with your hand.",
+            new String[] {"Off", "Dot", "Cross", "Cross and dot", "Circle", "Circle and dot", "Plus"},
+            new String[] {"0", "1", "2", "3", "4", "5", "6"}, "1"));
+    public static final Option CROSSHAIR_SIZE = guns(number("crosshair-size", "Crosshair size",
+            "How big the crosshair looks. It stays that size near or far.", 50, 300, 25, "%", 100));
+    public static final Option CROSSHAIR_COLOR = guns(choice("crosshair-color", "Crosshair color",
+            "The crosshair's color. It has a dark edge so it shows on anything.",
+            new String[] {"White", "Green", "Yellow", "Cyan", "Red", "Pink"},
+            new String[] {"0", "1", "2", "3", "4", "5"}, "0"));
+    public static final Option CROSSHAIR_OPACITY = guns(number("crosshair-opacity", "Crosshair opacity",
+            "How solid the crosshair is. Less lets you see through it.", 20, 100, 10, "%", 100));
+    public static final Option CROSSHAIR_ENEMY = guns(toggle("crosshair-enemy", "Crosshair red on enemies",
+            "The crosshair turns red on an enemy your gun can reach (yellow if yours is red).", true));
     public static final Option VIBRATION = toggle("vibration", "Vibration", "The controllers buzz.", true);
     public static final Option VIBRATION_STRENGTH = number("vibration-strength", "Vibration strength",
             "How hard every buzz is.", 25, 200, 25, "%", 100);
@@ -320,7 +369,8 @@ public final class VrOptions {
             "A quick pulse in the gun's hand as you change guns.", true));
     public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
-            HOLSTER_ON_FOOT, GUN_ANGLE, VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, GUN_SWITCH_BUZZ};
+            HOLSTER_ON_FOOT, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
+            VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, GUN_SWITCH_BUZZ};
 
     /** The launcher's tabs of options, in order. */
     public static final String[] TAB_NAMES = {"Graphics", "VR Body", "VR Controls"};
@@ -332,13 +382,37 @@ public final class VrOptions {
      * Jak 1's multiplayer (game/party.h): Teamruns' game side with a party of our own. Jak 1's file only. On to start
      * (owner, 2026-11-14): it changes nothing in the game until the player hosts or joins a game.
      */
-    public static final Option MULTIPLAYER = toggle("multiplayer", "Multiplayer",
+    public static final Option MULTIPLAYER = toggle("multiplayer", "Jak 1 multiplayer",
             "Jak 1: play together, built on Teamruns, the community's Jak 1 multiplayer. One player hosts and the others "
             + "join, on this network or through a party server: their Jaks are in your game, and what one takes, "
             + "everyone has. In the game: Options, VR Options, Multiplayer, to host or join. Until you do, it changes "
             + "nothing in the game; turn it off to keep it out altogether.", true);
+    /**
+     * 0.1.3 (LIST-0.1.3 item 15): Jak II's multiplayer (the community's Jak II multiplayer mod, game/multiplayer/jak2),
+     * the same "multiplayer" key in Jak II's own file. On to start; off (owner, 2026-11-16: "just to make it simple in
+     * case of conflicts"), the game starts nothing of it and its title and menus are the game's own.
+     */
+    public static final Option MULTIPLAYER_JAK2 = toggle("multiplayer", "Jak II multiplayer",
+            "Jak II: play the story together, built on the community's Jak II multiplayer mod (an early one: its own "
+            + "makers call it a beta). One player hosts and the others join, on this network or by the host's address: "
+            + "their Jaks are in your game, with their VR head and hands. In the game: Multiplayer on the title, for "
+            + "Host Game and Join Game. Until you host or join, it changes nothing in the game; turned off, nothing of "
+            + "it runs at all. Turn it off if anything seems wrong with it on.", true);
+    /** Only for reading and writing a file: the key is the same in each game's file (MULTIPLAYER_SWITCHES has both). */
     public static final Option[] MODS = {MULTIPLAYER};
+    /** Jak 1's party.txt sits beside its file. */
     public static final String MULTIPLAYER_GAME = "jak1";
+    /** The Mods page's multiplayer switches, each in its game's own file: MULTIPLAYER_GAMES[i]. */
+    public static final Option[] MULTIPLAYER_SWITCHES = {MULTIPLAYER, MULTIPLAYER_JAK2};
+    public static final String[] MULTIPLAYER_GAMES = {"jak1", "jak2"};
+
+    /** The multiplayer switch of this game (jak1, jak2), or null where there is none (jak3). */
+    public static Option multiplayerOf(String game) {
+        for (int i = 0; i < MULTIPLAYER_GAMES.length; i++) {
+            if (MULTIPLAYER_GAMES[i].equals(game)) return MULTIPLAYER_SWITCHES[i];
+        }
+        return null;
+    }
 
     // ---- party.txt, beside Jak 1's vr-options.txt: what game/party.cpp reads ----
 
@@ -471,6 +545,7 @@ public final class VrOptions {
     public static Map<String, String> read(File file) {
         Map<String, String> values = new LinkedHashMap<>();
         for (Option o : all()) values.put(o.key, o.fallback);
+        boolean gameRate = false;  // 0.1.3: "game-frame-rate" in the file (else 0.1.1's "frame-rate" 1 or 2 is kept)
         if (file.isFile()) {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8))) {
@@ -482,11 +557,14 @@ public final class VrOptions {
                     String value = words[1];
                     if (o == WORLD_SCALE || o == THIRD_SCALE) value = fromScale(value);
                     values.put(words[0], o == null ? value : o.clean(value));
+                    if (o == FRAME_RATE) gameRate = true;
                 }
             } catch (IOException ignored) {
                 // the defaults
             }
         }
+        String oldRate = values.get("frame-rate");
+        if (!gameRate && ("1".equals(oldRate) || "2".equals(oldRate))) values.put(FRAME_RATE.key, oldRate);
         return values;
     }
 

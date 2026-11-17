@@ -34,6 +34,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,6 +44,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import static dev.jakquest.vr.PcWidgets.Btn;
@@ -62,8 +64,10 @@ import static dev.jakquest.vr.PcWidgets.weighted;
 public final class PcLauncher {
     static final String TITLE = "Jak and Daxter VR";
     static final String RATCHET_URL = "https://github.com/moistman42069/RatchetAndClank-Quest-VR/releases/latest";
-    private static final String[] TABS = {"Play", "Graphics", "VR Body", "VR Controls", "Controls", "Mods", "Logs",
-        "Credits"};
+    /** 0.1.3: Texture packs a tab of their own (the owner: bundled with Mods they were confusing). */
+    private static final String[] TABS = {"Play", "Graphics", "VR Body", "VR Controls", "Controls", "Texture packs",
+        "Mods", "Logs", "Credits"};
+    private static final int TAB_PACKS = 5, TAB_MODS = 6;
 
     private final PcPaths paths;
     private JFrame frame;
@@ -80,6 +84,10 @@ public final class PcLauncher {
     private File logsZip;
     private String presetNote = "";
     private String modsNote = "";
+    /** What the last texture pack import or change did, shown on the Texture packs tab. */
+    private String packsNote = "";
+    /** The game Find texture packs shows. */
+    private int packsGame = 0;
     /** The mod lists once read (ModList: by Browse mods, or as the launcher starts with Automatic checks on). */
     private volatile ModList modList;
     private volatile boolean modListBusy;
@@ -157,9 +165,11 @@ public final class PcLauncher {
         });
         buildFrame();
         frame.setContentPane(root);
+        frame.setTransferHandler(new PackDrop());
         frame.setSize(1180, 780);
         frame.setMinimumSize(new Dimension(860, 600));
         frame.setLocationRelativeTo(null);
+        PcDataFolder.finishLeftover(paths, () -> SwingUtilities.invokeLater(this::redrawIfPlay));
         showTab(0);
         frame.setVisible(true);
         String last = PcUpdater.lastInstall(paths);
@@ -181,6 +191,32 @@ public final class PcLauncher {
                 return;
             }
             PcSetup.stop();
+        }
+        if (PcDataFolder.STATE.running) {
+            boolean copying = PcDataFolder.STATE.copying;
+            int answer = JOptionPane.showConfirmDialog(frame, copying
+                ? "The games are being moved. Stop and close?\nWhat was copied is removed, and the games stay where they "
+                    + "were."
+                : "The old copy of the games is being removed. Close?\nThe launcher finishes it next time.", TITLE,
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (answer != JOptionPane.YES_OPTION) {
+                return;
+            }
+            PcDataFolder.stop();
+            Thread moving = PcDataFolder.STATE.thread;
+            if (copying && moving != null) {
+                // the window goes at once; the launcher ends once the partial copy is removed
+                frame.dispose();
+                new Thread(() -> {
+                    try {
+                        moving.join();
+                    } catch (InterruptedException ignored) {
+                        // closing anyway
+                    }
+                    System.exit(0);
+                }, "closing").start();
+                return;
+            }
         }
         frame.dispose();
         System.exit(0);
@@ -376,11 +412,12 @@ public final class PcLauncher {
             case 2: showOptions(1); break;
             case 3: showOptions(2); break;
             case 4: showControls(); break;
-            case 5: showMods(); break;
-            case 6: showLogs(); break;
+            case TAB_PACKS: showTexturePacks(); break;
+            case TAB_MODS: showMods(); break;
+            case 7: showLogs(); break;
             default: showCredits(); break;
         }
-        if (index == 0 && (PcSetup.STATE.running || game != null)) {
+        if (index == 0 && (PcSetup.STATE.running || game != null || PcDataFolder.STATE.running)) {
             watcher.start();
         } else {
             watcher.stop();
@@ -451,10 +488,138 @@ public final class PcLauncher {
             card.add(text(PcSetup.STATE.failure, 15, PcArtwork.INK, false));
             page.add(card);
         }
+        if (PcDataFolder.STATE.running) {
+            page.add(dataFolderProgress());
+        } else if (PcDataFolder.missing(paths)) {
+            Card card = card();
+            card.add(text("Your games' folder is not there", 18, PcArtwork.BAD, true));
+            card.add(text(paths.data() + " cannot be found. If it is on a drive that is not plugged in, plug it in and "
+                + "press Look again. Or keep the games in another place (Where the games are kept, below): they are set "
+                + "up there again from your discs.", 15, PcArtwork.INK, false));
+            card.add(gap(6));
+            card.add(new Btn("Look again", false, this::redraw));
+            page.add(card);
+        }
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             page.add(gameCard(i));
         }
+        page.add(dataFolderCard());
         showUpdates();
+    }
+
+    // ---- Where the games are kept (PcDataFolder) ----
+
+    private Card dataFolderProgress() {
+        boolean copying = PcDataFolder.STATE.copying;
+        int percent = PcDataFolder.STATE.percent;
+        Card card = card();
+        card.add(text(copying ? "Moving the games" : "Removing the games' old copy", 20, PcArtwork.ACCENT, true));
+        card.add(text(PcDataFolder.STATE.phase + (percent >= 0 ? ": " + percent + "%." : "...")
+            + (copying ? " The games can be played and set up again once it is done." : " You can play meanwhile."),
+            15, PcArtwork.INK, false));
+        if (percent >= 0) {
+            card.add(new PcWidgets.Bar(percent));
+        }
+        if (copying) {
+            card.add(gap(6));
+            card.add(new Btn("Stop", false, () -> {
+                PcDataFolder.stop();
+                redraw();
+            }));
+        }
+        return card;
+    }
+
+    private Card dataFolderCard() {
+        Card card = card();
+        card.add(text("Where the games are kept", 18, PcArtwork.ACCENT, true));
+        File data = paths.data();
+        long free = PcDataFolder.free(data);
+        card.add(text("Each game's set-up (its extracted disc and the game built from it, up to about 10 GB a game) is "
+            + "kept in " + data + (paths.dataMoved() ? "" : " (the default place)")
+            + (free >= 0 ? ", with " + PcDataFolder.size(free) + " free on that drive" : "") + ". To keep the games on "
+            + "another drive, move them there: on another drive everything is copied and checked before the old copy "
+            + "is removed. Your saves and options stay in " + paths.home + ".", 15, PcArtwork.INK, false));
+        if (PcDataFolder.STATE.done != null) {
+            card.add(text(PcDataFolder.STATE.done, 14, PcArtwork.GOOD, false));
+        }
+        if (PcDataFolder.STATE.failure != null) {
+            card.add(text(PcDataFolder.STATE.failure, 14, PcArtwork.BAD, false));
+        }
+        boolean blocked = game != null || PcSetup.STATE.running || PcDataFolder.STATE.running;
+        JPanel buttons = row(6);
+        buttons.setBorder(new EmptyBorder(8, 0, 0, 0));
+        Btn move = new Btn("Move to another drive or folder...", false, this::pickDataFolder);
+        move.setEnabled(!blocked);
+        buttons.add(weighted(move, 2f));
+        if (paths.dataMoved()) {
+            Btn back = new Btn("Back to the default place", false, () -> moveData(paths.defaultData()));
+            back.setEnabled(!blocked);
+            buttons.add(weighted(back, 1f));
+        }
+        buttons.add(weighted(new Btn("Open the folder", false, () -> openFolder(paths.data())), 1f));
+        card.add(buttons);
+        return card;
+    }
+
+    /** A folder picker for folders (Windows' look: the launcher's own has no folder picker of its own). */
+    private void pickDataFolder() {
+        javax.swing.LookAndFeel before = UIManager.getLookAndFeel();
+        JFileChooser chooser;
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            chooser = new JFileChooser();
+        } catch (Exception e) {
+            chooser = new JFileChooser();
+        } finally {
+            try {
+                UIManager.setLookAndFeel(before);
+            } catch (Exception ignored) {
+                // the chooser is made; the launcher draws its own widgets
+            }
+        }
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setDialogTitle("Where to keep the games: a drive or a folder (a folder named " + PcDataFolder.NAME
+            + " is made in it)");
+        chooser.setApproveButtonText("Keep them here");
+        if (chooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File picked = chooser.getSelectedFile() != null ? chooser.getSelectedFile() : chooser.getCurrentDirectory();
+        if (picked != null) {
+            moveData(PcDataFolder.target(picked));
+        }
+    }
+
+    private void moveData(File target) {
+        if (game != null || PcSetup.STATE.running || PcDataFolder.STATE.running) {
+            JOptionPane.showMessageDialog(frame, "Close the game, and let a set-up finish, first.", TITLE,
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        String why = PcDataFolder.refuse(paths, target);
+        if (why != null) {
+            JOptionPane.showMessageDialog(frame, why, TITLE, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String[] had = paths.data().list();
+        boolean nothing = had == null || had.length == 0;
+        int answer = JOptionPane.showConfirmDialog(frame, "Keep the games in " + target + " from now on?" + (nothing ? ""
+            : "\n\nEverything in " + paths.data() + " goes there. On another drive it is copied and checked,\nthen "
+                + "removed from here: that can take a while (up to about 10 GB a game), and meanwhile\nthe games cannot "
+                + "be played or set up. Your saves and options stay where they are."), TITLE,
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (answer != JOptionPane.YES_OPTION) {
+            return;
+        }
+        log("games' folder: from " + paths.data() + " to " + target);
+        PcDataFolder.start(paths, target, () -> SwingUtilities.invokeLater(() -> {
+            String done = PcDataFolder.STATE.done, failure = PcDataFolder.STATE.failure;
+            log("games' folder: " + (failure != null ? failure : done));
+            redrawIfPlay();
+        }));
+        redraw();
     }
 
     private Card gameCard(int index) {
@@ -462,7 +627,8 @@ public final class PcLauncher {
         Card card = card();
         card.add(text(VrOptions.GAME_NAMES[index], 20, PcArtwork.INK, true));
         PcSetup.Status status = PcSetup.status(paths, game);
-        boolean busy = PcSetup.STATE.running;
+        boolean moving = PcDataFolder.STATE.copying;
+        boolean busy = PcSetup.STATE.running || moving || PcDataFolder.missing(paths);
         JPanel buttons = row(6);
         buttons.setBorder(new EmptyBorder(8, 0, 0, 0));
         String disc = status == PcSetup.Status.NONE ? null : DiscVersion.describe(paths.extracted(game));
@@ -473,17 +639,23 @@ public final class PcLauncher {
             case READY:
                 card.add(text("Ready. Start your headset's PC VR software (SteamVR, Meta Horizon Link, Virtual Desktop "
                     + "or another), then play.", 14, PcArtwork.MUTED, false));
-                buttons.add(weighted(new Btn("PLAY IN VR", true, () -> play(game)), 2f));
-                buttons.add(weighted(new Btn("Remove", false, () -> remove(game)), 1f));
+                Btn playIt = new Btn("PLAY IN VR", true, () -> play(game));
+                Btn removeIt = new Btn("Remove", false, () -> remove(game));
+                playIt.setEnabled(!moving);
+                removeIt.setEnabled(!moving);
+                buttons.add(weighted(playIt, 2f));
+                buttons.add(weighted(removeIt, 1f));
                 break;
             case OUTDATED:
                 card.add(text((PcSetup.newSources(paths, game) ? "This version brings new game code"
-                    : "Your texture packs changed (Mods)") + ": the game is built again from your disc (extracted "
+                    : "Your texture packs changed (Texture packs)") + ": the game is built again from your disc (extracted "
                     + "before, so no disc needed). A few minutes, once.", 14, PcArtwork.MUTED, false));
                 Btn rebuild = new Btn("Build it again", true, () -> setUp(game, null));
+                Btn removeOld = new Btn("Remove", false, () -> remove(game));
                 buttons.add(weighted(rebuild, 2f));
-                buttons.add(weighted(new Btn("Remove", false, () -> remove(game)), 1f));
+                buttons.add(weighted(removeOld, 1f));
                 rebuild.setEnabled(!busy);
+                removeOld.setEnabled(!moving);
                 break;
             default:
                 card.add(text("Not set up. It is made from your own disc image (.iso) of the game, once; no game files "
@@ -511,6 +683,9 @@ public final class PcLauncher {
     }
 
     private void setUp(String game, File iso) {
+        if (PcDataFolder.STATE.copying) {
+            return;  // the games are being moved (the buttons are off meanwhile)
+        }
         playFailure = null;
         log("set-up of " + game + (iso == null ? " again" : " from a disc image"));
         PcSetup.start(paths, game, iso, () -> SwingUtilities.invokeLater(this::redrawIfPlay));
@@ -530,6 +705,9 @@ public final class PcLauncher {
 
     /** gk for PC VR: the game from the player's data folder, its settings in theirs, JAKVR=1. */
     private void play(String game) {
+        if (PcDataFolder.STATE.copying) {
+            return;
+        }
         playFailure = null;
         if (!paths.gk().isFile()) {
             playFailure = "The release's game\\gk.exe is missing: unzip the release again.";
@@ -757,18 +935,18 @@ public final class PcLauncher {
         return card;
     }
 
-    // ---- Mods: what works here, Multiplayer built in (VrOptions.MULTIPLAYER, with its switch), texture packs
-    // (TexturePacks, each with On / Off and Update) and Browse mods (ModList: this project's list and jakmods.dev's) ----
+    // ---- Mods: what works here, Multiplayer built in (VrOptions.MULTIPLAYER_SWITCHES, one per game) and Browse mods
+    // (ModList: this project's list and jakmods.dev's). Texture packs have their own tab (0.1.3) ----
 
     private void showMods() {
         Card about = card();
         about.add(text("Mods", 18, PcArtwork.ACCENT, true));
         about.add(text("What works in Jak and Daxter Quest VR:", 14, PcArtwork.INK, true));
-        about.add(text("•  Multiplayer (Jak 1) comes built in and on: it changes nothing until you host or join a "
-            + "game, and turned off here it is out of the game altogether.", 13, PcArtwork.MUTED, false));
-        about.add(text("•  Texture packs (all three games): new pictures in place of the game's own. Add one from "
-            + "Browse mods at the bottom, or from a pack's .zip you have. The game is then built again with them from "
-            + "your disc (extracted before, no disc needed, a few minutes).", 13, PcArtwork.MUTED, false));
+        about.add(text("•  Multiplayer (Jak 1 and Jak II) comes built in and on, each game with its own switch "
+            + "below: it changes nothing until you host or join a game, and turned off here it is out of that game "
+            + "altogether.", 13, PcArtwork.MUTED, false));
+        about.add(text("•  Texture packs (new pictures in place of the game's own) have their own tab: Texture packs, "
+            + "where you import one you downloaded or find one, and turn each on or off.", 13, PcArtwork.MUTED, false));
         about.add(text("•  The mods in the OpenGOAL launcher and on jakmods.dev (new gameplay, levels, randomizers) "
             + "are whole games of their own made for a flat screen: they cannot run in VR. Browse mods lists them as "
             + "Flat screen only, with their page, so you can see what there is.", 13, PcArtwork.MUTED, false));
@@ -778,41 +956,200 @@ public final class PcLauncher {
         }
         page.add(about);
 
-        VrOptions.Option o = VrOptions.MULTIPLAYER;
-        File file = paths.vrOptions(VrOptions.MULTIPLAYER_GAME);
-        String current = o.clean(VrOptions.read(file).getOrDefault(o.key, o.fallback));
-        Card card = card();
-        card.add(text(o.label + "  (Jak 1)", 16, PcArtwork.INK, true));
-        card.add(text(o.help, 13, PcArtwork.MUTED, false));
+        // 0.1.3: a switch per game (VrOptions.MULTIPLAYER_SWITCHES), each in its own game's file; Jak 1's party card
+        // (name and party server) under its switch while it is on
+        for (int g = 0; g < VrOptions.MULTIPLAYER_SWITCHES.length; g++) {
+            VrOptions.Option o = VrOptions.MULTIPLAYER_SWITCHES[g];
+            String game = VrOptions.MULTIPLAYER_GAMES[g];
+            File file = paths.vrOptions(game);
+            String current = o.clean(VrOptions.read(file).getOrDefault(o.key, o.fallback));
+            Card card = card();
+            card.add(text(o.label, 16, PcArtwork.INK, true));
+            card.add(text(o.help, 13, PcArtwork.MUTED, false));
+            JPanel buttons = row(6);
+            buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
+            for (int i = 0; i < o.names.length; i++) {
+                final String value = o.values[i];
+                Btn b = new Btn(o.names[i], false, () -> {
+                    Map<String, String> values = VrOptions.read(file);
+                    values.put(o.key, value);
+                    try {
+                        VrOptions.write(file, values);
+                        modsNote = "";
+                    } catch (IOException e) {
+                        modsNote = "Could not save: " + e.getMessage();
+                    }
+                    redraw();
+                });
+                if (value.equals(current)) {
+                    b.chosen();
+                }
+                buttons.add(weighted(b, 1f));
+            }
+            card.add(buttons);
+            page.add(card);
+            if (VrOptions.MULTIPLAYER_GAME.equals(game) && VrOptions.isOn(current)) {
+                showParty();
+            }
+        }
+        page.add(browseCard(false));
+    }
+
+    // ---- Texture packs (0.1.3, their own tab): import one downloaded (a .zip, a folder, or either dropped on the
+    // window: TexturePacks.Stager finds the game, else asks), each game's list (On / Off, Up / Down, Remove, Update)
+    // and Find texture packs (the mod lists' packs) ----
+
+    private void showTexturePacks() {
+        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
+        Card about = card();
+        about.add(text("Texture packs", 18, PcArtwork.ACCENT, true));
+        about.add(text("New pictures in place of the game's own, for each of the three games. Each pack can be turned "
+            + "on or off, put above another (the higher one wins where two change the same picture) or removed. The "
+            + "game is then built again with the ones on, from your disc extracted before (no disc needed, a few "
+            + "minutes).", 13, PcArtwork.MUTED, false));
+        about.add(PcWidgets.gap(6));
+        about.add(text("Import a texture pack you downloaded", 16, PcArtwork.INK, true));
+        about.add(text("Its .zip, or the folder you unpacked it to (a pack inside a .zip is found too). It goes to the "
+            + "game it is for, on; when it does not say, you are asked. You can also drop a .zip or a folder onto this "
+            + "window. Packs made for OpenGOAL work (their pictures are in a texture_replacements folder); packs for the "
+            + "PCSX2 emulator do not, and a .7z or .rar needs unpacking first.", 13, PcArtwork.MUTED, false));
         JPanel buttons = row(6);
         buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
-        for (int i = 0; i < o.names.length; i++) {
-            final String value = o.values[i];
-            Btn b = new Btn(o.names[i], false, () -> {
-                Map<String, String> values = VrOptions.read(file);
-                values.put(o.key, value);
-                try {
-                    VrOptions.write(file, values);
-                    modsNote = "";
-                } catch (IOException e) {
-                    modsNote = "Could not save: " + e.getMessage();
-                }
-                redraw();
-            });
-            if (value.equals(current)) {
-                b.chosen();
-            }
-            buttons.add(weighted(b, 1f));
+        Btn zip = new Btn("Import a .zip...", true, this::importZip);
+        Btn folder = new Btn("Import a folder...", false, this::importFolder);
+        zip.setEnabled(!locked);
+        folder.setEnabled(!locked);
+        buttons.add(weighted(zip, 1f));
+        buttons.add(weighted(folder, 1f));
+        about.add(buttons);
+        if (!packsNote.isEmpty()) {
+            about.add(text(packsNote, 13, PcArtwork.ACCENT, false));
         }
-        card.add(buttons);
-        page.add(card);
-        if (VrOptions.isOn(current)) {
-            showParty();
-        }
+        page.add(about);
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             page.add(packsCard(i));
         }
-        page.add(browseCard());
+        page.add(browseCard(true));
+    }
+
+    /** Import a .zip...: the file asked for, then imported. */
+    private void importZip() {
+        FileDialog dialog = new FileDialog(frame, "A texture pack (.zip)", FileDialog.LOAD);
+        dialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".zip"));
+        dialog.setFile("*.zip");
+        dialog.setVisible(true);
+        if (dialog.getFile() != null) {
+            importPacks(java.util.Collections.singletonList(new File(dialog.getDirectory(), dialog.getFile())));
+        }
+    }
+
+    /** Import a folder...: the folder a pack was unpacked to. */
+    private void importFolder() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("The folder a texture pack was unpacked to");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile() != null) {
+            importPacks(java.util.Collections.singletonList(chooser.getSelectedFile()));
+        }
+    }
+
+    /** A .zip or a folder dropped anywhere on the window: imported, on the Texture packs tab. */
+    private final class PackDrop extends javax.swing.TransferHandler {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean canImport(javax.swing.TransferHandler.TransferSupport support) {
+            return support.isDataFlavorSupported(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+        }
+
+        @Override
+        public boolean importData(javax.swing.TransferHandler.TransferSupport support) {
+            if (!canImport(support) || packBusy) {
+                return false;
+            }
+            List<File> files = new ArrayList<>();
+            try {
+                Object data = support.getTransferable().getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                if (data instanceof List) {
+                    for (Object o : (List<?>) data) {
+                        if (o instanceof File) {
+                            files.add((File) o);
+                        }
+                    }
+                }
+            } catch (java.awt.datatransfer.UnsupportedFlavorException | IOException e) {
+                return false;
+            }
+            if (files.isEmpty()) {
+                return false;
+            }
+            showTab(TAB_PACKS);
+            importPacks(files);
+            return true;
+        }
+    }
+
+    /**
+     * Each file or folder imported in turn, in the background (TexturePacks.Stager): a pack goes to the game it names,
+     * and for one that names none the player is asked which.
+     */
+    private void importPacks(List<File> sources) {
+        if (packBusy) {
+            return;
+        }
+        packBusy = true;
+        packsNote = "Importing " + sources.get(0).getName() + "...";
+        redraw();
+        new Thread(() -> {
+            List<String> notes = new ArrayList<>();
+            for (File source : sources) {
+                try (TexturePacks.Stager s = new TexturePacks.Stager(paths.texturePacks(), source.getName(), null)) {
+                    if (source.isDirectory()) {
+                        s.folder(source);
+                    } else {
+                        s.zip(source);
+                    }
+                    TexturePacks.Imported done;
+                    try {
+                        done = s.finish(null, null);
+                    } catch (TexturePacks.NeedsGame ask) {
+                        String chosen = askGame(source.getName());
+                        if (chosen == null) {
+                            notes.add(source.getName() + " was not imported.");
+                            continue;
+                        }
+                        done = s.finish(chosen, null);
+                    }
+                    notes.add("Imported " + done.summary() + ": on. Build the game again with it (below) to see it.");
+                    log("texture pack imported from " + (source.isDirectory() ? "a folder" : "a file") + ": "
+                        + String.join(", ", done.games));
+                } catch (IOException e) {
+                    notes.add("Could not import " + source.getName() + ": " + e.getMessage());
+                }
+            }
+            packsNote = String.join(" ", notes);
+            packBusy = false;
+            SwingUtilities.invokeLater(this::redraw);
+        }, "texture-pack-import").start();
+    }
+
+    /** Which game a pack that does not say is for, asked on the window's thread; null when not answered. */
+    private String askGame(String name) {
+        String[] answer = new String[1];
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                String[] choices = {"Jak 1", "Jak II", "Jak 3", "Cancel"};
+                int picked = JOptionPane.showOptionDialog(frame, name + " does not say which game it is for. Which "
+                    + "game's texture pack is it?", TITLE, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, choices, choices[0]);
+                answer[0] = picked >= 0 && picked < VrOptions.GAMES.length ? VrOptions.GAMES[picked] : null;
+            });
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            return null;
+        }
+        return answer[0];
     }
 
     /** Multiplayer's name and party server (party.txt; game/party.cpp reads them as the game starts). */
@@ -853,18 +1190,19 @@ public final class PcLauncher {
     private Card packsCard(int index) {
         String game = VrOptions.GAMES[index];
         File root = paths.texturePacks();
-        boolean locked = packBusy || PcSetup.STATE.running;
+        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
         Card card = card();
         card.add(text("Texture packs: " + VrOptions.GAME_NAMES[index], 16, PcArtwork.INK, true));
         List<TexturePacks.Pack> packs = TexturePacks.list(root, game);
         if (packs.isEmpty()) {
-            card.add(text("None added. Add one from Browse mods below, or from a pack's .zip. A pack higher in the list "
-                + "wins where two change the same picture.", 13, PcArtwork.MUTED, false));
+            card.add(text("None yet: import one above, or find one below.", 13, PcArtwork.MUTED, false));
         }
         ModList lists = modList;
         for (TexturePacks.Pack p : packs) {
             card.add(PcWidgets.gap(6));
             card.add(text(p.line(), 14, PcArtwork.INK, true));
+            card.add(text(p.origin() + "  ·  " + (p.on ? "On" : "Off"), 12, p.on ? PcArtwork.ACCENT : PcArtwork.MUTED,
+                false));
             if (!p.description.isEmpty()) {
                 card.add(text(p.description, 12, PcArtwork.MUTED, false));
             }
@@ -901,21 +1239,23 @@ public final class PcLauncher {
             }
             card.add(buttons);
         }
-        JPanel buttons = row(6);
-        buttons.setBorder(new EmptyBorder(8, 0, 0, 0));
-        Btn add = new Btn("Add a texture pack (.zip)...", false, () -> addPack(game));
-        add.setEnabled(!locked);
-        buttons.add(weighted(add, 1f));
         PcSetup.Status status = PcSetup.status(paths, game);
         if (status != PcSetup.Status.NONE && TexturePacks.changed(root, game, paths.data())) {
+            card.add(PcWidgets.gap(6));
+            card.add(text("Changed since the game was built: build it again to see them.", 13, PcArtwork.ACCENT, false));
+            JPanel buttons = row(6);
+            buttons.setBorder(new EmptyBorder(4, 0, 0, 0));
             Btn rebuild = new Btn("Build the game again with them", true, () -> {
                 setUp(game, null);
                 showTab(0);
             });
             rebuild.setEnabled(!locked);
             buttons.add(weighted(rebuild, 1f));
+            card.add(buttons);
+        } else if (status == PcSetup.Status.NONE && !packs.isEmpty()) {
+            card.add(PcWidgets.gap(6));
+            card.add(text("The packs on go in when you set the game up (Play).", 13, PcArtwork.MUTED, false));
         }
-        card.add(buttons);
         return card;
     }
 
@@ -926,38 +1266,11 @@ public final class PcLauncher {
     private void packChange(PackStep step) {
         try {
             step.run();
-            modsNote = "";
+            packsNote = "";
         } catch (IOException e) {
-            modsNote = "Could not change the texture packs: " + e.getMessage();
+            packsNote = "Could not change the texture packs: " + e.getMessage();
         }
         redraw();
-    }
-
-    private void addPack(String game) {
-        FileDialog dialog = new FileDialog(frame, "A texture pack for " + VrOptions.GAME_NAMES[PcSetup.index(game)]
-            + " (.zip)", FileDialog.LOAD);
-        dialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".zip"));
-        dialog.setFile("*.zip");
-        dialog.setVisible(true);
-        if (dialog.getFile() == null) {
-            return;
-        }
-        File zip = new File(dialog.getDirectory(), dialog.getFile());
-        packBusy = true;
-        modsNote = "Adding " + zip.getName() + "...";
-        redraw();
-        new Thread(() -> {
-            try (java.io.InputStream in = new java.io.FileInputStream(zip)) {
-                TexturePacks.Pack p = TexturePacks.add(paths.texturePacks(), game, in, zip.getName());
-                modsNote = "Added " + p.line() + ".";
-                log("texture pack added for " + game + ": " + p.id);
-            } catch (IOException e) {
-                modsNote = "Could not add " + zip.getName() + ": " + e.getMessage();
-            } finally {
-                packBusy = false;
-                SwingUtilities.invokeLater(this::redraw);
-            }
-        }, "texture-pack").start();
     }
 
     /** The mod lists read again in the background (ModList.fetch never throws: its problems say what failed). */
@@ -973,33 +1286,40 @@ public final class PcLauncher {
             log("mod lists read: " + read.entries.size() + " mods" + (read.problems.isEmpty() ? ""
                 : "; " + String.join(" ", read.problems)));
             SwingUtilities.invokeLater(() -> {
-                if (tab == 5) {
+                if (tab == TAB_PACKS || tab == TAB_MODS) {
                     redraw();
                 }
             });
         }, "mod-lists").start();
     }
 
-    /** Browse mods: each game's mods in the lists, what each is here, and Add or Update for the texture packs. */
-    private Card browseCard() {
+    /**
+     * Find texture packs (packs: the Texture packs tab, the lists' texture packs with Add or Update) or Browse mods (the
+     * Mods tab: the rest, mods made for VR and OpenGOAL's flat-screen ones), each game's, and what each is here.
+     */
+    private Card browseCard(boolean packs) {
         Card card = card();
-        card.add(text("Browse mods", 16, PcArtwork.INK, true));
-        card.add(text("This project's own mod list (texture packs and mods made for VR) and jakmods.dev's (the list the "
-            + "OpenGOAL launcher's Mods reads), read when you ask" + (PcUpdater.automatic(paths)
-                ? " and as the launcher starts (Automatic checks, on the Play tab)" : "") + ".", 13, PcArtwork.MUTED,
+        card.add(text(packs ? "Find texture packs" : "Browse mods", 16, PcArtwork.INK, true));
+        card.add(text((packs ? "The texture packs in this project's own mod list and jakmods.dev's"
+            : "This project's own mod list (mods made for VR) and jakmods.dev's") + " (the list the OpenGOAL launcher's "
+            + "Mods reads), read when you ask" + (PcUpdater.automatic(paths)
+                ? " and as the launcher starts (Automatic checks, on the Play tab)" : "") + "." + (packs
+                ? " Most packs are shared on the web: import one you downloaded (above)." : ""), 13, PcArtwork.MUTED,
             false));
         ModList lists = modList;
         JPanel buttons = row(6);
         buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
-        Btn read = new Btn(modListBusy ? "Reading the mod lists..." : lists == null ? "Browse mods" : "Check again",
-            lists == null, () -> {
+        Btn read = new Btn(modListBusy ? "Reading the mod lists..." : lists == null
+            ? (packs ? "Find texture packs" : "Browse mods") : "Check again", lists == null, () -> {
                 readModList();
                 redraw();
             });
         read.setEnabled(!modListBusy);
         buttons.add(weighted(read, 1f));
         buttons.add(weighted(new Btn("Open jakmods.dev", false, () -> browse(ModList.COMMUNITY_SITE)), 1f));
-        buttons.add(weighted(new Btn("About mods here", false, () -> browse(ModList.OURS_PAGE)), 1f));
+        if (!packs) {
+            buttons.add(weighted(new Btn("About mods here", false, () -> browse(ModList.OURS_PAGE)), 1f));
+        }
         card.add(buttons);
         if (lists == null) {
             return card;
@@ -1012,26 +1332,35 @@ public final class PcLauncher {
         JPanel games = row(6);
         games.setBorder(new EmptyBorder(8, 0, 0, 0));
         String[] shortNames = {"Jak 1", "Jak II", "Jak 3"};
+        int chosen = packs ? packsGame : browseGame;
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             final int index = i;
             Btn b = new Btn(shortNames[i], false, () -> {
-                browseGame = index;
-                browseFlat = false;
+                if (packs) {
+                    packsGame = index;
+                } else {
+                    browseGame = index;
+                    browseFlat = false;
+                }
                 redraw();
             });
-            if (i == browseGame) {
+            if (i == chosen) {
                 b.chosen();
             }
             games.add(weighted(b, 1f));
         }
         card.add(games);
-        String game = VrOptions.GAMES[browseGame];
-        boolean locked = packBusy || PcSetup.STATE.running;
+        String game = VrOptions.GAMES[chosen];
+        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
         List<ModList.Entry> flat = new ArrayList<>();
-        int shown = 0;
+        int shown = 0, packsThere = 0;
         for (ModList.Entry e : lists.forGame(game)) {
-            if (e.kind == ModList.Kind.FLAT_SCREEN) {
-                flat.add(e);
+            if ((e.kind == ModList.Kind.TEXTURE_PACK) != packs) {
+                if (e.kind == ModList.Kind.FLAT_SCREEN) {
+                    flat.add(e);
+                } else if (e.kind == ModList.Kind.TEXTURE_PACK) {
+                    packsThere++;
+                }
                 continue;
             }
             shown++;
@@ -1074,12 +1403,13 @@ public final class PcLauncher {
         }
         if (shown == 0) {
             card.add(PcWidgets.gap(6));
-            card.add(text("No texture packs or VR mods for " + shortNames[browseGame] + " in the lists yet. A pack's "
-                + ".zip you have can be added above (Add a texture pack).", 13, PcArtwork.MUTED, false));
+            card.add(text(packs ? "No texture packs for " + shortNames[chosen] + " in the lists yet: import one you "
+                + "downloaded (above)." : "No mods made for VR for " + shortNames[chosen] + " in the lists yet."
+                + (packsThere > 0 ? " Its texture packs are on the Texture packs tab." : ""), 13, PcArtwork.MUTED, false));
         }
-        if (!flat.isEmpty()) {
+        if (!packs && !flat.isEmpty()) {
             card.add(PcWidgets.gap(10));
-            card.add(text(flat.size() + " of OpenGOAL's own mods for " + shortNames[browseGame] + " are flat screen "
+            card.add(text(flat.size() + " of OpenGOAL's own mods for " + shortNames[chosen] + " are flat screen "
                 + "only: whole games of their own, without VR. Play them with the OpenGOAL launcher.", 13,
                 PcArtwork.MUTED, false));
             JPanel toggle = row(6);
@@ -1113,13 +1443,13 @@ public final class PcLauncher {
             return;
         }
         packBusy = true;
-        modsNote = "Downloading " + entry.line() + "...";
+        packsNote = "Downloading " + entry.line() + "...";
         redraw();
         new Thread(() -> {
             File file = null;
             try {
                 file = ModList.download(entry, "JakQuestVR-launcher/" + PcBuild.VERSION, paths.modDownloads());
-                modsNote = "Adding " + entry.line() + "...";
+                packsNote = "Adding " + entry.line() + "...";
                 SwingUtilities.invokeLater(this::redraw);
                 String name = entry.key + ".zip";
                 TexturePacks.Pack p;
@@ -1127,11 +1457,11 @@ public final class PcLauncher {
                     p = old == null ? TexturePacks.add(paths.texturePacks(), game, in, name, entry)
                         : TexturePacks.update(paths.texturePacks(), game, old.id, in, name, entry);
                 }
-                modsNote = (old == null ? "Added " : "Updated to ") + p.line() + ".";
+                packsNote = (old == null ? "Added " : "Updated to ") + p.line() + ".";
                 log("texture pack " + (old == null ? "added" : "updated") + " for " + game + " from " + entry.ref()
                     + " " + entry.version + ": " + p.id);
             } catch (IOException e) {
-                modsNote = "Could not add " + entry.name + ": " + e.getMessage();
+                packsNote = "Could not add " + entry.name + ": " + e.getMessage();
             } finally {
                 if (file != null && file.isFile() && !file.delete()) {
                     file.deleteOnExit();
@@ -1251,8 +1581,9 @@ public final class PcLauncher {
         page.add(card);
         Card where = card();
         where.add(text("Where things are", 16, PcArtwork.INK, true));
-        where.add(text("Your set-up, saves and choices: " + paths.home + "\nLogs and the zips: " + paths.logs
-            + "\nAn update keeps all of them.", 14, PcArtwork.MUTED, false));
+        where.add(text("Your saves and choices: " + paths.home + "\nThe games' set-up: " + paths.data()
+            + (paths.dataMoved() ? "" : " (the Play tab's Where the games are kept moves it to another drive)")
+            + "\nLogs and the zips: " + paths.logs + "\nAn update keeps all of them.", 14, PcArtwork.MUTED, false));
         page.add(where);
     }
 

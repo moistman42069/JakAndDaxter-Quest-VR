@@ -73,6 +73,46 @@ public final class GameCodeTest {
         check(PcSetup.gameCode(paths).same.isEmpty(), "an empty list of the same reads as none");
         check(PcSetup.newSources(paths, "jak1"), "then a game built by 0.1.1 is built again");
 
+        // 0.1.3, building again only what changed: the compiler's sources and the decompiler's inputs in the mark.
+        write(codeFile, "id " + id + "\ndata 3\ncompiler abc123\nsame \n");
+        check(PcSetup.gameCode(paths).compiler.equals("abc123"), "the release's compiler line is read");
+        check(new PcSetup.GameCode("0.1.2\nid " + id + "\ndata 3\n").compiler.isEmpty(),
+            "a mark of 0.1.2 has no compiler: everything is compiled again");
+        check(PcSetup.markWord("0.1.3\r\nid x\r\ndecomp d00d\r\n", "decomp").equals("d00d"),
+            "a mark's decompile key is read, Windows line ends too");
+        check(PcSetup.markWord("0.1.3\nid x\n", "decomp").isEmpty(), "no decompile key: decompiled again");
+        String key1 = PcSetup.decompileKey(paths, "jak1", PcSetup.gameCode(paths));
+        check(key1.length() == 64 && key1.equals(PcSetup.decompileKey(paths, "jak1", PcSetup.gameCode(paths))),
+            "the decompile key is a SHA-256, the same twice");
+        File config = new File(paths.data(), "decompiler/config/jak1/jak1_config.jsonc");
+        write(config, "{ \"a\": 1 }");
+        String key2 = PcSetup.decompileKey(paths, "jak1", PcSetup.gameCode(paths));
+        check(!key2.equals(key1), "the decompiler's config changed: another key");
+        write(codeFile, "id " + id + "\ndata 4\ncompiler abc123\nsame \n");
+        check(!PcSetup.decompileKey(paths, "jak1", PcSetup.gameCode(paths)).equals(key2),
+            "another game data version: another key");
+
+        // 0.1.3: an update's sources copied over the last ones (syncTree): a file with the same bytes keeps its time (so
+        // the compiler's make leaves what depends only on it), a changed one is copied, one the release no longer has goes.
+        File from = new File(scratch, "sync/from"), to = new File(scratch, "sync/to");
+        write(new File(from, "same.gc"), "(same)");
+        write(new File(from, "kept/changed.gc"), "(old)");
+        write(new File(from, "gone.gc"), "(gone)");
+        PcSetup.syncTree(from, to);
+        long old = (System.currentTimeMillis() - 3_600_000L) / 1000 * 1000;
+        new File(to, "same.gc").setLastModified(old);
+        new File(to, "kept/changed.gc").setLastModified(old);
+        write(new File(from, "kept/changed.gc"), "(new)");  // the same length, other bytes
+        new File(from, "gone.gc").delete();
+        write(new File(from, "added.gc"), "(added)");
+        PcSetup.syncTree(from, to);
+        check(new File(to, "same.gc").lastModified() == old, "an update: a file with the same bytes keeps its time");
+        File changed = new File(to, "kept/changed.gc");
+        check(new String(Files.readAllBytes(changed.toPath()), StandardCharsets.UTF_8).equals("(new)")
+            && changed.lastModified() > old, "... a changed one (the same length) is copied, newer");
+        check(!new File(to, "gone.gc").exists(), "... one the release no longer has is removed");
+        check(new File(to, "added.gc").isFile(), "... a new one is copied");
+
         // Not set up at all.
         mark.delete();
         check(PcSetup.status(paths, "jak1") == PcSetup.Status.NONE, "no mark: not set up");

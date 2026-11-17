@@ -60,3 +60,20 @@ WebSocket++ (third-party/websocketpp): Copyright (c) 2014, Peter Thorson. All ri
   ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED.
 
 miniaudio (third-party/miniaudio.h): Copyright 2023 David Reid. Public domain, or MIT No Attribution.
+
+Jak and Daxter 2 Multiplayer (github.com/himstan/Jak-And-Daxter-2-Multiplayer): Jak II's multiplayer (game/multiplayer, the GOAL in
+goal_src/jak2/multiplayer and its hooks through the game, the runtime pieces it adds), merged into this project's
+Jak II in November 2026 and changed by it: its network sessions on plain TCP and UDP instead of GameNetworkingSockets,
+no Steam and no crash reporter, and VR (patches/ in this release's source). Under OpenGOAL's ISC License above
+(Copyright (c) 2020-2026 OpenGOAL Team), as its repository is.
+
+miniupnpc (third-party/miniupnpc) and libnatpmp (third-party/libnatpmp): Jak II's multiplayer opens the host's port on
+the router. Copyright (c) 2005-2025 and 2007-2022, Thomas BERNARD. All rights reserved.
+  BSD-3-Clause, the full texts in each one's LICENSE: redistributions in source or binary form must retain or
+  reproduce the copyright notice, its conditions and its disclaimer; the copyright holder's name and its contributors'
+  may not be used to endorse or promote products derived from it without specific prior written permission. THIS
+  SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES ARE
+  DISCLAIMED.
+
+serialize (third-party/serialize): Jak II's multiplayer's packets. Copyright (c) 2016 - 2026, Más Bandwidth LLC.
+  BSD-3-Clause, the full text in third_party/Precursor/third-party/serialize/LICENSE, on the same terms as above.

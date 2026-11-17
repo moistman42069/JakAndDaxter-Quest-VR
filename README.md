@@ -5,12 +5,14 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.2](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** 0.1.1's fixes for the
-> first players' reports on 0.1.0 and its pass over how Jak's body feels around you, and from 0.1.2 updates that leave
-> your games as they are when their game code has not changed. It is still a test release, tested
-> on a PC with a simulated headset, and its main purpose is still to collect logs. Whatever happens, please send yours:
-> the [release notes](docs/release-notes.md) say how. [docs/LIST-0.1.1.md](docs/LIST-0.1.1.md) says what changed and
-> how each part was checked ([docs/LIST-0.1.0.md](docs/LIST-0.1.0.md) for the first release).
+> **Test release [0.1.3](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** Jak II multiplayer
+> (the community's Jak and Daxter II Multiplayer mod, built in), fixes for the players' reports on 0.1.1 and 0.1.2, the
+> menus' pointer on every row, a crosshair for the guns, first person in every vehicle, performance options, and
+> texture packs on a tab of their own with Import. It is still a test release, tested on a PC with a simulated headset,
+> and its main purpose is still to collect logs. Whatever happens, please send yours: the
+> [release notes](docs/release-notes.md) say how. [docs/LIST-0.1.3.md](docs/LIST-0.1.3.md) says what changed and how
+> each part was checked ([LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases
+> before).
 
 ## Built on OpenGOAL
 
@@ -41,9 +43,11 @@ One VR layer shared by all three games, so each plays start to finish as it woul
 - **Performance options** as Ratchet & Clank Quest VR's: Smoother frames (AppSW), foveated rendering, CPU and GPU boost,
   refresh rate, eye resolution, Max draw distance.
 - **An in-game VR menu** and a launcher with every option, What's new, and an updater.
-- **Mods** in both launchers: Jak 1's multiplayer built in (host from one of your saves, a list of games on your
-  network and on a party server, play the host's progress; [docs/MULTIPLAYER.md](docs/MULTIPLAYER.md)), texture packs
-  for all three games, and Precursor's mod packages on the Quest ([docs/MODS.md](docs/MODS.md)).
+- **Mods** in both launchers: Jak 1's and Jak II's multiplayer built in, each with its own switch (host from one of
+  your saves, a list of games on your network, joining by address, and Jak 1's party server;
+  [docs/MULTIPLAYER.md](docs/MULTIPLAYER.md)),
+  and Precursor's mod packages on the Quest; **Texture packs** for all three games on a tab of their own, with Import
+  for the ones you download ([docs/MODS.md](docs/MODS.md)).
 
 Each VR mechanic is on to start and has its own off switch in the VR menu. Which of these work today is in the list.
 

@@ -15,8 +15,11 @@ PLAYING
 4. Start your headset's PC VR software, then press PLAY IN VR.
 
 Your set-up, saves and choices are kept in %LOCALAPPDATA%\JakQuestVR, so an update (the Play tab's Updates card, or
-a new zip unzipped over this folder) keeps them. The VR options are on the Graphics, VR Body and VR Controls tabs and
-in the game's own VR menu. The Controls tab shows every controller's buttons.
+a new zip unzipped over this folder) keeps them. The games' set-up (each game's extracted disc and the game built from
+it, about 3 GB for Jak 1 and up to about 10 GB for Jak II or 3) can be kept on another drive: the Play tab's "Where the
+games are kept" moves it there (the launcher copies it, checks the copy, then removes the old one). The VR options are
+on the Graphics, VR Body and VR Controls tabs and in the game's own VR menu. The Controls tab shows every controller's
+buttons.
 
 MODS
 The Mods tab has Jak 1's Multiplayer (on to start; it changes nothing until you host or join a game in the VR menu)

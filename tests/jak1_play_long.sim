@@ -1,0 +1,40 @@
+# Jak 1 at Geyser Rock for about four minutes (LIST-0.1.3 item 4: Game frame rate's Automatic, its try back at the
+# headset's rate 45 s after it fell to 60, and its stop after three tries), run with QUEST_SIM_HZ=120 and
+# JAKVR_TEST_LATE=3700-14000: the opening skipped as jak1_play.sim, then Jak standing, a look left and right now and
+# then. Expect in run.log "[vr-perf] game frame rate (Automatic)": 60 a second, the headset's rate tried again (twice),
+# and after the third fall no more tries.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3400 shot gr-intro
+3420 y 1
+3426 y 0
+4200 shot gr-start
+4260 head_yaw 60
+4320 shot gr-look-left
+4380 head_yaw 0
+5000 head_yaw 30
+5060 head_yaw 0
+6000 head_yaw 30
+6000 shot al-1
+6060 head_yaw 0
+7000 head_yaw 30
+7060 head_yaw 0
+8000 head_yaw 30
+8060 head_yaw 0
+9000 head_yaw 30
+9060 head_yaw 0
+10000 head_yaw 30
+10000 shot al-2
+10060 head_yaw 0
+11000 head_yaw 30
+11060 head_yaw 0
+12000 head_yaw 30
+12060 head_yaw 0
+13000 head_yaw 30
+13060 head_yaw 0
+13800 shot al-3
+14000 quit 0

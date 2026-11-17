@@ -1,0 +1,102 @@
+# Jak 1: each kind of settings row by the pointer (LIST-0.1.3 item 1), with JAKVR_POINTER_TRACE=1, on a copy of the
+# settings (C:\JakQuest\sim\gkcfg-ptrset) since it changes them. Aims as jak1_ptr_settings_cal.sim found them (sim b75):
+# pitch atan((0.35 + (0.5 - v) * 1.26) / 1.3) with v = y / 224, yaw atan((0.2 - (u - 0.5) * 1.68) / 1.3) with u = x / 512
+# (a row is 370 wide from x 17: its middle x 202 is yaw 16.2; x 110 is 27.6, x 300 is 2.45, x 80 is 30.9, x 330 is -1.9,
+# x 360 is -6.2, x 200 is 16.45). Game Options shows 6 of its 10 rows from y 40, 25 high: the second (Play hints) at
+# pitch 22.7, the fifth (Language) at 5.4; the hand at rest (pitch 0) points at the sixth.
+# - Game Options opened with the hand at rest: its first row stays chosen and the page does not move (b75: it moved on
+#   by itself to Back; build 61), pictures at once and after 3 s.
+# - Play hints (On / Off): the dot onto it and a click (Cross: the row is being changed), the dot onto the right half
+#   (Off, without a click), a click there (done); a click on the row again, the dot onto the left half (On), a click.
+# - Language (a list): a click (being changed), a click on its right third (a step right), on its left third (a step
+#   left, back), in its middle (done).
+# - B back, the stick down to Sound Options, A; SFX volume (a slider; the page's 4 rows from y 65) at pitch 22.7: a click (being changed), the trigger
+#   held on the bar at x 200 (the bar takes the dot: about half), the hand turned right to x 300 while held (about 88
+#   in 100), let go, a click off the bar at x 360 (done).
+2400 menu 1
+2406 menu 0
+2700 left_y -1
+2710 left_y 0
+2740 left_y -1
+2750 left_y 0
+2800 shot ps-title
+2830 a 1
+2836 a 0
+2950 shot ps-options
+2980 a 1
+2986 a 0
+3100 shot ps-open
+3300 shot ps-rest
+3320 hand_yaw 16.2
+3320 hand_pitch 22.7
+3360 shot ps-hints
+3370 right_trigger 1
+3376 right_trigger 0
+3440 shot ps-hints-sel
+3450 hand_yaw 2.45
+3500 shot ps-hints-off
+3510 right_trigger 1
+3516 right_trigger 0
+3580 shot ps-hints-done
+3600 right_trigger 1
+3606 right_trigger 0
+3660 shot ps-hints-sel2
+3670 hand_yaw 27.6
+3720 shot ps-hints-on
+3730 right_trigger 1
+3736 right_trigger 0
+3800 shot ps-hints-done2
+3810 hand_yaw 16.2
+3810 hand_pitch 5.4
+3850 shot ps-lang
+3860 right_trigger 1
+3866 right_trigger 0
+3920 shot ps-lang-sel
+3930 hand_yaw -1.9
+3960 right_trigger 1
+3966 right_trigger 0
+4020 shot ps-lang-right
+4030 hand_yaw 30.9
+4060 right_trigger 1
+4066 right_trigger 0
+4120 shot ps-lang-left
+4130 hand_yaw 16.2
+4160 right_trigger 1
+4166 right_trigger 0
+4220 shot ps-lang-done
+4240 hand_pitch -35
+4280 b 1
+4286 b 0
+4400 shot ps-options2
+4420 left_y -1
+4430 left_y 0
+4460 left_y -1
+4470 left_y 0
+4500 shot ps-options3
+4530 a 1
+4536 a 0
+4650 shot ps-sound
+4660 hand_yaw 16.45
+4660 hand_pitch 22.7
+4700 shot ps-sfx
+4710 right_trigger 1
+4716 right_trigger 0
+4780 shot ps-sfx-sel
+4790 right_trigger 1
+4830 shot ps-sfx-grab
+4840 hand_yaw 12
+4850 hand_yaw 8
+4860 hand_yaw 4
+4870 hand_yaw 2.45
+4900 shot ps-sfx-drag
+4910 right_trigger 0
+4960 shot ps-sfx-set
+4970 hand_yaw -6.2
+5000 right_trigger 1
+5006 right_trigger 0
+5060 shot ps-sfx-done
+5100 hand_pitch -35
+5120 b 1
+5126 b 0
+5240 shot ps-options4
+5300 quit 0

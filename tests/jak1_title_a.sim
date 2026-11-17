@@ -1,0 +1,13 @@
+# Jak 1's title: Start, then A (New Game), with the right hand at rest (its dot where jak1_ptr_slots has it). Shots
+# before and after A: the title menu should be up (t-menu), and A should bring the save slots (t-after-a) (sim b54
+# ptr1slots: after A the menu was gone and the title said PRESS START again).
+2400 menu 1
+2406 menu 0
+2500 shot t-menu
+2650 shot t-menu2
+2700 a 1
+2706 a 0
+2730 shot t-after-a
+2800 shot t-after-a2
+2950 shot t-after-a3
+3000 quit 0

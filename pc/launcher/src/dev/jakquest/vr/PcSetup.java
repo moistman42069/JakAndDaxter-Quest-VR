@@ -11,10 +11,15 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,10 +70,12 @@ final class PcSetup {
     static final class GameCode {
         final String id;
         final String data;
+        /** 0.1.3: the SHA-256 of the compiler's and decompiler's own sources (empty before 0.1.3). */
+        final String compiler;
         final List<String> same;
 
         GameCode(String text) {
-            String id = "", data = "";
+            String id = "", data = "", compiler = "";
             List<String> same = new ArrayList<>();
             for (String line : text.split("\\R")) {
                 String[] words = line.trim().split("\\s+");
@@ -76,6 +83,8 @@ final class PcSetup {
                     id = words[1];
                 } else if (words.length >= 2 && words[0].equals("data")) {
                     data = words[1];
+                } else if (words.length >= 2 && words[0].equals("compiler")) {
+                    compiler = words[1];
                 } else if (words[0].equals("same")) {
                     for (int i = 1; i < words.length; i++) {
                         same.add(words[i]);
@@ -84,6 +93,7 @@ final class PcSetup {
             }
             this.id = id;
             this.data = data;
+            this.compiler = compiler;
             this.same = same;
         }
     }
@@ -176,6 +186,25 @@ final class PcSetup {
         STATE.phase = "Putting your texture packs in";
         changed.run();
         TexturePacks.apply(paths.texturePacks(), game, paths.data());
+        // 0.1.3, faster building again (LIST-0.1.3 item 10): built again with the same compiler and game data version,
+        // the compiler's own make (its "(mi)") compiles only the sources that changed (refreshSources copies only
+        // those), and the disc's code and art are not decompiled again when what the decompiler reads is the same
+        // (decompileKey). With another compiler or game data version, all of it, as before.
+        String before = PcPaths.read(paths.readyMark(game));
+        GameCode now = gameCode(paths);
+        GameCode then = new GameCode(before);
+        boolean sameCompiler = iso == null && !now.compiler.isEmpty() && now.compiler.equals(then.compiler)
+            && now.data.equals(then.data);
+        String decomp = decompileKey(paths, game, now);
+        boolean decompile = !sameCompiler || !decomp.equals(markWord(before, "decomp"))
+            || !new File(paths.data(), "decompiler_out/" + game).isDirectory();
+        if (iso == null && !sameCompiler) {
+            PcPaths.deleteRecursively(new File(paths.compiled(game), "obj"));  // every source compiled again
+        }
+        if (iso == null) {
+            STATE.phase = decompile ? "Building the game again with this version"
+                : "Building again what changed in this version";
+        }
         paths.logs.mkdirs();
         String stamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
         File log = new File(paths.logs, "setup-" + game + "-" + stamp + ".log");
@@ -188,7 +217,9 @@ final class PcSetup {
         } else {
             command.add("-f");
         }
-        command.add("-d");
+        if (decompile) {
+            command.add("-d");
+        }
         command.add("-c");
         command.add("--proj-path");
         command.add(paths.data().getPath());
@@ -235,7 +266,68 @@ final class PcSetup {
             throw new IOException("The set-up stopped (" + code + "): " + STATE.line + " The whole of it is in " + log
                 + ". Is the disc image " + VrOptions.GAME_NAMES[index(game)] + "?");
         }
-        Files.write(paths.readyMark(game).toPath(), readyMark(paths).getBytes(StandardCharsets.UTF_8));
+        String mark = readyMark(paths);
+        if (!mark.endsWith("\n")) {
+            mark += "\n";
+        }
+        if (!now.compiler.isEmpty()) {
+            mark += "compiler " + now.compiler + "\n";
+        }
+        mark += "decomp " + decomp + "\n";
+        Files.write(paths.readyMark(game).toPath(), mark.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** A ready mark's word after `key` on its line, or empty. */
+    static String markWord(String mark, String key) {
+        for (String line : mark.split("\\R")) {
+            String[] words = line.trim().split("\\s+");
+            if (words.length >= 2 && words[0].equals(key)) {
+                return words[1];
+            }
+        }
+        return "";
+    }
+
+    /**
+     * What the decompiler makes a game's art and levels from, besides the disc: the game data version, the compiler's
+     * and decompiler's sources, the decompiler's config (the sources' decompiler folder), the game's custom assets and
+     * the texture packs on. The same: its output from the last build is kept.
+     */
+    static String decompileKey(PcPaths paths, String game, GameCode now) throws IOException {
+        try {
+            MessageDigest sha = MessageDigest.getInstance("SHA-256");
+            sha.update(("data " + now.data + "\ncompiler " + now.compiler + "\npacks "
+                + TexturePacks.signature(paths.texturePacks(), game) + "\n").getBytes(StandardCharsets.UTF_8));
+            hashTree(sha, new File(paths.data(), "decompiler"), "decompiler", null);
+            hashTree(sha, new File(paths.data(), "custom_assets/" + game), "custom_assets", "texture_replacements");
+            StringBuilder hex = new StringBuilder();
+            for (byte b : sha.digest()) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return "";
+        }
+    }
+
+    private static void hashTree(MessageDigest sha, File dir, String rel, String skip) throws IOException {
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return;
+        }
+        Arrays.sort(children);
+        for (File child : children) {
+            if (child.getName().equals(skip) || child.getName().startsWith(".")) {
+                continue;  // the packs (their signature counts) and the launcher's own marks
+            }
+            String name = rel + "/" + child.getName();
+            if (child.isDirectory()) {
+                hashTree(sha, child, name, null);
+            } else {
+                sha.update((name + "\0" + child.length() + "\0").getBytes(StandardCharsets.UTF_8));
+                sha.update(Files.readAllBytes(child.toPath()));
+            }
+        }
     }
 
     /** The release's sources copied into the data folder when this version's are not there yet (an update). */
@@ -252,12 +344,48 @@ final class PcSetup {
         for (String part : PcPaths.TEMPLATE_PARTS) {
             File from = new File(paths.template(), part);
             File to = new File(paths.data(), part);
-            PcPaths.deleteRecursively(to);
             if (from.isDirectory()) {
-                copyTree(from, to);
+                syncTree(from, to);  // 0.1.3: what did not change keeps its time, for the compiler's make
+            } else {
+                PcPaths.deleteRecursively(to);
             }
         }
         Files.write(mark.toPath(), PcBuild.VERSION.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** to made the same as from: a file copied only when its bytes differ, what from has not removed. (0.1.3; GameCodeTest) */
+    static void syncTree(File from, File to) throws IOException {
+        if (to.isFile()) {
+            PcPaths.deleteRecursively(to);
+        }
+        if (!to.isDirectory() && !to.mkdirs()) {
+            throw new IOException("cannot make " + to);
+        }
+        File[] children = from.listFiles();
+        Set<String> names = new HashSet<>();
+        if (children != null) {
+            for (File child : children) {
+                names.add(child.getName());
+                File target = new File(to, child.getName());
+                if (child.isDirectory()) {
+                    syncTree(child, target);
+                } else if (!target.isFile() || target.length() != child.length()
+                        || Files.mismatch(child.toPath(), target.toPath()) != -1) {
+                    if (target.isDirectory()) {
+                        PcPaths.deleteRecursively(target);
+                    }
+                    Files.copy(child.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
+        File[] there = to.listFiles();
+        if (there != null) {
+            for (File old : there) {
+                if (!names.contains(old.getName())) {
+                    PcPaths.deleteRecursively(old);
+                }
+            }
+        }
     }
 
     private static void copyTree(File from, File to) throws IOException {

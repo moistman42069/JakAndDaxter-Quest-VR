@@ -15,7 +15,9 @@ import java.util.Map;
  * Where everything lives on the PC. What came in the release's folder (the launcher, and in game\ OpenGOAL's gk and
  * extractor with the three games' sources) is read from it and never written: the player's set-up (each game made from
  * their own disc), saves and choices are in %LOCALAPPDATA%\JakQuestVR, so an update replaces the release's folder and
- * keeps them. The logs go to Downloads\JakQuestVR, as the headset's go to its Download folder.
+ * keeps them. The logs go to Downloads\JakQuestVR, as the headset's go to its Download folder. The games' set-up
+ * (data(), the biggest by far) can be kept on another drive: the player's choice is data-folder.txt in home
+ * (PcDataFolder moves it).
  *
  * JAKQUESTVR_HOME, JAKQUESTVR_INSTALL and JAKQUESTVR_LOGS move them, for the tests.
  */
@@ -25,17 +27,32 @@ final class PcPaths {
     final File install;
     final File home;
     final File logs;
+    /** Where the player chose to keep the games' set-up (data-folder.txt), null for defaultData(). */
+    private volatile File chosenData;
 
     PcPaths() {
         install = installFolder();
         home = homeFolder();
         logs = logsFolder(home);
+        chosenData = readChosenData(home);
     }
 
     PcPaths(File install, File home, File logs) {
         this.install = install;
         this.home = home;
         this.logs = logs;
+        chosenData = readChosenData(home);
+    }
+
+    private static File dataChoice(File home) { return new File(home, "data-folder.txt"); }
+
+    private static File readChosenData(File home) {
+        String text = read(dataChoice(home)).replace("﻿", "").trim();
+        if (text.isEmpty()) {
+            return null;
+        }
+        File folder = new File(text);
+        return folder.isAbsolute() ? folder : null;
     }
 
     private static File installFolder() {
@@ -92,8 +109,33 @@ final class PcPaths {
 
     // ---- The player's ----
 
-    /** OpenGOAL's project folder (--proj-path): the sources, each game's extracted disc and its compiled game. */
-    File data() { return new File(home, "data"); }
+    /**
+     * OpenGOAL's project folder (--proj-path): the sources, each game's extracted disc and its compiled game. In home
+     * unless the player keeps it elsewhere (the Play tab's "Where the games are kept").
+     */
+    File data() {
+        File chosen = chosenData;
+        return chosen != null ? chosen : defaultData();
+    }
+    File defaultData() { return new File(home, "data"); }
+    /** Whether the games' set-up is kept somewhere the player chose. */
+    boolean dataMoved() { return chosenData != null; }
+
+    /** Keeps the games' set-up in `folder` from now on (the default place: no choice saved). Moves nothing. */
+    void chooseData(File folder) throws IOException {
+        File choice = dataChoice(home);
+        if (folder == null || PcDataFolder.same(folder, defaultData())) {
+            Files.deleteIfExists(choice.toPath());
+            chosenData = null;
+            return;
+        }
+        File absolute = folder.getAbsoluteFile();
+        Files.createDirectories(home.toPath());
+        File written = new File(home, "data-folder.txt.new");
+        Files.write(written.toPath(), (absolute.getPath() + "\n").getBytes(StandardCharsets.UTF_8));
+        Files.move(written.toPath(), choice.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        chosenData = absolute;
+    }
     /** gk's --config-path: OpenGOAL\<game>\settings (the game's settings, vr-options.txt) and saves. */
     File config() { return new File(home, "config"); }
     File vrOptions(String game) { return VrOptions.file(config(), game); }

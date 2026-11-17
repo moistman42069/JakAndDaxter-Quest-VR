@@ -2,24 +2,39 @@
 // Copyright (c) 2026 the Jak and Daxter Quest VR contributors
 package dev.jakquest.vr;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -33,6 +48,12 @@ import java.util.zip.ZipInputStream;
  * name, author, version, what it says of itself) and [packs]/[game]/list.txt naming them in order, each on or off. Before
  * a build, apply() makes the project's custom_assets/[game]/texture_replacements from the ones on (one higher in the list
  * wins where two change the same picture) and writes what it used; changed() says whether that differs from now.
+ *
+ * <p>0.1.3: packs are imported as players find them on the web (Stager): a zip, a zip inside the zip, or the folder it
+ * was unpacked to. The game a pack is for is read from it (custom_assets/[game]/, [game]/texture_replacements, its
+ * metadata.json's supportedGames), else it is the game the player imports it for, else the launcher asks. A pack zipped
+ * from inside its texture_replacements (texture pages at its top) is taken too. What cannot work says so plainly: a .7z
+ * or .rar (unpack it first), a pack for the PCSX2 emulator (pictures named by number), pictures not in texture pages.
  */
 public final class TexturePacks {
     /** One pack, as the launchers list it. */
@@ -42,7 +63,7 @@ public final class TexturePacks {
         public final int pictures;
         public final long bytes;
         public final String stamp;  // when it was added: changes the build if the same id is added again
-        /** The mod list's entry it came from (ModList.Entry.ref()), or "" for one added from a file. */
+        /** The mod list's entry it came from (ModList.Entry.ref()), or "" for one imported from a file or folder. */
         public final String from;
         public boolean on;
 
@@ -68,6 +89,36 @@ public final class TexturePacks {
             b.append(", ").append(pictures).append(pictures == 1 ? " picture" : " pictures");
             return b.toString();
         }
+
+        /** Where it came from, for its card: "Imported" (a file or folder of the player's) or "From a mod list". */
+        public String origin() {
+            return from.isEmpty() ? "Imported" : "From a mod list";
+        }
+    }
+
+    /** What an import added: each pack with the game it went to (a pack with pictures for two games makes two). */
+    public static final class Imported {
+        public final List<String> games = new ArrayList<>();
+        public final List<Pack> packs = new ArrayList<>();
+
+        /** "Shiny Jak 1.2 by Someone, 340 pictures, for Jak 1", each joined by "; " */
+        public String summary() {
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < packs.size(); i++) {
+                if (b.length() > 0) b.append("; ");
+                b.append(packs.get(i).line()).append(", for ").append(shortName(games.get(i)));
+            }
+            return b.toString();
+        }
+    }
+
+    /** The pack does not say which game it is for and none was given: the launcher asks, then finish() again. */
+    public static final class NeedsGame extends IOException {
+        private static final long serialVersionUID = 1L;
+
+        NeedsGame() {
+            super("It does not say which game it is for.");
+        }
     }
 
     /** The most a pack may unpack to, and its most files: a pack is pictures, not a disc. */
@@ -75,6 +126,9 @@ public final class TexturePacks {
     static final int MOST_FILES = 100000;
     static final String REPLACEMENTS = "texture_replacements";
     private static final String LIST = "list.txt", ABOUT = "pack.txt", APPLIED = "texture-packs.txt";
+    private static final String[] SHORT_NAMES = {"Jak 1", "Jak II", "Jak 3"};
+    private static final String UNPACK = "It is a [kind] archive, which the launcher cannot open: unpack it first (7-Zip, "
+            + "free, opens it), then import the folder it makes, or a .zip of that folder.";
 
     private TexturePacks() {}
 
@@ -147,99 +201,379 @@ public final class TexturePacks {
 
     // ---- adding one ----
 
-    /**
-     * Unpacks a texture pack's zip (read once, as it comes) for game, on and at the top of the list. Only pictures
-     * under a texture_replacements folder are kept; one for another of the games (custom_assets/[other]/) is skipped.
-     * Throws with the player's words when it is not a texture pack for this game.
-     */
+    /** add() with no mod list entry. */
     public static Pack add(File root, String game, InputStream zip, String fileName) throws IOException {
         return add(root, game, zip, fileName, null);
     }
 
     /**
-     * As add(), for a pack from a mod list (ModList): its entry kept with it (for its Update button), and the list's
-     * name, authors, version and words used where the pack's own metadata.json has none.
+     * Unpacks a texture pack's zip (read once, as it comes) for game alone, on and at the top of the list (Browse mods'
+     * Add and Update): its pictures for another of the games are skipped, and the mod list's name, authors, version
+     * and words are used where the pack's own metadata.json has none. Throws with the player's words when it is not a
+     * texture pack for this game.
      */
     public static Pack add(File root, String game, InputStream zip, String fileName, ModList.Entry entry)
             throws IOException {
-        File games = gameFolder(root, game);
-        if (!games.isDirectory() && !games.mkdirs()) throw new IOException("Cannot make " + games);
-        String id = freeId(games, fileName);
-        File folder = new File(games, id);
-        File partial = new File(games, id + ".partial");
-        deleteTree(partial);
-        File pictures = new File(partial, REPLACEMENTS);
-        if (!pictures.mkdirs()) throw new IOException("Cannot make " + pictures);
-        int count = 0, files = 0;
-        long bytes = 0;
-        String metadata = "";
-        byte[] buffer = new byte[64 * 1024];
-        try (ZipInputStream in = new ZipInputStream(zip)) {
-            ZipEntry e;
-            while ((e = in.getNextEntry()) != null) {
-                if (e.isDirectory()) continue;
-                if (++files > MOST_FILES) throw new IOException("It has more than " + MOST_FILES + " files: not a texture pack.");
-                String name = e.getName().replace('\\', '/');
-                String lower = name.toLowerCase(Locale.ROOT);
-                if (lower.endsWith("metadata.json") && name.split("/").length <= 3 && metadata.isEmpty()) {
-                    metadata = readSmall(in, 64 * 1024);
-                    continue;
+        try (Stager s = new Stager(root, fileName, game)) {
+            s.zip(zip);
+            return s.finish(game, entry).packs.get(0);
+        }
+    }
+
+    /**
+     * One import: the pack's pictures gathered in a folder of the launcher's own beside the games' packs (so they move
+     * into place without a copy), from a zip, a folder or file by file (the Quest's folders); finish() makes the pack
+     * (one per game it has pictures for), close() takes away what is left. One Stager, one pack.
+     */
+    public static final class Stager implements Closeable {
+        private static final String ANY = "_any", LOOSE = "_loose";
+        private final File root, staging;
+        private final String only;
+        private String fileName;
+        private String metadata = "";
+        private int files, pictures, loose, pcsx2;
+        private long bytes;
+        private boolean looseDone;
+        private final Set<String> otherGames = new TreeSet<>();
+        private final byte[] buffer = new byte[64 * 1024];
+
+        /**
+         * fileName: the zip's or the folder's name (the pack's id and, with no metadata.json, its name). only: the one
+         * game wanted (its pictures for another are skipped), or null for any (finish() says which).
+         */
+        public Stager(File root, String fileName, String only) throws IOException {
+            this.root = root;
+            this.fileName = fileName == null ? "" : fileName;
+            this.only = only;
+            staging = new File(root, ".import-" + System.currentTimeMillis() + "-" + (System.nanoTime() % 100000));
+            if (!staging.mkdirs()) throw new IOException("Cannot make " + staging);
+        }
+
+        /** A zip on disk, read by its index (any zip a PC tool makes; old zips' names, not in UTF-8, too). */
+        public void zip(File file) throws IOException {
+            try (InputStream head = new FileInputStream(file)) {
+                refuseOther(head);
+            }
+            IOException failed = null;
+            for (Charset names : new Charset[] {StandardCharsets.UTF_8, Charset.forName("IBM437")}) {
+                try (ZipFile z = new ZipFile(file, names)) {
+                    Enumeration<? extends ZipEntry> all = z.entries();
+                    while (all.hasMoreElements()) {
+                        ZipEntry e = all.nextElement();
+                        if (e.isDirectory()) continue;
+                        try (InputStream in = z.getInputStream(e)) {
+                            offer(e.getName(), in, 0);
+                        }
+                    }
+                    return;
+                } catch (ZipException | IllegalArgumentException e) {
+                    failed = new IOException("Not a zip that can be read: " + e.getMessage());
+                    reset();
                 }
-                String relative = picturePath(name, game);
-                if (relative == null) continue;
-                File to = new File(pictures, relative);
-                File parent = to.getParentFile();
-                if (!parent.isDirectory() && !parent.mkdirs()) throw new IOException("Cannot make " + parent);
-                try (OutputStream out = new FileOutputStream(to)) {
-                    int n;
-                    while ((n = in.read(buffer)) > 0) {
-                        bytes += n;
-                        if (bytes > MOST_BYTES) throw new IOException("It unpacks to more than 3 GB: not a texture pack.");
-                        out.write(buffer, 0, n);
+            }
+            throw failed;
+        }
+
+        /** A zip as it comes (Browse mods' download; the Quest's picked file). */
+        public void zip(InputStream raw) throws IOException {
+            BufferedInputStream in = new BufferedInputStream(raw);
+            in.mark(16);
+            refuseOther(in);
+            in.reset();
+            try {
+                ZipInputStream z = new ZipInputStream(in);
+                ZipEntry e;
+                while ((e = z.getNextEntry()) != null) {
+                    if (!e.isDirectory()) offer(e.getName(), z, 0);
+                }
+            } catch (ZipException | IllegalArgumentException e) {
+                throw new IOException("Not a zip that can be read: " + e.getMessage());
+            }
+        }
+
+        /**
+         * A folder the pack was unpacked to. Its own name counts, as the player may pick texture_replacements itself
+         * or custom_assets/jak1; such a folder takes the name of the first above it that is not one of those.
+         */
+        public void folder(File dir) throws IOException {
+            if (!dir.isDirectory()) throw new IOException("Cannot read the folder " + dir);
+            File named = dir.getAbsoluteFile();
+            while (named != null && genericFolder(named.getName())) named = named.getParentFile();
+            if (named != null && !named.getName().isEmpty()) fileName = named.getName();
+            walk(dir, dir.getName() + "/");
+        }
+
+        private void walk(File dir, String prefix) throws IOException {
+            File[] children = dir.listFiles();
+            if (children == null) return;
+            Arrays.sort(children);
+            for (File c : children) {
+                if (Files.isSymbolicLink(c.toPath())) continue;
+                if (c.isDirectory()) {
+                    walk(c, prefix + c.getName() + "/");
+                } else if (c.isFile()) {
+                    try (InputStream in = new FileInputStream(c)) {
+                        offer(prefix + c.getName(), in, 0);
                     }
                 }
-                count++;
             }
-        } catch (IOException | RuntimeException ex) {
+        }
+
+        /** One file of the pack, at its path in the pack (folders joined by /); the Quest's folder import gives each. */
+        public void offer(String path, InputStream in) throws IOException {
+            offer(path, in, 0);
+        }
+
+        private void offer(String path, InputStream in, int depth) throws IOException {
+            if (++files > MOST_FILES) throw new IOException("It has more than " + MOST_FILES + " files: not a texture pack.");
+            String name = path.replace('\\', '/');
+            while (name.startsWith("/")) name = name.substring(1);
+            String lower = name.toLowerCase(Locale.ROOT);
+            String base = lower.substring(lower.lastIndexOf('/') + 1);
+            if (base.endsWith(".zip") && depth < 2) {
+                // a pack inside the download's zip (some come with a read-me or pictures of it beside)
+                ZipInputStream inner = new ZipInputStream(new KeepOpen(in));
+                try {
+                    ZipEntry e;
+                    while ((e = inner.getNextEntry()) != null) {
+                        if (!e.isDirectory()) offer(e.getName(), inner, depth + 1);
+                    }
+                } catch (ZipException | IllegalArgumentException e) {
+                    throw new IOException("The zip " + name + " inside it cannot be read: " + e.getMessage());
+                }
+                return;
+            }
+            if (base.equals("metadata.json")) {
+                if (metadata.isEmpty() && name.split("/").length <= 3) metadata = readSmall(in, 64 * 1024);
+                return;
+            }
+            if (base.endsWith(".dds")) {
+                pcsx2++;  // OpenGOAL takes PNG alone; the emulator's packs have DDS too
+                return;
+            }
+            if (!base.endsWith(".png")) return;
+            String relative = replacementPath(name);
+            if (relative == null) {
+                if (pcsx2Like(lower)) {
+                    pcsx2++;
+                } else if (safe(name)) {
+                    loose++;
+                    write(in, new File(new File(staging, LOOSE), name));
+                }
+                return;
+            }
+            String game = namedGame(lower);
+            if (only != null && game != null && !game.equals(only)) {
+                otherGames.add(game);
+                return;
+            }
+            write(in, new File(new File(staging, game == null ? ANY : game), relative));
+            pictures++;
+        }
+
+        /**
+         * Makes the pack in the list of each game it has pictures for, on and at the top. Pictures that name no game
+         * go to only, else to its metadata.json's supportedGames (preferred alone if it is one of them), else to
+         * preferred (the game the player imports it for), else to the one game the rest named; with none of those it
+         * throws NeedsGame, and the launcher asks and calls again. entry: the mod list's (Browse mods), or null.
+         */
+        public Imported finish(String preferred, ModList.Entry entry) throws IOException {
+            if (pictures == 0 && loose > 0 && !looseDone) {
+                looseDone = true;
+                pictures = adoptLoose();
+            }
+            Map<String, File> buckets = new LinkedHashMap<>();
+            for (String g : VrOptions.GAMES) {
+                File f = new File(staging, g);
+                if (f.isDirectory()) buckets.put(g, f);
+            }
+            File any = new File(staging, ANY);
+            if (any.isDirectory()) {
+                List<String> to = new ArrayList<>();
+                List<String> said = supportedGames(metadata);
+                if (only != null) {
+                    to.add(only);
+                } else if (!said.isEmpty()) {
+                    to.addAll(preferred != null && said.contains(preferred) ? Collections.singletonList(preferred) : said);
+                } else if (preferred != null) {
+                    to.add(preferred);
+                } else if (buckets.size() == 1) {
+                    to.addAll(buckets.keySet());
+                }
+                if (to.isEmpty()) throw new NeedsGame();
+                for (int i = 0; i < to.size(); i++) {
+                    File f = new File(staging, to.get(i));
+                    if (i == to.size() - 1 && !f.exists() && any.renameTo(f)) {
+                        buckets.put(to.get(i), f);
+                        break;
+                    }
+                    copyTree(any, f);
+                    buckets.put(to.get(i), f);
+                }
+                deleteTree(any);
+            }
+            if (buckets.isEmpty()) throw new IOException(nothingMessage(only != null ? only : preferred));
+            // OpenGOAL's texture-pack metadata.json (its launcher's schemas/texture-packs/v1): name, authors (one
+            // string), version, description, supportedGames; "author" too, as some packs have it.
+            String name = jsonString(metadata, "name");
+            String author = jsonString(metadata, "authors");
+            if (author.isEmpty()) author = jsonString(metadata, "author");
+            String version = jsonString(metadata, "version");
+            String description = jsonString(metadata, "description");
+            if (entry != null) {
+                if (name.isEmpty()) name = entry.name;
+                if (author.isEmpty()) author = entry.authors;
+                if (!entry.version.isEmpty()) version = entry.version;  // the list's version is what Update compares
+                if (description.isEmpty()) description = entry.description;
+            }
+            if (name.isEmpty()) name = baseName(fileName);
+            Imported done = new Imported();
+            for (Map.Entry<String, File> b : buckets.entrySet()) {
+                done.games.add(b.getKey());
+                done.packs.add(place(b.getKey(), b.getValue(), new String[] {clean(name, 60), clean(author, 40),
+                    clean(version, 20), clean(description, 300)}, entry));
+            }
+            return done;
+        }
+
+        /** The pictures moved in as the game's newest pack: its folder, pack.txt and the list. */
+        private Pack place(String game, File from, String[] about, ModList.Entry entry) throws IOException {
+            File games = gameFolder(root, game);
+            if (!games.isDirectory() && !games.mkdirs()) throw new IOException("Cannot make " + games);
+            String id = freeId(games, fileName);
+            File folder = new File(games, id), partial = new File(games, id + ".partial");
             deleteTree(partial);
-            throw ex instanceof IOException ? (IOException) ex : new IOException("Not a zip that can be read: " + ex.getMessage());
+            if (!partial.mkdirs()) throw new IOException("Cannot make " + partial);
+            File into = new File(partial, REPLACEMENTS);
+            if (!from.renameTo(into)) copyTree(from, into);
+            long[] counted = new long[2];
+            count(into, counted);
+            String stamp = Long.toString(System.currentTimeMillis());
+            writeAbout(new File(partial, ABOUT), new String[] {about[0], about[1], about[2], about[3],
+                Long.toString(counted[0]), Long.toString(counted[1]), stamp, entry == null ? "" : clean(entry.ref(), 200)});
+            if (!partial.renameTo(folder)) {
+                deleteTree(partial);
+                throw new IOException("Cannot make " + folder);
+            }
+            List<Pack> packs = list(root, game);
+            packs.removeIf(p -> p.id.equals(id));
+            Pack pack = new Pack(id, about[0], "", "", "", (int) counted[0], counted[1], stamp, "", true);
+            packs.add(0, pack);
+            writeList(root, game, packs);
+            for (Pack p : list(root, game)) {
+                if (p.id.equals(id)) return p;
+            }
+            return pack;
         }
-        if (count == 0) {
-            deleteTree(partial);
-            throw new IOException("No pictures for " + gameName(game) + " in it (" + REPLACEMENTS + "): is it a texture "
-                    + "pack for this game?");
+
+        /** Why nothing could be taken, in the player's words. */
+        private String nothingMessage(String wanted) {
+            if (!otherGames.isEmpty()) {
+                List<String> names = new ArrayList<>();
+                for (String g : otherGames) names.add(shortName(g));
+                return "It is a texture pack for " + String.join(" and ", names) + ", not " + shortName(wanted) + ".";
+            }
+            if (pcsx2 > 0) {
+                return "It is a texture pack for the PCSX2 emulator (its pictures are named by number, for PCSX2's "
+                        + "replacements folder). OpenGOAL games, this port included, cannot use those: look for the "
+                        + "pack made for OpenGOAL (its pictures are in a texture_replacements folder).";
+            }
+            if (loose > 0) {
+                return "Its pictures are not in a texture_replacements folder of texture pages, as OpenGOAL's texture "
+                        + "packs have them (texture_replacements/[texture page]/[picture].png): not a pack this port "
+                        + "can use.";
+            }
+            return wanted == null ? "No pictures in it (" + REPLACEMENTS + "): is it a texture pack?"
+                    : "No pictures for " + shortName(wanted) + " in it (" + REPLACEMENTS + "): is it a texture pack "
+                    + "for this game?";
         }
-        // OpenGOAL's texture-pack metadata.json (its launcher's schemas/texture-packs/v1): name, authors (one string),
-        // version, description; "author" too, as some packs have it.
-        String name = jsonString(metadata, "name");
-        String author = jsonString(metadata, "authors");
-        if (author.isEmpty()) author = jsonString(metadata, "author");
-        String version = jsonString(metadata, "version");
-        String description = jsonString(metadata, "description");
-        if (entry != null) {
-            if (name.isEmpty()) name = entry.name;
-            if (author.isEmpty()) author = entry.authors;
-            if (!entry.version.isEmpty()) version = entry.version;  // the list's version is what Update compares
-            if (description.isEmpty()) description = entry.description;
+
+        /**
+         * A pack zipped from inside its texture_replacements (texture pages at its top, or in one folder): the folder
+         * whose folders of pictures look most like the games' texture pages (at least one by its name) becomes it.
+         * The pictures taken, or 0.
+         */
+        private int adoptLoose() throws IOException {
+            Map<File, Integer> pages = new HashMap<>(), marked = new HashMap<>();
+            scorePages(new File(staging, LOOSE), pages, marked);
+            File best = null;
+            for (Map.Entry<File, Integer> e : pages.entrySet()) {
+                if (marked.getOrDefault(e.getKey(), 0) > 0 && (best == null || e.getValue() > pages.get(best))) {
+                    best = e.getKey();
+                }
+            }
+            if (best == null) return 0;
+            File any = new File(staging, ANY);
+            if (!any.isDirectory() && !any.mkdirs()) throw new IOException("Cannot make " + any);
+            int taken = 0;
+            for (File page : listed(best)) {
+                if (!page.isDirectory() || !hasPictures(page)) continue;
+                File to = new File(any, page.getName());
+                if (!page.renameTo(to)) copyTree(page, to);
+                for (File f : listed(to)) {
+                    if (f.isFile()) taken++;
+                }
+            }
+            return taken;
         }
-        if (name.isEmpty()) name = baseName(fileName);
-        String stamp = Long.toString(System.currentTimeMillis());
-        writeAbout(new File(partial, ABOUT), new String[] {clean(name, 60), clean(author, 40), clean(version, 20),
-            clean(description, 300), Integer.toString(count), Long.toString(bytes), stamp,
-            entry == null ? "" : clean(entry.ref(), 200)});
-        if (!partial.renameTo(folder)) {
-            deleteTree(partial);
-            throw new IOException("Cannot make " + folder);
+
+        private void scorePages(File dir, Map<File, Integer> pages, Map<File, Integer> marked) {
+            for (File c : listed(dir)) {
+                if (!c.isDirectory()) continue;
+                if (hasPictures(c)) {
+                    pages.merge(dir, 1, Integer::sum);
+                    if (pageName(c.getName())) marked.merge(dir, 1, Integer::sum);
+                }
+                scorePages(c, pages, marked);
+            }
         }
-        List<Pack> packs = list(root, game);
-        packs.removeIf(p -> p.id.equals(id));
-        Pack pack = new Pack(id, clean(name, 60), "", "", "", count, bytes, stamp, "", true);
-        packs.add(0, pack);
-        writeList(root, game, packs);
-        for (Pack p : list(root, game)) {
-            if (p.id.equals(id)) return p;
+
+        private void write(InputStream in, File to) throws IOException {
+            File parent = to.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) throw new IOException("Cannot make " + parent);
+            try (OutputStream out = new FileOutputStream(to)) {
+                int n;
+                while ((n = in.read(buffer)) > 0) {
+                    bytes += n;
+                    if (bytes > MOST_BYTES) throw new IOException("It unpacks to more than 3 GB: not a texture pack.");
+                    out.write(buffer, 0, n);
+                }
+            }
         }
-        return pack;
+
+        /** As new (a zip read again with its names in another encoding). */
+        private void reset() throws IOException {
+            deleteTree(staging);
+            if (!staging.mkdirs()) throw new IOException("Cannot make " + staging);
+            metadata = "";
+            files = pictures = loose = pcsx2 = 0;
+            bytes = 0;
+            looseDone = false;
+            otherGames.clear();
+        }
+
+        /** Takes away what was gathered and not made into a pack. */
+        @Override
+        public void close() {
+            deleteTree(staging);
+        }
+    }
+
+    /** A .7z, a .rar or anything but a zip refused in plain words, from its first bytes. */
+    static void refuseOther(InputStream in) throws IOException {
+        byte[] h = new byte[8];
+        int n = 0, r;
+        while (n < h.length && (r = in.read(h, n, h.length - n)) > 0) n += r;
+        if (n == 0) throw new IOException("The file is empty.");
+        if (n >= 4 && h[0] == '7' && h[1] == 'z' && (h[2] & 0xff) == 0xBC && (h[3] & 0xff) == 0xAF) {
+            throw new IOException(UNPACK.replace("[kind]", ".7z"));
+        }
+        if (n >= 4 && h[0] == 'R' && h[1] == 'a' && h[2] == 'r' && h[3] == '!') {
+            throw new IOException(UNPACK.replace("[kind]", ".rar"));
+        }
+        if (n < 2 || h[0] != 'P' || h[1] != 'K') {
+            throw new IOException("It is not a .zip: texture packs come as a .zip, or a folder of pictures.");
+        }
     }
 
     /**
@@ -247,20 +581,95 @@ public final class TexturePacks {
      * another game, or a path that would leave the folder.
      */
     static String picturePath(String name, String game) {
+        String g = namedGame(name.toLowerCase(Locale.ROOT));
+        return g != null && !g.equals(game) ? null : replacementPath(name);
+    }
+
+    /** The path under texture_replacements of a picture in it, or null (as picturePath, any game). */
+    static String replacementPath(String name) {
         String lower = name.toLowerCase(Locale.ROOT);
         if (!lower.endsWith(".png")) return null;
         int at = lower.lastIndexOf(REPLACEMENTS + "/");
         if (at < 0) return null;
-        String before = lower.substring(0, at);
-        for (String other : VrOptions.GAMES) {
-            if (!other.equals(game) && before.contains("custom_assets/" + other + "/")) return null;
-        }
         String relative = name.substring(at + REPLACEMENTS.length() + 1);
-        if (relative.isEmpty() || relative.startsWith("/") || relative.contains(":")) return null;
+        return safe(relative) ? relative : null;
+    }
+
+    /** A relative path with no drive, no empty part, no . or .. */
+    static boolean safe(String relative) {
+        if (relative.isEmpty() || relative.startsWith("/") || relative.contains(":")) return false;
         for (String part : relative.split("/")) {
-            if (part.isEmpty() || part.equals(".") || part.equals("..")) return null;
+            if (part.isEmpty() || part.equals(".") || part.equals("..")) return false;
         }
-        return relative;
+        return true;
+    }
+
+    /** The game a picture's path names (custom_assets/jak1/, or jak1/ just above texture_replacements), or null. */
+    static String namedGame(String lower) {
+        int at = lower.lastIndexOf(REPLACEMENTS + "/");
+        String before = at < 0 ? lower : lower.substring(0, at);
+        for (String g : VrOptions.GAMES) {
+            if (before.contains("custom_assets/" + g + "/") || before.equals(g + "/") || before.endsWith("/" + g + "/")) {
+                return g;
+            }
+        }
+        return null;
+    }
+
+    private static final Pattern PCSX2_NAME = Pattern.compile("[0-9a-f]{8,16}(-[0-9a-f]{8}){1,2}\\.(png|dds)");
+    private static final Pattern SERIAL = Pattern.compile("s[a-z]{3}-\\d{5}");
+
+    /** A picture of an emulator's pack: PCSX2's replacements folder, a disc's serial (SCUS-97124) or a hash name. */
+    static boolean pcsx2Like(String lower) {
+        String[] parts = lower.split("/");
+        for (int i = 0; i < parts.length - 1; i++) {
+            if (parts[i].equals("replacements") || SERIAL.matcher(parts[i]).matches()) return true;
+        }
+        return PCSX2_NAME.matcher(parts[parts.length - 1]).matches();
+    }
+
+    /** A texture page's name as the games have them (village1-vis-tfrag, common, ctysluma-pris...). */
+    static boolean pageName(String name) {
+        String n = name.toLowerCase(Locale.ROOT);
+        return n.contains("-vis-") || n.matches(".*-(tfrag|pris|pris2|shrub|alpha|water|sprite|minimap|warp)")
+                || n.equals("common") || n.equals("effects") || n.equals("hud") || n.equals("_all")
+                || n.equals("environment-generic") || n.equals("zoomerhud");
+    }
+
+    /** A folder's name that is no pack's name: texture_replacements, custom_assets, jak1, jak2, jak3. */
+    public static boolean genericFolder(String name) {
+        String n = name.toLowerCase(Locale.ROOT);
+        if (n.equals(REPLACEMENTS) || n.equals("custom_assets")) return true;
+        for (String g : VrOptions.GAMES) {
+            if (n.equals(g)) return true;
+        }
+        return false;
+    }
+
+    private static final Pattern SUPPORTED = Pattern.compile("\"supportedGames\"\\s*:\\s*\\[([^\\]]*)\\]");
+    private static final Pattern QUOTED = Pattern.compile("\"([^\"]*)\"");
+
+    /** metadata.json's supportedGames, the games known here alone. */
+    static List<String> supportedGames(String json) {
+        List<String> out = new ArrayList<>();
+        Matcher m = SUPPORTED.matcher(json);
+        if (!m.find()) return out;
+        Matcher q = QUOTED.matcher(m.group(1));
+        while (q.find()) {
+            String g = q.group(1).trim().toLowerCase(Locale.ROOT);
+            for (String known : VrOptions.GAMES) {
+                if (known.equals(g) && !out.contains(g)) out.add(g);
+            }
+        }
+        return out;
+    }
+
+    /** "Jak 1", "Jak II", "Jak 3" */
+    public static String shortName(String game) {
+        for (int i = 0; i < VrOptions.GAMES.length && i < SHORT_NAMES.length; i++) {
+            if (VrOptions.GAMES[i].equals(game)) return SHORT_NAMES[i];
+        }
+        return game == null ? "" : game;
     }
 
     // ---- into the game ----
@@ -328,13 +737,6 @@ public final class TexturePacks {
         String n = fileName == null ? "" : fileName.replace('\\', '/');
         n = n.substring(n.lastIndexOf('/') + 1);
         return n.toLowerCase(Locale.ROOT).endsWith(".zip") ? n.substring(0, n.length() - 4) : n;
-    }
-
-    private static String gameName(String game) {
-        for (int i = 0; i < VrOptions.GAMES.length; i++) {
-            if (VrOptions.GAMES[i].equals(game)) return VrOptions.GAME_NAMES[i];
-        }
-        return game;
     }
 
     /** Printable text on one line, at most most characters. */
@@ -428,6 +830,32 @@ public final class TexturePacks {
         }
     }
 
+    private static File[] listed(File dir) {
+        File[] children = dir.listFiles();
+        if (children == null) return new File[0];
+        Arrays.sort(children);
+        return children;
+    }
+
+    private static boolean hasPictures(File dir) {
+        for (File f : listed(dir)) {
+            if (f.isFile() && f.getName().toLowerCase(Locale.ROOT).endsWith(".png")) return true;
+        }
+        return false;
+    }
+
+    /** files and bytes under dir, added to counted[0] and counted[1] */
+    private static void count(File dir, long[] counted) {
+        for (File f : listed(dir)) {
+            if (f.isDirectory()) {
+                count(f, counted);
+            } else {
+                counted[0]++;
+                counted[1] += f.length();
+            }
+        }
+    }
+
     static void copyTree(File from, File to) throws IOException {
         if (!from.isDirectory()) return;
         if (!to.isDirectory() && !to.mkdirs()) throw new IOException("Cannot make " + to);
@@ -449,12 +877,23 @@ public final class TexturePacks {
 
     /** Deletes f and what is in it; a link is deleted, never what it leads to (the Quest links the release's files). */
     static void deleteTree(File f) {
-        if (!java.nio.file.Files.isSymbolicLink(f.toPath())) {
+        if (!Files.isSymbolicLink(f.toPath())) {
             File[] children = f.listFiles();
             if (children != null) {
                 for (File c : children) deleteTree(c);
             }
         }
         f.delete();
+    }
+
+    /** A zip's entry stream read by a zip inside it, left open for the next entry. */
+    private static final class KeepOpen extends FilterInputStream {
+        KeepOpen(InputStream in) {
+            super(in);
+        }
+
+        @Override
+        public void close() {
+        }
     }
 }

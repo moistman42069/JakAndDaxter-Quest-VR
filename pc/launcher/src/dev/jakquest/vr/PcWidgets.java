@@ -330,11 +330,22 @@ final class PcWidgets {
             return new Dimension(metrics.stringWidth(getText()) + 36, metrics.getHeight() + 20);
         }
 
+        /** 0.1.3: a button that cannot be used now (a set-up or a move running) is drawn dim, with no hand over it. */
+        @Override
+        public void setEnabled(boolean enabled) {
+            super.setEnabled(enabled);
+            setCursor(java.awt.Cursor.getPredefinedCursor(enabled ? java.awt.Cursor.HAND_CURSOR
+                : java.awt.Cursor.DEFAULT_CURSOR));
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             Color plate = fill;
-            if (getModel().isPressed()) {
+            boolean on = isEnabled();
+            if (!on) {
+                plate = new Color(plate.getRed(), plate.getGreen(), plate.getBlue(), plate.getAlpha() * 2 / 5);
+            } else if (getModel().isPressed()) {
                 plate = plate.darker();
             } else if (getModel().isRollover()) {
                 plate = new Color(Math.min(255, plate.getRed() + 22), Math.min(255, plate.getGreen() + 22),
@@ -349,7 +360,7 @@ final class PcWidgets {
                 metrics = g2.getFontMetrics(f);
             }
             g2.setFont(f);
-            g2.setColor(ink);
+            g2.setColor(on ? ink : new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), ink.getAlpha() * 9 / 20));
             int x = (getWidth() - metrics.stringWidth(getText())) / 2;
             int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
             g2.drawString(getText(), x, y);

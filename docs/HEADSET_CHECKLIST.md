@@ -74,8 +74,9 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **A scene's view** (0.1.1): hold the menu button a second in a scene: through Jak's eyes, then around you, and back
   (`[vr-pad] scenes are seen ...`).
 - **Spin kick by spreading your arms** (off to start, 0.1.1): turn it on, hold both arms out as a T: one spin kick.
-- **First person in vehicles** (off to start, 0.1.1): turn it on, get on the Zoomer, the board or in a car: the view is
-  from Jak's seat and turns with the vehicle. Off: third person there as before.
+- **First person in vehicles** (on to start since 0.1.3): get on the Zoomer, the board or in a car: the view is
+  from Jak's seat and turns with the vehicle. Off: third person there. Vehicle view height, forward and tilt (0.1.3)
+  move and tip that view; the hands and the gun stay where yours are.
 - **Fingers**: touch and lift the buttons, trigger and grip: Jak's fingers curl and point with yours.
 - **Hands at the world**: put a hand into a wall or the floor: it stops there with a short buzz. 0.1.1: lay the palm
   on a wall or the ground and the fingers settle on to it; point the fingers into it and they fold; draw the hand
@@ -141,17 +142,28 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 
 ## Mods (Quest; the PC launcher's Mods tab the same)
 
-- The Mods section starts by saying what works here (Multiplayer, texture packs, Quest mod packages) and that
-  OpenGOAL's own mods are flat screen only.
+- The Mods section starts by saying what works here (Multiplayer, Quest mod packages, texture packs on their own tab)
+  and that OpenGOAL's own mods are flat screen only.
 - **Browse mods**: both lists read (this project's and jakmods.dev's), "Read at ..." under them; Jak 1 / Jak II / Jak 3
-  each show their mods; **Show them** lists OpenGOAL's own mods as Flat screen only, each with **Its page**. Without a
-  network: a plain line saying a list could not be read, and the copy from before when there is one.
-- **Add** a texture pack from the list: it shows under Texture packs, from its list, and the button says **Added**. A
-  newer version in the list: the pack's card and the list both offer **Update to ...**, and it keeps its place and its
-  On / Off.
-- **Texture packs**: a game's options page, Mods, **Add a texture pack (.zip)** (an OpenGOAL launcher pack), then
-  **Prepare again** and the disc image: the game's pictures changed. Turn it off and prepare again: the game's own.
-- **Mod packages** (Precursor's): import one, enable it with the game closed, play, disable it.
+  each show their mods (no texture packs: those are on Texture packs); **Show them** lists OpenGOAL's own mods as Flat
+  screen only, each with **Its page**. Without a network: a plain line saying a list could not be read, and the copy
+  from before when there is one.
+- **Mod packages** (Precursor's): import one, enable it with the game closed, play, disable it. A texture pack's .zip
+  given to **Import a mod**: "It is a texture pack: imported to Texture packs".
+
+## Texture packs (Quest: a game's options page, Texture packs; the PC launcher's Texture packs tab the same)
+
+- The tab is beside Mods, between Controls and Mods, and its name reads whole.
+- **Import a .zip**: a pack downloaded in the headset's browser (Downloads), an OpenGOAL launcher pack. It shows in the
+  game's list, **Imported**, on. Then **Prepare again** and the disc image: the game's pictures changed. Turn it off and
+  prepare again: the game's own.
+- **Import a folder**: a pack's folder copied to the headset (the folder picker asks to allow it): the same.
+- A Jak 1 pack imported from Jak II's page: the message says "for Jak 1 (on that game's Texture packs)", and it is in
+  Jak 1's list, not Jak II's.
+- A .7z, a PCSX2 pack, a zip of photos: a plain message, nothing added.
+- **Find texture packs**: the lists' packs; **Add** one: it shows in the list, **From a mod list**, and the button says
+  **Added**. A newer version in the list: the pack's card and the list both offer **Update to ...**, and it keeps its
+  place and its On / Off.
 
 ## The launcher
 

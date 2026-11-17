@@ -1,4 +1,4 @@
-# Multiplayer (Jak 1)
+# Multiplayer (Jak 1, and Jak II)
 
 Jak 1 can be played together: the others' Jaks run around your world with their names over them, and what one
 player takes (power cells, scout flies, orbs, crates, beaten enemies and tasks) everyone has. Up to 8 players a game.
@@ -6,7 +6,7 @@ Every Jak is in his own colors; the name over him says whose he is.
 
 It is [Teamruns](https://github.com/JoKronk/teamruns-jak-project)' multiplayer, built in as a mod; the games you host
 and join, the list of games and the saves are this port's own, laid out as Ratchet and Clank Quest VR's Multiplayer.
-Jak II and Jak 3 have none.
+Jak II has its own, built on the community's Jak II multiplayer mod: see [Jak II](#jak-ii) at the end. Jak 3 has none.
 
 ## On to start, and changes nothing until you play together
 
@@ -17,8 +17,8 @@ skipped (so nobody waits on another's) and the taunts on the d-pad.
 
 To keep it out of the game altogether, turn it off:
 
-- **PC:** the launcher's **Mods** tab, **Multiplayer: Off**.
-- **Quest:** Jak 1's options page in the launcher, **Mods**, **Multiplayer: Off**.
+- **PC:** the launcher's **Mods** tab, **Jak 1 multiplayer: Off**.
+- **Quest:** Jak 1's options page in the launcher, **Mods**, **Jak 1 multiplayer: Off**.
 - Or in the game: the VR menu's **Multiplayer** row.
 
 With it on, the launcher also has:
@@ -121,3 +121,34 @@ host removing a player; a game or server on protocol 1 is told to update.
 
 gk still takes Teamruns' `--socketport` for its app, as Teamruns' own build does. This port does not use Teamruns'
 online service: its games go through the hosts and party servers above.
+
+## Jak II
+
+Jak II's story can be played together too, on the community's Jak II multiplayer mod (its licence is in
+THIRD_PARTY_NOTICES): one player hosts a save, up to 7 others join, and their Jaks are in the host's world. In this
+port it runs on plain TCP and UDP of its own (no Steam), so it plays with this port's build of the same release only,
+not with the mod's own build. In VR, the others' Jaks show their VR head and hands as in Jak 1.
+
+**On to start, and changes nothing until you play together.** The title's New Game and Load Game are the game's own,
+as always: the mod opens no network until you host or join. Its makers call it a beta, so it has its own switch; turned
+off, neither the title nor Options has a Multiplayer row and nothing of the mod runs at all (no network, no lobby, no
+player list). Turn it off if anything seems wrong with it on:
+
+- **PC:** the launcher's **Mods** tab, **Jak II multiplayer: Off**.
+- **Quest:** Jak II's options page in the launcher, **Mods**, **Jak II multiplayer: Off**.
+
+A change counts from the game's next start.
+
+**To play together**, the title's **Multiplayer** has **Host Game** (then New Game or Load Game, the save everyone
+plays) and **Join Game** (games on this network, or **Direct Connect** to a host's address); **Options**,
+**Multiplayer** has your name, your Jak's colors and the mod's settings.
+
+**The network.** A hosted game says so on the local network (UDP port 26211) and the others' **Join Game** lists it.
+The game itself uses one port, 26210 to start (**Options**, **Multiplayer**, **Port**), for both TCP and UDP. Over the
+internet the host's router has to let that port in, TCP and UDP, to the host's PC or headset; with **Port Mapping** on
+(to start) the game asks the router to do it by itself, where the router allows that. The others then use **Direct
+Connect** with the host's address. Jak II's games use no party server.
+
+**Typing in VR.** A headset has no keyboard, so while one of the game's text fields is open (your name, an address, a
+room code) the sticks type into it, as an arcade's name entry: up or down changes the letter before the cursor, right
+keeps it and goes on to the next, left erases one. A enters the text and Y leaves the field. A held push steps on.

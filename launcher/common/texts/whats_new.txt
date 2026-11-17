@@ -1,3 +1,62 @@
+0.1.3: Jak II multiplayer, and fixes for the players' reports on 0.1.2. Still a test release: please keep sending
+your logs.
+
+0.1.3 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+a few minutes, no disc image needed). Your saves and options are kept. From 0.1.3 on, the PC builds again only what
+an update changed, so the updates after this one are quicker.
+
+New
+- Jak II multiplayer: the community's Jak and Daxter II Multiplayer mod, built in. The title's Multiplayer hosts a
+  game or joins one on your network or by address, with every VR feature for everyone and the others shown with their
+  VR head and hands. With players of this port only. The launcher's Mods turns it off (then nothing of it runs), as
+  Jak 1's multiplayer.
+- A crosshair for the guns (Jak II and 3): a mark where the shot would land, on the wall, the ground or the enemy the
+  gun points at, the same size near or far, red on an enemy the gun can reach. It starts as a small dot. The VR menu
+  and the launcher's VR options have Crosshair (Off, Dot, Cross, Cross and dot, Circle, Circle and dot, Plus),
+  Crosshair size, Crosshair color, Crosshair opacity and Crosshair red on enemies.
+- Typing with the sticks in a text field (a name, an address): up or down changes the letter, right keeps it, left
+  erases one, A enters it and Y leaves.
+- Texture packs have their own tab (Texture packs, beside Mods), with Import: a pack you downloaded, as its .zip or
+  the folder you unpacked it to (on PC, drop either onto the launcher too). It goes to the game it is for, on, to turn
+  off, order or remove there. Packs made for OpenGOAL work; a pack for the PCSX2 emulator, or a .7z or .rar, is told
+  apart with what to do. Find texture packs lists the ones in the mod lists.
+- PC: the games can be kept on another drive. The Play tab's Where the games are kept moves them (up to about 10 GB a
+  game): copied, checked, then removed from where they were. Saves and options stay where they are.
+
+Fixed
+- Jak 1's Load Game loads your save (it asked to write over it, and Yes started a new game there).
+- Menus: the pointer and the sticks work in every menu of all three games, the trigger clicks with the pointer, and
+  the stick's row stays chosen until you point at another. B goes back in the games' menus. Jak II's title: the stick
+  and the pointer no longer land on the hidden Secrets row. Every kind of setting (On / Off, lists, sliders) takes the
+  pointer, and a long settings page no longer scrolls on by itself when it opens with your hand resting low.
+- Both eyes see the same: shiny walls, doors and lanterns, cloth, trails and lasers are drawn alike in each eye. Jak
+  3's clothing no longer sticks to your view or the HUD.
+- Posters and signs on walls hold steadier against the wall in VR (Jak II's city). The city's lit signs flicker by
+  design, as in the game.
+- Each shot, its flash and its light start at the gun in your hand.
+- Punch and shoot (Jak II and 3's combo, the gun course's lesson): the shot goes to what the punch hit. On foot the
+  left fist is only a fist now; Dark Jak (and Jak 3's Light Jak) is the left stick's click there.
+- Dark Jak is as solid as Jak; the gear on his arms and legs fades with them near your eyes.
+- The JET-Board: a quick squeeze of the right grip takes it out and puts it away, as does the right stick's click; a
+  quick click is no longer lost, and it no longer pauses the game with your left thumb on its rest.
+
+Riding
+- First person in vehicles is on to start, with Vehicle view height, Vehicle view forward and Vehicle view tilt to put
+  the view where you like it.
+- Steady view when riding (on to start): the view stays in his seat without each bounce and shake (Jak 3's leaper
+  lizards).
+- Jak 1's Zoomer in first person: the view no longer drops into the Zoomer at each bump.
+- Jak 3's gun turrets (Spargus' wall): you stand at the gun, at Jak's own height, looking over its barrels (the view
+  sank into the turret as you played).
+
+Adaptive cutscenes go back to Jak's eyes when a long scene comes back to him, without going back and forth.
+
+Performance (each in the launcher's Graphics)
+- Game frame rate: Automatic (to start): the headset's rate while the game keeps up, else 60.
+- Dynamic resolution on to start. Share work between eyes (on): the second eye skips what is the same for both.
+- Show performance (off): a small line low in your view with the frame rate and each frame's work.
+- Less log writing in play.
+
 0.1.2: smoother updates, out the same day as 0.1.1 (its notes below). Still a test release: please keep sending
 your logs.
 
@@ -18,6 +77,8 @@ Your saves and options are kept.
 Fixed
 - Jak 1's menus: the stick moves through them again, so Load Game loads (it could start a new game by mistake).
 - The menu pointer: a hand held still no longer takes back the row the stick chose, on every menu of all three games.
+- A long settings page no longer scrolls on by itself when it opens with your hand resting low.
+- Jak 1's list settings (language, frame rate, resolution and the like) take the pointer while you change them.
 - Jak II no longer crashes as the sewer's gun turret is destroyed; Jak 3 no longer crashes in the arena or at the end
   of its tutorial.
 - A scene that ends early lets Jak go again (Jak 1's pipe game in Lost Precursor City could leave him unable to move).

@@ -37,7 +37,11 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_TEST_KILL_SCENE=1` | Jak 1: a scene's camera (pov-camera) dies a second into its scene, to see Jak let go (`[vr] the scene ... ended before it let Jak go`). |
 | `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start. |
 | `JAKVR_TEST_BOARD=1` | Jak II and 3: Jak has the JET-Board from the start. |
-| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). |
+| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). |
+| `JAKVR_TEST_TURRETS=1` | Jak II: the sewer's first gun turret destroyed through the game's own instant death once it is made (its die state, LIST-0.1.1 item 22). Jak 3: 2 seconds into play, Spargus' wall turret (`wascity-turret-1`, with `JAKVR_TEST_CONTINUE=wascityb-gungame`) is sent the `'pickup` its Triangle prompt sends, so Jak gets in (`[vr] test: turret: Jak put in ...`). |
+| `JAKVR_TEST_COMBO=1` | Jak II, with `JAKVR_TEST_CONTINUE=gungame-start`: the gun course's yellow gun lesson opened and its manager told to start (`[vr] test: combo: ...`), for the punch-then-shoot combo. |
+| `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
+| `QUEST_SIM_HZ=N` | The refresh rate the simulated headset tells (72 to start), for Game frame rate: Automatic. |
 | `JAKVR_PARTY_TEST=host` or `=join` | Multiplayer: host a game as soon as the game is up, or look for games and join the first of this build found. |
 | `JAKVR_PARTY_TEST_SAVE=copy` | With `=join`: once the host's Jak is in the game, play the host's progress (Play which save?). |
 | `JAKVR_BODY_TRACE=1` | How the posed body sits, twice a second; the merc models the eyes draw, once each; each frame Jak's bones came from the game, or were posed, with their last column off 0 0 0 1 (made affine). |
@@ -53,7 +57,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_HIDE_JOINTS=14,64,...` | Those nodes shrunk out of the eyes (which joint is in the way?). |
 | `JAKVR_BUCKET_LOG=1` | In the left eye: each draw bucket starting and stopping, and the share of the picture the shadow pass darkens. |
 | `JAKVR_REPROJECT=0` | What the game had already put on the screen for its own camera is drawn as it was, not taken to each eye's view (to compare). |
-| `JAKVR_CRASH_DUMP=<folder>` | The first access violation writes a dump there. |
+| `JAKVR_CRASH_DUMP=<folder>` | The first access violation writes a dump there: crash.txt (the registers, the stack's words, rip and the game memory's base) and ee.bin (the game's memory from 512 KB on). A rip or stack word minus the base, inside the game's memory, is GOAL code: its function is found from the symbol table in ee.bin (Jak II and 3: s7 is r14, a symbol's name pointer at it + 0xff37). |
 | `QUEST_SIM_ALIGN=F` | Script frames from F on count from the frame the test's set-up was done. |
 | `QUEST_SIM_GRIP_TILT=D` | The grip pose turned D degrees up from the aim pose, as on the Quest's controllers. |
 | `QUEST_SIM_SPACE_WARP=0` | No motion pictures (Smoother frames off). |
@@ -132,7 +136,8 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
   eyes, his right side and in front, then a shot; `[vr-body] the gun's nearest joint N m from the eyes` once a second.
 - Scenes: `jak1_scene_view` (the left menu button held), `jak1_scene_face`, `jak1_scene_adaptive` and
   `jak3_open_adaptive` (`[vr-view] adaptive cutscenes` lines), `jak3_title`.
-- The menu pointer: `jak1_ptr_slots`, `jak2_ptr_menu`, `jak3_ptr_menu` (with `JAKVR_POINTER_TRACE=1`: the dot
+- The menu pointer: `jak1_ptr_slots`, `jak2_ptr_menu` (Jak II's multiplayer on, as it starts: the title's five rows;
+  `jak2_ptr_menu_mpoff` with it off, gkcfg-mpoff: four), `jak3_ptr_menu` (with `JAKVR_POINTER_TRACE=1`: the dot
   against each Yes / No line, every trigger press, a click that found no row, and each auto-scroll step); the
   auto-scroll down Jak II's Options menu: C:\JakQuest\sim\jak2_ptr_scroll.sim. The stick beside a resting, shaking
   dot on Jak 1's title (LIST-0.1.1 item 42): `jak1_ptr_stick` (the highlight stays where the stick puts it, A picks it).
@@ -154,9 +159,13 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
 - The party server: `python -I tests/party_server_test.py tools/party_server.py 8139` (24 checks).
 - Texture packs (launcher/common TexturePacks.java): compile the launchers' sources, then
   `javac -cp <classes> -d <out> tests/java/dev/jakquest/vr/TexturePacksTest.java` and
-  `java -cp <classes>;<out> dev.jakquest.vr.TexturePacksTest <an empty scratch folder>` (23 checks).
+  `java -cp <classes>;<out> dev.jakquest.vr.TexturePacksTest <an empty scratch folder>` (37 checks, 14 of them imports).
 - Browse mods' lists (launcher/common ModList.java) the same way: `tests/java/dev/jakquest/vr/ModListTest.java`,
   `java -cp <classes>;<out> dev.jakquest.vr.ModListTest <an empty scratch folder>` (20 checks, no network).
 - The PC launcher's "build it again" after an update (pc/launcher PcSetup.newSources, 0.1.2) the same way:
   `tests/java/dev/jakquest/vr/GameCodeTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.GameCodeTest <an empty scratch
   folder>` (19 checks: the game code of 0.1.0, 0.1.1 and later marks against a release's game\data\game-code.txt).
+- The PC launcher's "Where the games are kept" (pc/launcher PcDataFolder, 0.1.3) the same way:
+  `tests/java/dev/jakquest/vr/DataFolderTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.DataFolderTest <an empty
+  scratch folder> [<an empty scratch folder on another drive>]` (32 checks with the second folder, 29 without: what is
+  refused, a rename on one drive, a copy to another drive and back, a stop, the old copy's removal, a missing folder).

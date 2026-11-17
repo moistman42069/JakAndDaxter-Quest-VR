@@ -1,0 +1,40 @@
+# Jak 3 on a leaper lizard (LIST-0.1.3 item 26: "shakes camera to point where you can't see where your going"), run
+# with JAKVR_TEST_CONTINUE=wascitya-start-flut JAKVR_RIDE_TRACE=1: the opening skipped and a new game started as
+# jak3_toplay.sim, then once Jak is first in play the game starts again in Spargus on a leaper. Ridden ahead, a jump,
+# a turn and a look round; "[vr-cam] riding, the most in a frame" gives the view's move in his seat against his
+# head's (Steady view when riding on to start; the sims' gkcfg-steadyoff has it off).
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+# the new game's autosave notice holds the game paused: A closes it (b63: the first three pictures were the notice)
+3300 a 1
+3306 a 0
+4500 shot l-start
+4560 left_y 1
+4700 shot l-ride1
+4800 shot l-ride2
+4860 a 1
+4866 a 0
+4890 shot l-jump
+5000 left_x 0.6
+5100 shot l-turn
+5160 left_x 0
+5300 shot l-ride3
+5400 left_y 0
+5450 head_yaw 60
+5500 shot l-look
+5530 head_yaw 0
+5600 quit 0

@@ -4,7 +4,7 @@ package dev.jakquest.vr;
 
 /** This release's version, the updater's "installed" (tools/build_pc_launcher.sh writes the same into the zip's name). */
 final class PcBuild {
-    static final String VERSION = "0.1.2";
+    static final String VERSION = "0.1.3";
 
     private PcBuild() {}
 }

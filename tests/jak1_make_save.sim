@@ -1,0 +1,11 @@
+# Jak 1: a save for jak1_load_game.sim (the batch runs both in their own config folder with KEEP_SAVES=1, so the runner
+# keeps it; every other sim starts with no saves). Start, A (New Game: the save files), A on the first empty file: the
+# game starts and saves into it (s-saved: play, the save made).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+2900 a 1
+2906 a 0
+4400 shot s-saved
+4500 quit 0
