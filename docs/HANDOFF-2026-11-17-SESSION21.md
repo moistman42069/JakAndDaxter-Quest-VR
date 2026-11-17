@@ -2,9 +2,9 @@
 
 Read this first, then docs/LIST-0.1.5.md (every item [x], each with how it was checked), then
 docs/HANDOFF-2026-11-17-SESSION20.md (items 1 to 12, and "Publishing 0.1.5": the release steps left). 0.1.4 is
-published (latest). 0.1.5 is in progress: nothing committed, nothing released. VERSION, PcBuild.java and Jak II's
+published. 0.1.5 is published (latest, 2026-11-17: see "0.1.5 released" at the end). VERSION, PcBuild.java and Jak II's
 *mod-version-text* ("0.3.1-jakvr.0.1.5") were bumped by the publish that was stopped; the owner then said "dont
-publish anything yet".
+publish anything yet", and later "go ahead and publish on git as latest release".
 
 ## The owner's asks this session (0.1.5)
 
@@ -97,3 +97,25 @@ again (nothing else building meanwhile). Then, in order, as SESSION19's "0.1.4 r
    `gh release create v0.1.5 --target main --title "Jak and Daxter VR 0.1.5" --notes-file docs/release-notes.md
    --latest` with the three files.
 5. Give the owner the APK's path and SHA-256 (no adb steps); record it here and in memory.
+
+## 0.1.5 released, 2026-11-17 (Session 22)
+
+The owner: "proceed from where it left off". Finished the steps above:
+
+- build_apk.sh had finished on its own (`== gradle exit 0`; C:\JakQuest\sim\apk_build_015.log): JakQuestVR-0.1.5.apk,
+  versionCode 10599, versionName 0.1.5, signed with 0.1.0's key (certificate 66390b53...d59d52a, apksigner verify),
+  toolchain.sha256 cbee7961...0d54, SHA-256 e59d05d94fe64c98cd134ef8e6d71c2282b99d9d8288c1eb2ede5e6ddb45b43d. No
+  changed file was newer than it.
+- `python -I tools/build_pc_release.py` (C:\JakQuest\sim\pc_release_015.log): self-test OK, game code
+  de658c00...d452 (pc/game-code.txt), Jak II's "0.3.1-jakvr.0.1.5" checked, JakQuestVR-0.1.5-windows.zip SHA-256
+  81a7c7fb5fdeb40d5a3b013537f41fdc2b3b9cda0494f2d03c984d33b6f8b0fa. out/release-0.1.5 with SHA256SUMS.txt.
+- Private details: none in the changes; the patch's addresses are the same 31 upstream copyright lines as 0.1.4's.
+  release-notes.md named a tester with his quote: now "a player" (as 0.1.4's notes, which name no player).
+- make_patch.sh: 2991 files, 33,538,269 bytes. Commit 8fd3d23 on main, pushed.
+- **Published:** https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/tag/v0.1.5 ("Jak and Daxter VR
+  0.1.5", latest, not a prerelease, body docs/release-notes.md; the APK, the Windows zip and SHA256SUMS.txt, GitHub's
+  digests the same as above).
+
+Next: players' reports on 0.1.5 (HEADSET_CHECKLIST's new checks: Dark Jak by the left grip, no squares from effects,
+the sky's far hills, Select and L3 by the head, no flat screen between scenes), then a new list (LIST-0.1.6.md). Next
+release: bump VERSION, PcBuild.java and Jak II's mod-settings.gc "0.3.1-jakvr.<ver>".
