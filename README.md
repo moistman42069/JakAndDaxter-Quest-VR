@@ -5,14 +5,15 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.4](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** a quick vibration
-> update. **Extra vibration** lets you feel what you collect, or the whole world (each step, jump, landing, punch and
-> hit); the Quest's graphics start as a tested Quest 3 runs them; and the Quest launcher's **Save log** now saves
-> everything a bug report needs. It is still a test release, tested on a PC with a simulated headset, and its main
-> purpose is still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say
-> how. [docs/LIST-0.1.4.md](docs/LIST-0.1.4.md) says what changed and how each part was checked
-> ([LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md)
-> for the releases before).
+> **Test release [0.1.5](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
+> testers' reports on 0.1.4: no more flat screen between scenes, no more colored square in front of your face from
+> effects, Dark Jak back on the left grip, Jak II's missions and bosses working when you play alone, every game button
+> in reach with a controls table for each game, first person switches for each kind of ride and a **Small circle**
+> crosshair (off to start). It is still a test release, tested on a PC with a simulated headset, and its main purpose
+> is still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
+> [docs/LIST-0.1.5.md](docs/LIST-0.1.5.md) says what changed and how each part was checked
+> ([LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and
+> [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
 
 ## Built on OpenGOAL
 

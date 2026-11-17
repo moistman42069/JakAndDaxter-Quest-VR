@@ -32,6 +32,47 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **Jak 3's white screen after its first scene** (Precursor's README): a new game; after the opening scene the desert
   should draw.
 
+## 0.1.5's fixes (a tester's reports on 0.1.4: PC, SteamVR with a Quest over Link)
+
+- **The gun's laser** (Jak II and 3, SteamVR): turn on a crosshair, draw the gun and point it around: at the end of
+  the laser only the crosshair, never a small picture of the game or of the HUD. The same with **Show performance**
+  on: only its text.
+- **The crosshair**: off to start (a game with no options saved yet, or one whose 0.1.3 or 0.1.4 file had the Dot:
+  the log's `[vr] options: ... crosshair-kind 0`). **Small circle**: a thin ring, about half a degree across at 100%,
+  sharp at any distance; red on an enemy the gun can reach.
+- **Game frame rate: Automatic** on SteamVR: the log's `[vr-view] the game at ...` lines no more than a few in a run
+  (0.1.4 gave up to 26 changes a second), and Jak 1's `Tried to set unsupported video-mode` gone. A change of the
+  headset's own rate shows as `[vr-view] the headset at N a second for 1.0 s: the game follows it`.
+- **Jak 1's temple** (Forbidden Jungle, inside): where 0.1.4 froze (`too many sound commands queued`, then `STALL:
+  waiting for IOP on RPC port #0`), the game goes on. If the sound stops answering, the log says `the IOP has not
+  answered the sound player for over a quarter of a second` (a sound or two missed) and later `the IOP answers the
+  sound player again`; say whether the sound came back.
+- **Lag spikes** (Jak 1's plant boss, going in and out): say whether they still happen. A frame of over a second
+  writes `[vr-stall] the game has not finished a frame for 1.0 s: it is ...` with where the display and the sound
+  processor's threads were; send that log.
+- **Jak 3's leaper race restarted** several times from the pause menu: say whether it still closes. If the PC game
+  closes on its own, its log ends with `[crash] the game crashed: ...` lines; send that log.
+- **No flat screen** at the game's start, between scenes, after a mission failed or on a long load: black in the
+  headset, then the game around you again (the log's `[vr-view] a blackout kept in the eyes, black: N frames (S s)`
+  for each). A scene put **On a screen** in the VR menu's Cutscenes still shows on the screen.
+- **B in the pause menu**: Jak 1's pause opens on the power cell page; **B** opens the Options (its "Circle Options"),
+  **B** again goes back, **Y** shows the scout flies. In the Options and save menus **B** goes back. Jak II's lobby
+  list: **B** opens Manual (Join with Invite, Direct Connect). Turn round before pausing: the menu is in front of you.
+- **Dark Jak's button** (Jak II and 3): a quick squeeze of the left grip (or the left stick's click) makes Dark Jak
+  (`[vr-pad] a quick squeeze of the left grip: L2`; a quick click, `[vr-pad] a quick click of the left stick: L2 held
+  0.30 s`), once his meter has some dark eco. Jak 3: squeeze, let go and squeeze again and hold, then the right
+  stick or A, B, X, Y for Light Jak's powers. On SteamVR with Touch (the left click is the menu button) the grip
+  works the same.
+- **The sky** (Jak 3's desert, Jak II's city), in first person: the farthest hills whole against the sky, clouds and
+  the haze behind them, nothing flickering at their edges as you turn your head.
+- **First person for each ride**: the VR menu's Body, with First person in vehicles on: turn one ride's switch off
+  (the JET-Board, say) and ride it: third person on it, first person on the others.
+- **Jak II alone, multiplayer on** (as it starts): the burning bushes offer their missions, the Baron's squid boss
+  shoots at you and its ending scene plays, the tomb's widow throws her bombs and her ending plays, and after a
+  failed mission walking back to it starts its scene and the mission again.
+- **Effects in Jak II and 3**: Dark Jak's lightning and change, the guns' impacts, Jak 3's red guns' shockwave: no
+  colored or black square in front of your face; Dark Jak's darkening dims the HUD only.
+
 ## Performance options (launcher's Graphics tab, as Ratchet & Clank Quest VR's)
 
 - **0.1.4's Quest start** (a tested Quest 3's Graphics): a game with no options saved yet starts at 120 Hz (`[openxr]
@@ -71,6 +112,11 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
   pulses in that hand (`[vr-pad] d-pad up (the right stick)` and so on), the thumb rest a light one as it takes the
   stick, and Jak II and 3's gun change pulses in the gun's hand (`[vr-gun] the gun switched`): say whether each is
   felt, and whether the d-pad ever fails to go in. Off with **Buzz on d-pad presses** and **Buzz on gun switch**.
+- **Select and L3** (0.1.5): the left hand held by the head, click the left stick (`[vr-pad] Select: the left stick's
+  click with the left hand by the head`; Jak 3 pauses without the menu, Jak II multiplayer shows the player list) and
+  the right (`L3: the right stick's click ...`; Jak II multiplayer, the names and HUD while held). On foot in Jak II
+  and 3 the same clicks with the hand down stay Dark Jak and the JET-Board. Vive wands: the left touchpad's click in
+  its middle, the hand by the head (`Select: the left touchpad's click ...`); on a direction, that direction only.
 - **Extra vibration** (0.1.4; the VR menu's Controls, the launchers' VR Controls). **Pickups** (to start): collect an
   orb, eco, a power cell or a scout fly (Jak II and 3: ammo, a gun, a skull gem): a light tick, a longer buzz, a
   strong one. **The whole world**: walk and run (each step in that foot's hand, firmer running), jump, land, roll,

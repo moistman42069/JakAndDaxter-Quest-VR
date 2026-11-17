@@ -1,0 +1,34 @@
+# Jak 1: B on the pause's pages and in its Options (LIST-0.1.5 item 17; a tester: "the button that should be circle is
+# acting like triangle in pause menu"), with the head turned well round first (a report: "pause menu behind me"). A new
+# game, the intro skipped as jak1_play.sim, at Geyser Rock: the head turned 150 degrees, Start (the pause's power cell
+# page, on the HUD ahead of the head), B (Circle there: the Options), B again (Triangle there: back to the page), Y
+# (Triangle: the scout flies page), Start (play again), the head back.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot pb-start
+4260 head_yaw 150
+4340 shot pb-turned
+4400 menu 1
+4406 menu 0
+4520 shot pb-pause
+4560 b 1
+4566 b 0
+4700 shot pb-options
+4740 b 1
+4746 b 0
+4880 shot pb-back
+4920 y 1
+4926 y 0
+5060 shot pb-flies
+5100 menu 1
+5106 menu 0
+5240 shot pb-closed
+5260 head_yaw 0
+5340 shot pb-end
+5360 quit 0

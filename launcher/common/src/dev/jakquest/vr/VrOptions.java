@@ -243,8 +243,32 @@ public final class VrOptions {
     // 0.1.3 (the owner: "make that the new default"): on to start, under a new key, so a file an older release wrote
     // (where it was off to start) starts on too
     public static final Option VEHICLES = toggle("first-person-vehicles-on", "First person in vehicles",
-            "On the Zoomer, the JET-Board, in cars, turrets, slides, the Titan suit and on the flut flut: seen from his "
-                    + "eyes too, the view turning with what he rides. Off: the game's camera around you there.", true);
+            "Everything Jak rides seen from his eyes too, the view turning with it. Off: the game's camera around you "
+                    + "there. With it on, each kind of ride below has its own switch as well.", true);
+    // 0.1.5 (LIST-0.1.5 item 18; a player: "can you make vehicle types seperate 1st person toggles, for example hover
+    // car, hover bike, lizard, hover board?"; the owner: keep First person in vehicles for everything): each kind of
+    // ride on its own, on to start (game/vr/vr_options.h fp_*)
+    private static Option ride(String key, String label, String what) {
+        return toggle(key, label, "With First person in vehicles on: " + what + " from his seat. Off: the game's camera "
+                + "around you there.", true);
+    }
+    public static final Option FP_ZOOMER = ride("first-person-zoomer", "Zoomer in first person", "Jak 1's Zoomer");
+    public static final Option FP_FLUT = ride("first-person-flut-flut", "Flut Flut in first person",
+            "Jak 1's Flut Flut");
+    public static final Option FP_BOARD = ride("first-person-jet-board", "JET-Board in first person",
+            "Jak II and 3's JET-Board (its rails and half-pipes too)");
+    public static final Option FP_CARS = ride("first-person-hover-cars", "Hover cars in first person",
+            "Jak II and 3's city cars");
+    public static final Option FP_BIKES = ride("first-person-hover-bikes", "Hover bikes in first person",
+            "Jak II and 3's city bikes and Jak II's race bikes");
+    public static final Option FP_TITAN = ride("first-person-titan-suit", "Titan suit in first person",
+            "Jak II's Titan suit");
+    public static final Option FP_LEAPERS = ride("first-person-leaper-lizards", "Leaper lizards in first person",
+            "Jak 3's leaper lizards");
+    public static final Option FP_DESERT = ride("first-person-desert-vehicles", "Desert vehicles in first person",
+            "Jak 3's wasteland vehicles");
+    public static final Option FP_OTHER = ride("first-person-other-rides", "Other rides in first person",
+            "slides, gun turrets, the glider, the sled and anything else");
     // 0.1.3 (the owner: "add options to adjust angle/positioning as needed"): the view in a vehicle, first person
     public static final Option VEHICLE_HEIGHT = number("vehicle-view-height", "Vehicle view height",
             "First person in a vehicle: raises or lowers the view from his eyes there. His body stays in his seat.",
@@ -310,7 +334,8 @@ public final class VrOptions {
     public static final Option HUD_FOLLOWS = toggle("hud-follows-head", "HUD follows your head",
             "On, the HUD moves with your head. Off, it stays put ahead of you, and moves only when you look well away.",
             true);
-    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, VEHICLE_HEIGHT, VEHICLE_FORWARD,
+    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, FP_ZOOMER, FP_FLUT, FP_BOARD,
+            FP_CARS, FP_BIKES, FP_TITAN, FP_LEAPERS, FP_DESERT, FP_OTHER, VEHICLE_HEIGHT, VEHICLE_FORWARD,
             VEHICLE_TILT, STEADY_RIDE, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
             BODY_SHOWN, HIDE_ARMS_NEAR_EYES, FADE_BODY, KEEP_UPRIGHT, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
             HUD_DISTANCE, HUD_HEIGHT, HUD_FOLLOWS};
@@ -365,11 +390,13 @@ public final class VrOptions {
             "In a car, on the board or a turret, a grip at your hip or shoulder stays the game's own button.", true));
     public static final Option GUN_ANGLE = guns(number("gun-angle", "Gun angle",
             "The gun tilted up or down from the controller.", -45, 45, 5, " degrees", 0));
-    // 0.1.3 the gun's crosshair (LIST-0.1.3 item 27; game/vr/crosshair.h, the in-game VR menu's same rows)
-    public static final Option CROSSHAIR = guns(choice("crosshair", "Crosshair",
+    // 0.1.3 the gun's crosshair (LIST-0.1.3 item 27; game/vr/crosshair.h, the in-game VR menu's same rows). 0.1.5
+    // (LIST-0.1.5 items 2 and 3): Off to start, under a new key (0.1.3's "crosshair" started with the Dot: read keeps
+    // a kind a player chose), and the Small circle.
+    public static final Option CROSSHAIR = guns(choice("crosshair-kind", "Crosshair",
             "A mark on whatever your shot would hit first, the same size however far. First person, aiming with your hand.",
-            new String[] {"Off", "Dot", "Cross", "Cross and dot", "Circle", "Circle and dot", "Plus"},
-            new String[] {"0", "1", "2", "3", "4", "5", "6"}, "1"));
+            new String[] {"Off", "Dot", "Cross", "Cross and dot", "Circle", "Circle and dot", "Plus", "Small circle"},
+            new String[] {"0", "1", "2", "3", "4", "5", "6", "7"}, "0"));
     public static final Option CROSSHAIR_SIZE = guns(number("crosshair-size", "Crosshair size",
             "How big the crosshair looks. It stays that size near or far.", 50, 300, 25, "%", 100));
     public static final Option CROSSHAIR_COLOR = guns(choice("crosshair-color", "Crosshair color",
@@ -573,6 +600,7 @@ public final class VrOptions {
         Map<String, String> values = new LinkedHashMap<>();
         for (Option o : all()) values.put(o.key, o.fallback);
         boolean gameRate = false;  // 0.1.3: "game-frame-rate" in the file (else 0.1.1's "frame-rate" 1 or 2 is kept)
+        boolean crossKind = false;  // 0.1.5: "crosshair-kind" in the file (else 0.1.3's "crosshair" 2 to 6 is kept)
         if (file.isFile()) {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8))) {
@@ -585,6 +613,7 @@ public final class VrOptions {
                     if (o == WORLD_SCALE || o == THIRD_SCALE) value = fromScale(value);
                     values.put(words[0], o == null ? value : o.clean(value));
                     if (o == FRAME_RATE) gameRate = true;
+                    if (o == CROSSHAIR) crossKind = true;
                 }
             } catch (IOException ignored) {
                 // the defaults
@@ -592,6 +621,9 @@ public final class VrOptions {
         }
         String oldRate = values.get("frame-rate");
         if (!gameRate && ("1".equals(oldRate) || "2".equals(oldRate))) values.put(FRAME_RATE.key, oldRate);
+        String oldCross = values.get("crosshair");
+        if (!crossKind && oldCross != null && oldCross.matches("[2-6]")) values.put(CROSSHAIR.key, oldCross);
+        values.remove("crosshair");  // the game reads it no more
         return values;
     }
 

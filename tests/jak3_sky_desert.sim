@@ -1,0 +1,48 @@
+# Jak 3's sky against the far land (LIST-0.1.5 item 15; the owner: "jak 3 has skybox z-fighting ... only really happens
+# if you look at it just right"), run with JAKVR_TEST_CONTINUE=wasdoors-desert-turtle JAKVR_SKY_TRACE=1: the opening
+# skipped as jak3_vehicle.sim, then in the desert in the Tough Puppy's seat (first person in vehicles: the eyes' near
+# plane), the head turned round a sixth at a time along the horizon, and up a little at each half. The sky's clouds,
+# the land under its horizon and the haze sit at a set depth meant to be about the far plane; with the eyes' nearer
+# near plane they stood a third as far, before the farthest hills. Expect the [vr-sky] lines' 400 as 204 (the depth
+# scaled to the eyes' near plane) and the hills whole against the sky in the pictures.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+# the new game's autosave notice holds the game paused (b63: every picture was the notice): A, twice, closes it
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+5400 shot s3-0
+5420 head_yaw 60
+5480 shot s3-60
+5500 head_yaw 120
+5560 shot s3-120
+5580 head_pitch 12
+5640 shot s3-120up
+5660 head_pitch 0
+5680 head_yaw 180
+5740 shot s3-180
+5760 head_yaw 240
+5820 shot s3-240
+5840 head_yaw 300
+5900 shot s3-300
+5920 head_pitch 12
+5980 shot s3-300up
+6000 head_pitch 0
+6020 head_yaw 0
+6080 shot s3-end
+6100 quit 0

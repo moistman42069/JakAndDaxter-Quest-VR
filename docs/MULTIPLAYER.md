@@ -13,7 +13,8 @@ Jak II has its own, built on the community's Jak II multiplayer mod: see [Jak II
 Multiplayer is on when the game is installed. Until you host or join a game it changes nothing in Jak 1: the game,
 its cutscenes and its saves are as they always were, and it opens no network port. Only when you host, join or look
 for games does the game go on the network, and only in a game are the others' Jaks shown, the in-game cutscenes
-skipped (so nobody waits on another's) and the taunts on the d-pad.
+skipped (so nobody waits on another's) and the taunts on the d-pad. (Since 0.1.5 also its checkpoint hook and its
+crate rule, which ran with the mod merely on.)
 
 To keep it out of the game altogether, turn it off:
 
@@ -39,6 +40,12 @@ nothing has to be allowed by the host.
 A player in VR in first person shows as he moves: his Jak's head turns with his headset and his arms and hands go
 where his controllers are, in everyone's game of this release, in VR or not. In third person, or with VR off, his Jak
 moves as the game animates him.
+
+**Friends without a headset** play on PC with this port's PC build: with no headset connected the game plays on the
+monitor with a pad, as OpenGOAL does (its log says `[vr] no headset`), and hosts and joins like anyone else, seeing
+the VR players' heads and hands. Players of Teamruns' own app or of the Jak II mod's own build cannot join this port's
+games, nor this port theirs: Teamruns' app goes through Teamruns' online service and the Jak II mod through Steam's
+networking, and neither carries the VR players' head and hands.
 
 ## In the game: the VR menu's Multiplayer
 
@@ -132,7 +139,11 @@ not with the mod's own build. In VR, the others' Jaks show their VR head and han
 **On to start, and changes nothing until you play together.** The title's New Game and Load Game are the game's own,
 as always: the mod opens no network until you host or join. Its makers call it a beta, so it has its own switch; turned
 off, neither the title nor Options has a Multiplayer row and nothing of the mod runs at all (no network, no lobby, no
-player list). Turn it off if anything seems wrong with it on:
+player list). Since 0.1.5 that holds in play as well: the mod lets only a game's host decide some things (a boss's aim
+and its ending, the burning bushes' missions, the guards taking the Kid and Kor, some enemies' moves), and played
+alone nobody was the host, so those never happened; now, out of a multiplayer game, the game decides them itself as
+it always did, and a failed mission's scene plays again when you walk back to it. Turn it off if anything seems wrong
+with it on:
 
 - **PC:** the launcher's **Mods** tab, **Jak II multiplayer: Off**.
 - **Quest:** Jak II's options page in the launcher, **Mods**, **Jak II multiplayer: Off**.

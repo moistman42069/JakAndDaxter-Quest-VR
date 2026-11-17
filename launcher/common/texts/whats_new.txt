@@ -1,3 +1,60 @@
+0.1.5: fixes for a tester's reports on 0.1.4, and a small circle crosshair. Still a test release: please keep sending
+your logs.
+
+0.1.5 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+which builds again only what changed). Your saves and options are kept.
+
+New
+- Crosshair: Small circle, a thin ring about half a degree across at Crosshair size 100%, for a precise aim.
+- First person for each kind of ride: with First person in vehicles on, the VR menu's Body and the launchers' VR Body
+  have a switch for each (Zoomer, Flut Flut, JET-Board, hover cars, hover bikes, Titan suit, leaper lizards, desert
+  vehicles, other rides), each in the games that have it, all on to start.
+- CONTROLS (the launchers' Controls page) shows what each button does in each game, on foot and in each ride.
+- Every game button in reach: with the left hand held by your head, the left stick's click is Select (Jak II
+  multiplayer's player list) and the right's L3 (its names and HUD), which on foot in Jak II and 3 had no button.
+  Vive wands, which had no Select at all: the left touchpad's click in its middle, the hand by your head.
+
+Changed
+- Loads and blackouts (a scene starting or ending, a mission retried, the game's start) stay black in the headset
+  however long they last, as on a flat screen: no more flat screen floating in front of you between scenes.
+- B in the games' menus is the game's Circle where the menu has a Circle of its own: Jak 1's pause pages (B opens
+  the Options, out of reach before) and Jak II's multiplayer menus. Elsewhere B still goes back.
+- The crosshair is off to start (0.1.3 and 0.1.4 started with the Dot): turn it on in the VR menu's Combat or the
+  launcher's VR Controls. A crosshair you chose other than the Dot is kept.
+- The game's log: Jak 1's is far shorter (debug lines from the port's base are gone); each game's lists your VR
+  options at the start, says where the game and the display were when either stops for over a second, and, on the
+  PC, ends with what crashed and where if the game crashes. Its lines are written as they come, so a crash keeps
+  the last ones.
+
+Fixed
+- Dark Jak's button (Jak II and 3): the left grip makes Dark Jak again, as before 0.1.3: a quick squeeze and let go,
+  with no punch or other button. Squeezed again at once and held (Jak 3): Light Jak's powers with a face button or the
+  right stick. The left stick's click, where it is Dark Jak, holds it long enough now: a quick click ended before Jak 3
+  counted it.
+- A colored or black square in front of your face (Jak II and 3): Dark Jak's change and lightning and the game's
+  other darkenings of the screen, Jak II's big flashes (explosions) and Jak 3's zoom blur (the red guns' shots, the
+  dark gun) were drawn as solid rectangles into the HUD's layer. The darkening dims only the HUD there
+  now, the big flashes are drawn in your view, and the zoom blur and slow time's trail are left out of VR (the flat
+  screen keeps them).
+- The sky against the farthest hills (Jak II and 3, first person): seen at some angles they flickered into each
+  other. The sky's depth now follows the eyes' nearer view.
+- PC (SteamVR): a small picture of the game, or its HUD, at the end of the gun's laser, where the crosshair is (and
+  in place of Show performance's text). Their pictures are written in full now.
+- The game's frame rate flipped between the headset's rate and half of it, many times a second on SteamVR (which
+  reports a slow frame as a half-rate one): it follows the headset only once a new rate holds for a second.
+- A full sound queue froze the game for good when the sound processor stopped answering (a tester's freeze in Jak
+  1's Forbidden Jungle temple): a few sounds are skipped instead, and the log says so.
+- Jak 3 closed after a few restarts of a mission from the pause menu (a tester's leaper race): during the restart
+  the game uploaded its textures with an empty entry, and reading it closed the game. Such entries are passed over
+  now, and the log says so.
+- Jak II: after failing a mission, walking back to it no longer starts nothing: its scene plays again and the mission
+  starts. The multiplayer mod passed over a scene it had just played, a check meant for its guests only.
+- Jak II played alone with its multiplayer on (as it starts): what the mod let only a host decide, nobody decided.
+  The burning bushes offered no missions; the Baron's squid-shaped boss aimed at the middle of its arena, not at
+  you, and its ending never played; the tomb's widow boss threw no bombs (they are what hurt her) and her ending
+  never played; the guards never took the Kid or Kor; some enemies (the hoppers) held back. All the game's own again
+  out of a multiplayer game. Jak 1's multiplayer likewise changes nothing until you host or join.
+
 0.1.4: more vibration. Still a test release: please keep sending your logs.
 
 0.1.4 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game:

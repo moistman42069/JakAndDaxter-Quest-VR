@@ -1,0 +1,33 @@
+# Jak II: B in the multiplayer lobby list (LIST-0.1.5 item 17, every control reachable): Circle there joins by address
+# (lobby-browser.gc), out of reach while B was Triangle in every menu. The title's menu (Start, A), down twice to
+# Multiplayer, A (Host Game, Join Game), down to Join Game, A (the lobby list), B (Circle: Join by address), Y (Triangle:
+# back). Then the head turned 150 degrees and Start again over the title (a report: "pause menu behind me").
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3100 shot jb-main
+3200 left_y -1
+3210 left_y 0
+3260 left_y -1
+3270 left_y 0
+3340 shot jb-mp-row
+3360 a 1
+3366 a 0
+3500 shot jb-mp
+3520 left_y -1
+3530 left_y 0
+3600 a 1
+3606 a 0
+3800 shot jb-browser
+3820 b 1
+3826 b 0
+3980 shot jb-manual
+4000 y 1
+4006 y 0
+4150 shot jb-back
+4200 y 1
+4206 y 0
+4300 head_yaw 150
+4380 shot jb-turned
+4460 quit 0

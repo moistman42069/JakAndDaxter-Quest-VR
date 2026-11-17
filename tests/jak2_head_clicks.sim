@@ -1,0 +1,66 @@
+# Jak II: Select and L3 with the left hand held by the head (LIST-0.1.5 item 17; the owner: "make sure theres NO control
+# conflicts and all controls are able to be accessed"), run with JAKVR_TEST_CONTINUE=ctysluma-start JAKVR_STATE_TRACE=1:
+# on foot in Haven City with the fists on the grips, where the stick clicks are R2 and L2, the left hand held up by the
+# side of the head (as a phone at the ear): the right stick's click is L3, the left's Select. Expect
+# "[vr-pad] L3: the right stick's click with the left hand by the head", then "Select: the left stick's click ...";
+# Jak II alone does nothing with Select (main.gc toggle-pause turns it away; the multiplayer mod's player list in a game)
+# and Start opens its pause menu. Then a Vive wand (no left stick click, no thumb rest), the hand at the head again: its
+# left touchpad clicked in the middle "Select: the left touchpad's click ...", clicked on its right "d-pad right" alone.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+6000 shot hc-start
+6020 lh_x 0.05
+6020 lh_y 0.35
+6020 lh_z 0.3
+6080 shot hc-byhead
+6100 right_click 1
+6110 right_click 0
+6160 shot hc-l3
+6200 left_click 1
+6210 left_click 0
+6300 shot hc-select
+6400 menu 1
+6406 menu 0
+6500 shot hc-closed
+6520 lh_x 0
+6520 lh_y 0
+6520 lh_z 0
+6600 shot hc-down
+6640 menu 1
+6646 menu 0
+6700 no_left_click 1
+6700 no_thumb_rest 1
+6720 lh_x 0.05
+6720 lh_y 0.35
+6720 lh_z 0.3
+6780 shot hc-wand
+6800 x 1
+6810 x 0
+6860 shot hc-wand-select
+6900 left_x 0.9
+6920 x 1
+6930 x 0
+6960 left_x 0
+6980 shot hc-wand-right
+7000 lh_x 0
+7000 lh_y 0
+7000 lh_z 0
+7100 quit 0

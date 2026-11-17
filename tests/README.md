@@ -35,13 +35,19 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_TEST_WARP_OFFSET=dx,dy,dz` | Jak 1, with `JAKVR_TEST_WARP`: that many metres from the actor instead of a metre over it (the pipe game's buttons, which are not entities: `sunken-pipegame-1` with `7.5,1.3,1.25` for the right one). |
 | `JAKVR_TEST_WARP_APPROACH=1` | Jak 1, with `JAKVR_TEST_WARP_OFFSET`: first to the offset, then onto the actor once the levels there have loaded, as a player walking up to it (the elevator down to the underwater city asks for the city as it starts). |
 | `JAKVR_TEST_KILL_SCENE=1` | Jak 1: a scene's camera (pov-camera) dies a second into its scene, to see Jak let go (`[vr] the scene ... ended before it let Jak go`). |
-| `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start. |
+| `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start (0.1.5: Jak II also Dark Jak, his meter full and his bombs). `JAKVR_TEST_GUN=all` (0.1.5, Jak 3): every gun, Light Jak's powers, and Dark Jak's and Light Jak's meters kept full while he is neither (build 76: a new game has Dark Jak already, and the first aid left his meter empty). |
+| `JAKVR_SKY_TRACE=1` | 0.1.5, PC: every 4 seconds each draw of the sky bucket (Jak 3's `sky`, Jak II's `sky-draw` since build 76): its points' depth (after the scaling to the eyes' near plane), depth test and writes, alpha test, and the near plane (`[vr-sky] frame N draw: ...`). |
 | `JAKVR_TEST_BOARD=1` | Jak II and 3: Jak has the JET-Board from the start. |
 | `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). |
 | `JAKVR_TEST_TURRETS=1` | Jak II: the sewer's first gun turret destroyed through the game's own instant death once it is made (its die state, LIST-0.1.1 item 22). Jak 3: 2 seconds into play, Spargus' wall turret (`wascity-turret-1`, with `JAKVR_TEST_CONTINUE=wascityb-gungame`) is sent the `'pickup` its Triangle prompt sends, so Jak gets in (`[vr] test: turret: Jak put in ...`). |
 | `JAKVR_TEST_COMBO=1` | Jak II, with `JAKVR_TEST_CONTINUE=gungame-start`: the gun course's yellow gun lesson opened and its manager told to start (`[vr] test: combo: ...`), for the punch-then-shoot combo. |
 | `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
 | `QUEST_SIM_HZ=N` | The refresh rate the simulated headset tells (72 to start), for Game frame rate: Automatic. |
+| `QUEST_SIM_PERIOD_BLIPS=N` | 0.1.5: every Nth frame the simulated headset tells a doubled frame period, as SteamVR does for each frame it missed; Automatic keeps the game's rate (a change of the headset's rate is followed once it has held a second: `[vr-view] the headset at ...`). |
+| `JAKVR_TEST_TASK=<number>`, `JAKVR_TEST_RESTARTS=N` | 0.1.5, Jak 3: once Jak has been in play for 2 seconds, that mission played from its start (the game's play-task and its continue), then restarted N times as the pause menu's Restart mission does, a minute after and then every 20 seconds (`[vr] test: task ...`, `restart mission N`; 17 is the leaper race). |
+| `JAKVR_TEST_SOUND_STALL=S` | 0.1.5, Jak 1: the sound processor's player stops answering for S seconds at its 1200th batch of commands (about 20 seconds into a run; `[vr-test] the sound player held for S s`, then `goes on`), and the game, once the player has been busy for 30 frames, sends 300 sound commands at once (`[vr] test: 300 sound commands while the sound player is held`), so the sound queue fills as in the tester's freeze. |
+| `JAKVR_TEST_GAME_STALL=S` | 0.1.5: the game's thread held S seconds at its 1500th frame (`[vr-test] the game held for S s`, then `goes on`), for the stall watch's `[vr-stall]` lines. PC only. |
+| `JAKVR_TEST_BAD_TEXTURE=N` | 0.1.5: the Nth texture page the game uploads has its first entry read as 0 (`[vr-test] page N's first entry read as 0`), as the page in Jak 3's crash on a restart had: the texture guard passes it over. |
 | `JAKVR_PARTY_TEST=host` or `=join` | Multiplayer: host a game as soon as the game is up, or look for games and join the first of this build found. |
 | `JAKVR_PARTY_TEST_SAVE=copy` | With `=join`: once the host's Jak is in the game, play the host's progress (Play which save?). |
 | `JAKVR_BODY_TRACE=1` | How the posed body sits, twice a second; the merc models the eyes draw, once each; each frame Jak's bones came from the game, or were posed, with their last column off 0 0 0 1 (made affine). |
@@ -166,6 +172,68 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
   `hit (0 0; ...)`, and its scout fly, `big pickup (8 0; ...)`).
 - The Quest's driver notes (LIST-0.1.4 item 10): `ocean` (`jak1_ocean`, the sea and Jak's shadow, before and after);
   a repeated driver message is written 3 times, then at the 10th, 100th ... with `(the 10th time)`.
+
+## The checks added in 0.1.5
+
+- The crosshair (C:\JakQuest\sim\batch28g.sh): `crossdef2` (`jak2_gun` on the defaults: `[vr] options: ...
+  crosshair-kind 0`, no `[sim] crosshair` line), `cross2` (gkcfg-cross, 0.1.3's `crosshair 3`: kept, the Cross drawn),
+  `ring2` and `ring3` (gkcfg-ring, `crosshair-kind 7` at 100%: the Small circle drawn). The sim stamps the crosshair
+  with nearest sampling at its eyes' 10 pixels a degree, coarser than any headset: a thin line looks broken there.
+- `blips1` (`jak1_play` on gkcfg-perf with `QUEST_SIM_PERIOD_BLIPS=7`): `[sim] a doubled frame period told every 7
+  frames`, then one `[vr-view] the game at 72 frames a second` and no other.
+- `task3` (C:\JakQuest\sim\jak3_task_restart.sim, `JAKVR_TEST_TASK=17 JAKVR_TEST_RESTARTS=4`): the leaper race played
+  and restarted four times by the game's restart-mission (each a leaper death, `resetting with ... wascitya-flut-racer`
+  and the race again); `task3m` (jak3_menu_restart.sim, `JAKVR_TEST_RESTARTS=0`): the same four times through the
+  pause menu (menu, up, A, A for Yes / No, left for Yes, A), as a player does, with its sound bank swap (wascity3,
+  menu1, wascity3). Before 0.1.5's texture guard, task3m crashed at the third restart, as the tester's game did (`[crash]
+  the game crashed: exception 0xc0000005 in gk.exe+0x420340`, a read at 0x0); with it, 20 restarts in three runs
+  passed, the guard not reached: the bad page comes only now and then. `task3m8` and `task3m8b` (jak3_menu_restart8.sim): eight restarts through the pause menu, from frame 6200
+  every 2000.
+- `badtex3` (`jak3_actions` with `JAKVR_TEST_BAD_TEXTURE=40`): that guard, on purpose: `[vr-test] page 40's first
+  entry read as 0`, then `[vr] a texture page the game uploads has a bad entry (a texture outside the game's memory:
+  entry 0, 0x0): passed over (1 so far)`, and the game goes on.
+- `sstall1` (`jak1_play` with `JAKVR_TEST_SOUND_STALL=5`): the sound queue never waiting forever: `[vr] test: 300 sound
+  commands while the sound player is held`, `too many sound commands queued` and the queue's dump (a line for each run
+  of the same command, each play by its sound's name), `the IOP has not answered the sound player for over a quarter
+  of a second: 1 sound commands dropped` (and at 10 and 100), the sim's frame lines on time through the hold, then
+  `the IOP answers the sound player again: N sound commands were dropped`.
+- `gstall1` (`jak1_play` with `JAKVR_TEST_GAME_STALL=7`): the stall watch: `[vr-stall] the game has not finished a frame
+  for 1.0 s: it is held by the test (JAKVR_TEST_GAME_STALL); the display is ...; the IOP: ...` (and at 5 s), then
+  `[vr-stall] the game went on after 7.x s`.
+- Every batch28g run's summary counts `[vr-stall]` lines, `the IOP has not answered the sound player` lines, `[crash]`
+  lines and the texture guard's `bad entry` lines.
+- The owner's and the tester's later reports (C:\JakQuest\sim\batch28h.sh and batch28i.sh, LIST-0.1.5 items 13 to 22):
+  - `pturn2` (`jak2_pause_turned`): Jak II from its start through the opening's skips: each blackout `[vr-view] a
+    blackout kept in the eyes, black: N frames (S s)` with the sim's `eyes 1 panel 0` and black pictures (the load into
+    the fortress about 18 s), no `[vr-stall]`; then the head turned 150 degrees and Start: the pause menu on the HUD
+    panel in front, the world in the eyes. Also `[vr] test: multiplayer game #f, host #f, guest #f` (alone, the mod on).
+  - `pauseb1` (`jak1_pause_b`): Jak 1's pause with the head turned: the power cell page ("Circle OPTIONS") on the HUD
+    panel; B opens the Options, B again goes back, Y the scout flies page.
+  - `joinb2` (`jak2_join_b`): Jak II's lobby list ("Circle Manual"): B opens the Manual page, Y goes back.
+  - `boardon` and `boardoff` (`jak2_board` at ctysluma-start, gkcfg and gkcfg-fpoff with `first-person-jet-board
+    off`): first person on the JET-Board, and with its switch off `view in play: third person (...)` as he gets on,
+    first person as he gets off. `zoomoff` (`jak1_zoomer_misty` at misty-bike, `first-person-zoomer off`): third person
+    on the Zoomer (camera flags 0x10151, ride kind 1).
+  - `eff3` (`jak3_effects`, `JAKVR_TEST_GUN=all JAKVR_STATE_TRACE=1 JAKVR_SKY_TRACE=1`): every gun fired at his feet and
+    ahead, pictures 2 to 40 frames after: no black or colored square in either eye, the HUD panel only the HUD (its
+    pictures under 5% drawn), `[vr-view] the game's zoom blur is left out of VR` (the Wave Concussor, the Plasmite RPG)
+    and `slow time's trail` (Light Jak's freeze); Light Jak by the grip's squeeze again and held, then X.
+  - `eff2` (`jak2_effects`, `JAKVR_TEST_GUN=1`): Dark Jak by the left grip's quick squeeze (`[vr-pad] a quick squeeze of
+    the left grip: L2`, `state target-darkjak-get-on`), his lightning, punch and bomb, then each gun: no square in the
+    eyes or on the HUD panel. (Its Dark Jak part starts at frame 4900 since 0.1.5: the load into the fortress, black
+    since item 21, lasts to about 4660.)
+  - `dark3` (`jak3_darkjak` at templea-start, `JAKVR_TEST_GUN=all`, which keeps both meters full while he is neither):
+    Dark Jak by a quick click of the left stick (6 frames: `[vr-pad] a quick click of the left stick: L2 held 0.30 s in
+    all`), back by a 2-frame click (inside the click's hold-back), again by a 10-frame click, back, by the left grip's
+    quick squeeze; each `state target-darkjak-get-on`. Then Light Jak's shield (the grip squeezed, again and held, B).
+  - `sky3` (`jak3_sky_desert` at wasdoors-desert-turtle, `JAKVR_SKY_TRACE=1`) and `sky2` (`jak2_board` at ctysluma-start,
+    the same trace): the sky's `[vr-sky]` lines, its clouds, base and haze at depth 400 in third person and 204 in
+    first person (the eyes' near plane, 356 game units, over the game's 1024), and the far hills whole in the pictures.
+  - `hclick2` (`jak2_head_clicks` at ctysluma-start, `JAKVR_STATE_TRACE=1`): the left hand held by the head (`lh_x 0.05
+    lh_y 0.35 lh_z 0.3`), the right stick's click `[vr-pad] L3: the right stick's click with the left hand by the
+    head`, the left's `Select: the left stick's click ...` (Jak II alone does nothing with Select; Start opens its
+    pause menu). Then a Vive wand (`no_left_click 1`, `no_thumb_rest 1`), the hand by the head: X with the left stick
+    at rest `Select: the left touchpad's click ...`, X with it pushed right `d-pad right` alone.
 
 ## Without a game
 
