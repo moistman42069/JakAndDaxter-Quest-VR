@@ -87,6 +87,9 @@ The owner: "i want you to work through EVERYTHING and just publish it as a new r
   75c68a17...fb1e (pc/game-code.txt), JakQuestVR-0.1.3-windows.zip SHA-256
   25ca58e6371a0a6d53bd7e3b9ced64ee04b2d553db47da0c198cdba2a56997fb. out/release-0.1.3 with SHA256SUMS.txt.
 - make_patch.sh: 2966 files, 33,379,430 bytes (as before the builds). Commit, push, `gh release create v0.1.3`.
+- **Published:** https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/tag/v0.1.3 ("Jak and Daxter VR
+  0.1.3", latest, not a prerelease, body docs/release-notes.md; the APK, the Windows zip and SHA256SUMS.txt, GitHub's
+  digests the same as above). Commit 058c500 on main, pushed.
 
 ## Next, in order
 
