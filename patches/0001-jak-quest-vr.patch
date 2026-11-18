@@ -58782,7 +58782,7 @@ index 33b5f162b..906be3551 100644
 +
 +
 diff --git a/goal_src/jak1/engine/collide/collide-cache.gc b/goal_src/jak1/engine/collide/collide-cache.gc
-index 8d91f8b60..04d7c05ab 100644
+index 8d91f8b60..c990eb062 100644
 --- a/goal_src/jak1/engine/collide/collide-cache.gc
 +++ b/goal_src/jak1/engine/collide/collide-cache.gc
 @@ -99,58 +99,59 @@
@@ -58900,7 +58900,19 @@ index 8d91f8b60..04d7c05ab 100644
    (rlet ((Q :class vf)
           (vf0 :class vf)
           (vf1 :class vf)
-@@ -263,13 +264,14 @@
+@@ -230,7 +231,10 @@
+       (nop!)
+       (set! (-> obj proc) arg2)
+       (.mov.vf.w vf1 vf0)
+-      (let ((a0-1 *collide-work*))
++      ;; Jak Quest VR 0.1.6: Teamruns' coll-work, lost in our merge (the box went to the global *collide-work* while
++      ;; fill-from-background's tests read coll-work's, so the ledge search's own work never had its box). Every fill
++      ;; but the ledge search's passes *collide-work*; alone that one does too (collide-edge-grab.gc), the original.
++      (let ((a0-1 coll-work))
+         (.mov.vf.w vf2 vf0)
+         (set! (-> obj ignore-mask) arg3)
+         (.ftoi.vf vf3 vf1)
+@@ -263,13 +267,14 @@
      (if (logtest? arg1 (collide-kind background))
        (fill-from-background obj
                              (method-of-type bsp-header collide-with-box)
@@ -58917,7 +58929,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars (v1-1 int))
    (rlet ((acc :class vf)
           (vf0 :class vf)
-@@ -279,7 +281,7 @@
+@@ -279,7 +284,7 @@
      (init-vf0-vector)
      (nop!)
      (.max.w.vf vf3 vf0 vf0)
@@ -58926,7 +58938,7 @@ index 8d91f8b60..04d7c05ab 100644
      (.sub.vf vf1 vf1 vf2)
      (nop!)
      (.mul.vf vf1 vf1 vf1)
-@@ -295,10 +297,10 @@
+@@ -295,10 +300,10 @@
      (.mov v1-1 vf1)
      (<= (the-as int v1-1) 0)))
  
@@ -58940,7 +58952,7 @@ index 8d91f8b60..04d7c05ab 100644
          (let ((v1-5 (-> arg1 items (-> arg1 num-items)))) (set! (-> v1-5 mesh) (-> obj mesh)) (set! (-> v1-5 inst) #f))
          ; (add-debug-sphere #t (bucket-id debug) (-> obj bsphere) (-> obj bsphere w) (new 'static 'rgba :g #x80 :a #x80))
          ; (format 0 "~f~%" (-> obj bsphere w))
-@@ -307,16 +309,16 @@
+@@ -307,16 +312,16 @@
    0
    (none))
  
@@ -58961,7 +58973,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (let ((v1-12 (-> arg1 items (-> arg1 num-items))))
                    (set! (-> v1-12 mesh) (-> (the-as collide-fragment s1-0) mesh))
                    (set! (-> v1-12 inst) obj))
-@@ -330,7 +332,7 @@
+@@ -330,7 +335,7 @@
  ;; Y PROBE
  ;;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -58970,7 +58982,7 @@ index 8d91f8b60..04d7c05ab 100644
    (rlet ((vf1 :class vf)
           (vf2 :class vf)
           (vf3 :class vf)
-@@ -340,7 +342,7 @@
+@@ -340,7 +345,7 @@
      (.mov vf5 arg1)
      (.lvf vf2 (&-> arg0 quad))
      (nop!)
@@ -58979,7 +58991,7 @@ index 8d91f8b60..04d7c05ab 100644
        (.mov.vf vf1 vf2)
        (set! (-> obj ignore-mask) (the-as pat-surface arg4))
        (.add.x.vf.y vf2 vf2 vf5)
-@@ -366,13 +368,14 @@
+@@ -366,13 +371,14 @@
      (if (logtest? arg2 (collide-kind background))
        (fill-from-background obj
                              (method-of-type bsp-header collide-y-probe)
@@ -58996,7 +59008,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars
      (zero uint128)
      (v1-1 uint128)
-@@ -389,7 +392,7 @@
+@@ -389,7 +395,7 @@
           (vf5 :class vf))
      (set! zero (the-as uint128 0))
      (nop!)
@@ -59005,7 +59017,7 @@ index 8d91f8b60..04d7c05ab 100644
        (nop!)
        (.lvf vf1 (&-> arg0 quad))
        (nop!)
-@@ -414,26 +417,30 @@
+@@ -414,26 +420,30 @@
  
  ;; definition for method 12 of type collide-fragment
  ;; INFO: Return type mismatch int vs none.
@@ -59045,7 +59057,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (let ((v1-11 (-> arg1 items (-> arg1 num-items))))
                    (set! (-> v1-11 mesh) (-> (the-as collide-fragment s1-0) mesh))
                    (set! (-> v1-11 inst) obj))
-@@ -460,7 +467,7 @@
+@@ -460,7 +470,7 @@
      (set! (-> temp 3) (abs (-> temp 3)))
      (set! ,out (-> (the (pointer uint128) temp)))))
  
@@ -59054,7 +59066,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars (zero uint128) (a0-2 uint128) (a0-3 uint128) (a0-7 int) (t0-1 uint128) (t0-2 uint128))
    (rlet ((acc :class vf)
           (Q :class vf)
-@@ -499,7 +506,7 @@
+@@ -499,7 +509,7 @@
          (.ftoi.vf vf21 vf3)
          (.lvf vf1 (&-> arg0 quad))
          (.mul.vf vf8 vf3 vf3)
@@ -59063,7 +59075,7 @@ index 8d91f8b60..04d7c05ab 100644
            (.add.vf vf2 vf1 vf3)
            (set! (-> obj ignore-mask) arg5)
            (.mov t0-1 vf21)
-@@ -510,7 +517,7 @@
+@@ -510,7 +520,7 @@
            (let ((a0-4 (shl (the-as int a0-3) 16))) (b! (nonzero? a0-4) cfg-3))
            (let ((s2-0 (new 'stack-no-clear 'bounding-box)))
              (set-from-point-offset-pad! s2-0 (the-as vector3s arg0) (the-as vector3s arg1) arg2)
@@ -59072,7 +59084,7 @@ index 8d91f8b60..04d7c05ab 100644
            (b! #t cfg-13 :delay (nop!))
            (set! v1-1 (the-as collide-work 0))
            (label cfg-3)
-@@ -581,14 +588,15 @@
+@@ -581,14 +591,15 @@
      (if (logtest? arg3 (collide-kind background))
        (fill-from-background obj
                              (method-of-type bsp-header collide-ray)
@@ -59091,7 +59103,7 @@ index 8d91f8b60..04d7c05ab 100644
    "Check if the input sphere is in the rotated bounding box volume of the current
     line-sphere query."
    (local-vars (v1-1 uint128) (v1-2 uint128) (v1-3 uint128) (a0-1 uint128) (a1-2 uint128) (a2-0 uint128) (zero uint128))
-@@ -606,7 +614,7 @@
+@@ -606,7 +617,7 @@
           (vf9 :class vf))
      (init-vf0-vector)
      (set! zero (the uint128 0))
@@ -59100,7 +59112,7 @@ index 8d91f8b60..04d7c05ab 100644
        (.lvf vf5 (&-> arg0 quad))
        (.lvf vf4 (&-> a1-0 inv-mat vector 3 quad))
        (.lvf vf1 (&-> a1-0 inv-mat vector 0 quad))
-@@ -630,7 +638,7 @@
+@@ -630,7 +641,7 @@
      (.ppach v1-3 zero v1-2)
      (let ((v1-4 (shl (the-as int v1-3) 16))) (nop!) (zero? v1-4))))
  
@@ -59109,7 +59121,7 @@ index 8d91f8b60..04d7c05ab 100644
    "Check if a collide-fragment at a given instance is in the rotated bounding box volume
     of the current line-sphere query."
    (local-vars
-@@ -668,7 +676,7 @@
+@@ -668,7 +679,7 @@
           (vf9 :class vf))
      (init-vf0-vector)
      (set! zero (the uint128 0))
@@ -59118,7 +59130,7 @@ index 8d91f8b60..04d7c05ab 100644
        (let ((a2-0 (-> arg1 max-scale)))
          (let ((a3-0 (the-as uint128 (-> arg1 origin vector4h 3 long))))
            (let ((t2-0 (the-as uint128 (-> arg1 origin vector4h 0 long))))
-@@ -722,15 +730,15 @@
+@@ -722,15 +733,15 @@
      (.ppach v1-4 zero v1-3)
      (let ((v1-5 (shl (the-as int v1-4) 16))) (nop!) (zero? v1-5))))
  
@@ -59137,7 +59149,7 @@ index 8d91f8b60..04d7c05ab 100644
        (let ((v1-5 (-> arg1 items (-> arg1 num-items))))
          (set! (-> v1-5 mesh) (-> obj mesh))
          (set! (-> v1-5 inst) #f) ;; non-instanced.
-@@ -740,7 +748,7 @@
+@@ -740,7 +751,7 @@
    0
    (none))
  
@@ -59146,7 +59158,7 @@ index 8d91f8b60..04d7c05ab 100644
    "Inline-array function to do line-sphere with TIE instances.
    If the bsphere of the mesh is in the non-aligned bounding box, the mesh will be added
    to the given collide-list.
-@@ -748,14 +756,14 @@
+@@ -748,14 +759,14 @@
    ;; loop over instance-ties
    (dotimes (s3-0 arg0)
      ;; first check the instance-tie's bsphere
@@ -59163,7 +59175,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (let ((v1-10 (-> arg1 items (-> arg1 num-items))))
                    (set! (-> v1-10 mesh) (-> (the-as collide-fragment s1-0) mesh))
                    (set! (-> v1-10 inst) obj))
-@@ -1385,7 +1393,7 @@
+@@ -1385,7 +1396,7 @@
      (.lvf vf30 (&-> *pc-fffuls-work* reg-vf30 quad))
      (.lvf vf31 (&-> *pc-fffuls-work* reg-vf31 quad))))
  
@@ -59172,7 +59184,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars
      (zero uint128)
      (v1-1 float)
-@@ -1437,7 +1445,7 @@
+@@ -1437,7 +1448,7 @@
           (vf6 :class vf))
      (init-vf0-vector)
      (set! zero (the uint128 0))
@@ -59181,7 +59193,7 @@ index 8d91f8b60..04d7c05ab 100644
             (s5-0 (-> v1-0 collide-box4w min quad))
             (s4-0 (-> v1-0 collide-box4w max quad))
             (s3-0 (the-as uint128 (-> obj collide-with))))
-@@ -1483,7 +1491,7 @@
+@@ -1483,7 +1494,7 @@
                      (.ppach a2-3 zero a2-2)
                      (let ((a2-4 (shl (the-as int a2-3) 16))) (nop!) (b! (nonzero? a2-4) cfg-6 :delay (nop!)))
                      (b! (= a1-3 v1-9) cfg-6 :delay (nop!))))
@@ -59190,7 +59202,7 @@ index 8d91f8b60..04d7c05ab 100644
                (label cfg-6)
                0
                (label cfg-7)
-@@ -1528,7 +1536,7 @@
+@@ -1528,7 +1539,7 @@
                        (.ppach a2-8 zero a2-7)
                        (let ((a2-9 (shl (the-as int a2-8) 16))) (nop!) (b! (nonzero? a2-9) cfg-17 :delay (nop!)))
                        (b! (= a1-8 v1-25) cfg-17 :delay (nop!))))
@@ -59199,7 +59211,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (label cfg-17)
                  0
                  (label cfg-18)
-@@ -1572,7 +1580,7 @@
+@@ -1572,7 +1583,7 @@
                        (.ppach a2-13 zero a2-12)
                        (let ((a2-14 (shl (the-as int a2-13) 16))) (nop!) (b! (nonzero? a2-14) cfg-27 :delay (nop!)))
                        (b! (= a1-13 (the-as process-drawable v1-38)) cfg-27 :delay (nop!))))
@@ -59208,7 +59220,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (label cfg-27)
                  0
                  (label cfg-28)
-@@ -1616,7 +1624,7 @@
+@@ -1616,7 +1627,7 @@
                        (.ppach a2-18 zero a2-17)
                        (let ((a2-19 (shl (the-as int a2-18) 16))) (nop!) (b! (nonzero? a2-19) cfg-37 :delay (nop!)))
                        (b! (= a1-18 v1-50) cfg-37 :delay (nop!))))
@@ -59217,7 +59229,7 @@ index 8d91f8b60..04d7c05ab 100644
                  (label cfg-37)
                  0
                  (label cfg-38)
-@@ -1625,11 +1633,11 @@
+@@ -1625,11 +1636,11 @@
                  (set! s2-3 (-> s2-3 next0))))))))
      (none)))
  
@@ -59231,7 +59243,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars (t1-1 uint))
    (nop!)
    (let* ((t0-0 (-> arg0 prims))
-@@ -1658,7 +1666,7 @@
+@@ -1658,7 +1669,7 @@
    (label cfg-3)
    (none))
  
@@ -59240,7 +59252,7 @@ index 8d91f8b60..04d7c05ab 100644
    (local-vars
      (zero uint128)
      (v1-3 uint128)
-@@ -1683,7 +1691,7 @@
+@@ -1683,7 +1694,7 @@
      (init-vf0-vector)
      (load-fffuls-work)
      (set! zero (the-as uint128 0))
@@ -59249,7 +59261,7 @@ index 8d91f8b60..04d7c05ab 100644
            (s5-0 (-> obj prims))
            (s4-0 (-> obj num-prims-u)))
        (nop!)
-@@ -1725,7 +1733,7 @@
+@@ -1725,7 +1736,7 @@
              (.por v1-5 a1-2 v1-4)
              (.ppach v1-6 zero v1-5)
              (let ((v1-7 (shl (the-as int v1-6) 16))) (nop!) (b! (nonzero? v1-7) cfg-1 :delay (nop!)))
@@ -59258,7 +59270,7 @@ index 8d91f8b60..04d7c05ab 100644
              (b! (nonzero? s4-0) cfg-2 :delay (set! a0-1 s1-0))))))
      (label cfg-5)
      0
-@@ -1735,8 +1743,8 @@
+@@ -1735,8 +1746,8 @@
  ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;; PROBE ;;
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -59269,7 +59281,7 @@ index 8d91f8b60..04d7c05ab 100644
    (probe-using-y-probe obj arg0 arg1 arg2 arg4 arg5))
  
  (defmethod probe-using-y-probe ((obj collide-cache) (arg0 vector) (arg1 float) (arg2 collide-kind) (arg3 collide-tri-result) (arg4 pat-surface))
-@@ -1785,7 +1793,8 @@
+@@ -1785,7 +1796,8 @@
            (vector+*! (-> gp-0 vertex 2) (-> gp-0 intersect) a2-5 4096.0))))))
  
  (defmethod fill-and-probe-using-line-sphere ((obj collide-cache) (arg0 vector) (arg1 vector) (arg2 float) (arg3 collide-kind) (arg4 process) (arg5 collide-tri-result) (arg6 pat-surface))
@@ -59279,7 +59291,7 @@ index 8d91f8b60..04d7c05ab 100644
    (probe-using-line-sphere obj arg0 arg1 arg2 arg3 arg5 arg6))
  
  (deftype collide-puls-work (structure)
-@@ -1840,15 +1849,15 @@
+@@ -1840,15 +1852,15 @@
            (set! s3-0 (-> (the-as (inline-array collide-cache-prim) s3-0) 1)))
          f30-0))))
  
@@ -59400,10 +59412,18 @@ index ef1570c43..2073f0fce 100644
 +  )
 \ No newline at end of file
 diff --git a/goal_src/jak1/engine/collide/collide-edge-grab.gc b/goal_src/jak1/engine/collide/collide-edge-grab.gc
-index 69988527a..83f9a90c2 100644
+index 69988527a..21d4f5177 100644
 --- a/goal_src/jak1/engine/collide/collide-edge-grab.gc
 +++ b/goal_src/jak1/engine/collide/collide-edge-grab.gc
-@@ -11,9 +11,9 @@
+@@ -8,12 +8,17 @@
+ (require "engine/target/target-h.gc")
+ (require "engine/collide/collide-shape-h.gc")
+ (require "engine/debug/debug.gc")
++(define-extern *vr-party-on?* symbol) ;; Jak Quest VR 0.1.6: in a party (mod-game-handler.gc, set each frame)
++
++;; Jak Quest VR 0.1.6 (a player on 0.1.5: "a ledge that should be grabable is not", Klaww's cliff in Rock Village):
++;; Teamruns' ledge search fills a cache and work of each player's own, in a party only; alone the original's
++;; *collide-cache* and *collide-work* (the callers in logic-target.gc, target2.gc and target-tube.gc pass the cache).
  
  ;; DECOMP BEGINS
  
@@ -59415,7 +59435,7 @@ index 69988527a..83f9a90c2 100644
    (rlet ((vf1 :class vf)
           (vf2 :class vf)
           (vf3 :class vf)
-@@ -21,7 +21,7 @@
+@@ -21,7 +26,7 @@
           (vf5 :class vf)
           (vf6 :class vf)
           (vf7 :class vf))
@@ -59424,13 +59444,13 @@ index 69988527a..83f9a90c2 100644
        ;; reset the edge work...
        (set! (-> gp-0 num-verts) (the-as uint 0))
        (set! (-> gp-0 num-edges) (the-as uint 0))
-@@ -54,26 +54,28 @@
+@@ -54,26 +59,28 @@
                                 (-> gp-0 cache-fill-box)
                                 (-> this control root-prim collide-with)
                                 this
 -                               (new 'static 'pat-surface :noentity #x1))
 +                               (new 'static 'pat-surface :noentity #x1)
-+                               (-> *edge-collide-work-list* tgt-idx))
++                               (if *vr-party-on?* (-> *edge-collide-work-list* tgt-idx) *collide-work*))
        ;; Filter out tris that can't be grabbed
        (find-grabbable-tris! gp-0)
        (when (nonzero? (-> gp-0 num-tris))
@@ -59461,7 +59481,7 @@ index 69988527a..83f9a90c2 100644
            0)))
      0))
  
-@@ -111,6 +113,8 @@
+@@ -111,6 +118,8 @@
     (split-vec   vector :inline)))
  
  (defmethod-mips2c "(method 18 collide-edge-work)" 18 collide-edge-work)
@@ -59470,7 +59490,7 @@ index 69988527a..83f9a90c2 100644
  
  (defmethod check-grab-for-collisions ((this collide-edge-work) (arg0 collide-edge-hold-item) (arg1 edge-grab-info))
    (let* ((s3-0 (-> arg0 edge))
-@@ -130,8 +134,13 @@
+@@ -130,8 +139,13 @@
      (set! (-> arg1 center-hold quad) (-> arg0 center-pt quad))
      (set! (-> arg1 world-vertex 0 quad) (-> s3-0 vertex-ptr 0 0 quad))
      (set! (-> arg1 world-vertex 1 quad) (-> s3-0 vertex-ptr 1 0 quad))
@@ -59486,7 +59506,7 @@ index 69988527a..83f9a90c2 100644
      (vector-normalize! (vector-cross! (the-as vector (-> arg1 hanging-matrix))
                                        (-> arg1 hanging-matrix vector 2)
                                        (-> arg1 hanging-matrix vector 1))
-@@ -163,7 +172,7 @@
+@@ -163,7 +177,7 @@
          (else (set! (-> arg1 actor-cshape-prim-offset) 0) (set! (-> arg1 actor-handle) (the-as handle #f))))))
    #t)
  
@@ -59495,7 +59515,7 @@ index 69988527a..83f9a90c2 100644
    (local-vars (v0-0 symbol) (v1-14 int))
    (rlet ((acc :class vf)
           (Q :class vf)
-@@ -208,8 +217,9 @@
+@@ -208,8 +222,9 @@
            (set! v0-0 #f)
            (b! #t cfg-27 :delay (nop!))
            (label cfg-17)
@@ -59507,7 +59527,7 @@ index 69988527a..83f9a90c2 100644
            (vector-normalize! (vector-cross! (the-as vector (-> this hanging-matrix))
                                              (-> this hanging-matrix vector 2)
                                              (-> this hanging-matrix vector 1))
-@@ -218,11 +228,11 @@
+@@ -218,11 +233,11 @@
                           (the-as vector (-> this hanging-matrix))
                           (-> this hanging-matrix vector 1))
            (set! (-> this hanging-matrix vector 3 quad) (-> this center-hold quad))
@@ -59522,12 +59542,15 @@ index 69988527a..83f9a90c2 100644
          (set! (-> a1-14 spheres) (-> v1-22 world-player-leap-up-spheres))
          (set! (-> a1-14 num-spheres) (the-as uint 6))
          (set! (-> a1-14 collide-with) (-> v1-22 cshape root-prim collide-with))
-@@ -238,7 +248,7 @@
+@@ -238,7 +253,10 @@
          (set! (-> a1-14 ignore-pat) (new 'static 'pat-surface :noentity #x1))
          (set! (-> a1-14 solid-only) #t)
          (label cfg-21)
 -        (b! (not (fill-and-probe-using-spheres *collide-cache* a1-14)) cfg-24 :delay (empty-form)))
-+        (b! (not (fill-and-probe-using-spheres (-> *edge-collide-cache-list* tgt-idx) a1-14 (-> *edge-collide-work-list* tgt-idx))) cfg-24))
++        (b! (not (fill-and-probe-using-spheres (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*)
++                                               a1-14
++                                               (if *vr-party-on?* (-> *edge-collide-work-list* tgt-idx) *collide-work*)))
++            cfg-24))
        (set! v0-0 #f)
        (b! #t cfg-27 :delay (nop!))
        (the-as none 0)
@@ -69732,10 +69755,16 @@ index caea67ed8..a7bd96165 100644
  (defun-debug make-sqrt-table ()
    "Write the C code for the ??? square root table"
 diff --git a/goal_src/jak1/engine/target/logic-target.gc b/goal_src/jak1/engine/target/logic-target.gc
-index 7d691a496..8970f02e1 100644
+index 7d691a496..19b60b153 100644
 --- a/goal_src/jak1/engine/target/logic-target.gc
 +++ b/goal_src/jak1/engine/target/logic-target.gc
-@@ -13,6 +13,8 @@
+@@ -8,11 +8,14 @@
+ (require "engine/common-obs/process-drawable.gc")
+ (require "engine/common-obs/water-h.gc")
+ (require "engine/target/target-util.gc")
++(define-extern *vr-party-on?* symbol) ;; Jak Quest VR 0.1.6: in a party (mod-game-handler.gc, set each frame)
+ 
+ ;; note: changed for high fps
  
  ;; target-start is modified due to changing the size of the stack in gkernel.gc
  
@@ -69744,7 +69773,7 @@ index 7d691a496..8970f02e1 100644
  ;; DECOMP BEGINS
  
  (defbehavior build-conversions target ((arg0 vector))
-@@ -577,13 +579,16 @@
+@@ -577,13 +580,16 @@
    (target-compute-slopes (-> self control dynam gravity-normal)))
  
  (defbehavior level-setup target ()
@@ -69768,7 +69797,7 @@ index 7d691a496..8970f02e1 100644
    0
    (none))
  
-@@ -735,54 +740,60 @@
+@@ -735,54 +741,60 @@
                      (new 'static 'rgba :r #xff :b #xff :a #x80)))
  
  (defbehavior target-compute-edge target ()
@@ -69872,7 +69901,7 @@ index 7d691a496..8970f02e1 100644
    (set! (-> self control unknown-float110) 0.0)
    (do-joint-math! self)
    (none))
-@@ -804,7 +815,7 @@
+@@ -804,7 +816,7 @@
            (vector+! v1-8 s3-0 s2-0)
            (vector-float*! v1-8 v1-8 0.5)
            (+! (-> v1-8 y) -6144.0)
@@ -69881,7 +69910,7 @@ index 7d691a496..8970f02e1 100644
          (vector-segment-distance-point! (-> self control unknown-vector90) s3-0 s2-0 s5-0)
          (when *display-edge-collision-marks*
            (add-debug-vector #t
-@@ -945,9 +956,11 @@
+@@ -945,9 +957,11 @@
                     'draw
                     (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
        (set! (-> self control reaction) target-collision-reaction)
@@ -69892,11 +69921,11 @@ index 7d691a496..8970f02e1 100644
 +        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-close-by-environment? self))
 +          (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
 +          (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
-+            (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
++            (find-edge-grabs! self (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*) tgt-idx)))) ;; VR 0.1.6: alone the original's cache
        (if *debug-segment*
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
-@@ -988,9 +1001,11 @@
+@@ -988,9 +1002,11 @@
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
                     (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
@@ -69906,11 +69935,11 @@ index 7d691a496..8970f02e1 100644
 +      (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
        (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
 -        (find-edge-grabs! *target* *collide-cache*))
-+        (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
++        (find-edge-grabs! self (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*) tgt-idx)))) ;; VR 0.1.6: alone the original's cache
        (if *debug-segment*
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
-@@ -1026,9 +1041,11 @@
+@@ -1026,9 +1042,11 @@
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
                     (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
@@ -69920,11 +69949,11 @@ index 7d691a496..8970f02e1 100644
 +      (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
        (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
 -        (find-edge-grabs! *target* *collide-cache*))
-+        (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
++        (find-edge-grabs! self (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*) tgt-idx)))) ;; VR 0.1.6: alone the original's cache
        (if *debug-segment*
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
-@@ -1104,9 +1121,11 @@
+@@ -1104,9 +1122,11 @@
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
                     (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
@@ -69934,11 +69963,11 @@ index 7d691a496..8970f02e1 100644
 +      (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
        (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
 -        (find-edge-grabs! *target* *collide-cache*))
-+        (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
++        (find-edge-grabs! self (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*) tgt-idx)))) ;; VR 0.1.6: alone the original's cache
        (if *debug-segment*
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0) 'draw (new 'static 'rgba :r #x40 :a #x80)))
        (bend-gravity)
-@@ -1162,71 +1181,138 @@
+@@ -1162,71 +1182,138 @@
    self)
  
  (defbehavior init-target target ((arg0 continue-point))
@@ -70132,7 +70161,7 @@ index 7d691a496..8970f02e1 100644
    (initialize-skeleton self *jchar-sg* '())
    (set! (-> self draw origin-joint-index) (the-as uint 33))
    (set! (-> self draw shadow-joint-index) (the-as uint 33))
-@@ -1247,22 +1333,30 @@
+@@ -1247,22 +1334,30 @@
    (set! (-> self sound) (new 'process 'ambient-sound 'none (-> self control trans)))
    (set! (-> self control unknown-soundid00) (new-sound-id))
    (if *debug-segment* (add-connection *debug-engine* self target-print-stats self *stdcon0* #f))
@@ -71543,22 +71572,23 @@ index d9a32ebb3..383ba9848 100644
            (if (not (ja-max? 0))
              (align! (-> self align)
 diff --git a/goal_src/jak1/engine/target/target2.gc b/goal_src/jak1/engine/target/target2.gc
-index 9313a50e5..52d9c596f 100644
+index 9313a50e5..7cf99d1ce 100644
 --- a/goal_src/jak1/engine/target/target2.gc
 +++ b/goal_src/jak1/engine/target/target2.gc
-@@ -6,6 +6,11 @@
+@@ -5,6 +5,12 @@
+ (require "engine/common-obs/generic-obs.gc")
  (require "engine/target/target.gc")
  (declare-type first-person-hud process)
- 
++(define-extern *vr-party-on?* symbol) ;; Jak Quest VR 0.1.6: in a party (mod-game-handler.gc, set each frame)
++
 +(define-extern is-interactive? (function int symbol))
 +(define-extern runs-on-swingpole-grab (function string string none))
 +(define-extern *enable-remote-target-yellow-eco-blasts* symbol)
 +
-+
+ 
  ;; DECOMP BEGINS
  
- (defstate target-load-wait (target)
-@@ -322,9 +327,11 @@
+@@ -322,9 +328,11 @@
        (set! (-> self cam-user-mode) 'look-around)
        (set! (-> self control mod-surface) *duck-mods*)
        (logior! (-> self state-flags) (state-flags first-person-mode))
@@ -71573,7 +71603,7 @@ index 9313a50e5..52d9c596f 100644
        (let ((a0-5 (handle->process (-> self fp-hud)))) (if a0-5 (deactivate a0-5)))
        (set! (-> self fp-hud)
              (ppointer->handle (process-spawn first-person-hud :to *dproc* :stack (&+ *fp-hud-stack* #x3800)))))
-@@ -333,7 +340,7 @@
+@@ -333,7 +341,7 @@
        (let ((a0-1 (handle->process (-> self fp-hud)))) (if a0-1 (send-event a0-1 'go-away)))
        (set! (-> self cam-user-mode) 'normal)
        (target-exit)
@@ -71582,7 +71612,7 @@ index 9313a50e5..52d9c596f 100644
          (send-event *camera* 'no-intro)
          (send-event *camera* 'force-blend (seconds 0.2))
          (send-event *camera* 'clear-entity)
-@@ -368,14 +375,9 @@
+@@ -368,14 +376,9 @@
                    (.lvf vf5 (&-> s5-1 quad))
                    (.add.vf.xyz vf6 vf4 vf5)
                    (.svf (&-> sv-48 quad) vf6)
@@ -71600,7 +71630,7 @@ index 9313a50e5..52d9c596f 100644
                  (-> s4-0 ppointer))))
            (set-time! (-> self control unknown-dword82)))
          (when (cpad-pressed? (-> self control cpad number) triangle)
-@@ -384,14 +386,15 @@
+@@ -384,14 +387,15 @@
            (set! (-> self cam-user-mode) 'normal))))
    :code
      (behavior ()
@@ -71624,7 +71654,7 @@ index 9313a50e5..52d9c596f 100644
    :post target-no-move-post)
  
  (defstate target-billy-game (target)
-@@ -406,9 +409,11 @@
+@@ -406,9 +410,11 @@
        (set! (-> self neck flex-blend) 0.0)
        (set! (-> self control mod-surface) *duck-mods*)
        (logior! (-> self state-flags) (state-flags first-person-mode))
@@ -71639,7 +71669,7 @@ index 9313a50e5..52d9c596f 100644
        (camera-change-to (the-as string 'cam-billy) 0 #f)
        (let ((a0-6 (handle->process (-> self fp-hud)))) (if a0-6 (deactivate a0-6)))
        (set! (-> self fp-hud)
-@@ -416,7 +421,7 @@
+@@ -416,7 +422,7 @@
    :exit
      (behavior ()
        (let ((a0-1 (handle->process (-> self fp-hud)))) (if a0-1 (send-event a0-1 'go-away)))
@@ -71648,7 +71678,7 @@ index 9313a50e5..52d9c596f 100644
          (send-event *camera* 'no-intro)
          (send-event *camera* 'force-blend 0)
          (camera-change-to (the-as string 'base) 0 #f))
-@@ -451,14 +456,9 @@
+@@ -451,14 +457,9 @@
                    (.lvf vf5 (&-> s5-1 quad))
                    (.add.vf.xyz vf6 vf4 vf5)
                    (.svf (&-> sv-48 quad) vf6)
@@ -71666,7 +71696,7 @@ index 9313a50e5..52d9c596f 100644
                  (-> s4-0 ppointer))))
            (set-time! (-> self control unknown-dword82)))))
    :code
-@@ -581,6 +581,8 @@
+@@ -581,6 +582,8 @@
          (target-standard-event-handler proc argc message block)))
    :enter
      (behavior ((arg0 handle))
@@ -71675,7 +71705,7 @@ index 9313a50e5..52d9c596f 100644
        (set! (-> self control unknown-handle10) arg0)
        (set-time! (-> self state-time))
        (set! (-> self control mod-surface) *pole-mods*)
-@@ -588,8 +590,8 @@
+@@ -588,8 +591,8 @@
        (target-collide-set! 'pole (the-as float 0.0))
        (set! (-> self control unknown-vector102 quad) (-> self control transv quad))
        (set! (-> self control transv quad) (the-as uint128 0))
@@ -71686,7 +71716,7 @@ index 9313a50e5..52d9c596f 100644
    :exit
      (behavior ()
        (target-collide-set! 'normal (the-as float 0.0))
-@@ -679,7 +681,7 @@
+@@ -679,7 +682,7 @@
    :code
      (behavior ((arg0 float) (arg1 float))
        (sound-play "jump")
@@ -71695,7 +71725,7 @@ index 9313a50e5..52d9c596f 100644
        (ja :group! eichar-pole-jump-loop-ja :num! min)
        (let ((f0-1 (target-height-above-ground))
              (f1-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
-@@ -749,12 +751,12 @@
+@@ -749,12 +752,12 @@
        (logior! (-> self control root-prim prim-core action) (collide-action edgegrab-active edgegrab-cam))
        (set! (-> self control unknown-vector102 quad) (-> self control transv quad))
        (set! (-> self control transv quad) (the-as uint128 0))
@@ -71710,7 +71740,7 @@ index 9313a50e5..52d9c596f 100644
    :trans
      (behavior ()
        (when (and (time-elapsed? (-> self state-time) (seconds 0.2))
-@@ -764,15 +766,17 @@
+@@ -764,15 +767,20 @@
          (cond
            ((or (< -0.2 (local-pad-angle)) (= (-> *cpad-list* cpads (-> self control cpad number) stick0-speed) 0.0))
             (let ((a1-2 (new 'stack-no-clear 'collide-using-spheres-params)))
@@ -71731,13 +71761,16 @@ index 9313a50e5..52d9c596f 100644
 +                (set! (-> a1-2 proc) #f)
 +                (set! (-> a1-2 ignore-pat) (new 'static 'pat-surface :noentity #x1))
 +                (set! (-> a1-2 solid-only) #t)
-+                (when (not (fill-and-probe-using-spheres (-> *edge-collide-cache-list* tgt-idx) a1-2 (-> *edge-collide-work-list* tgt-idx)))
++                ;; Jak Quest VR 0.1.6: alone the original's *collide-cache* and *collide-work* (collide-edge-grab.gc)
++                (when (not (fill-and-probe-using-spheres (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*)
++                                                         a1-2
++                                                         (if *vr-party-on?* (-> *edge-collide-work-list* tgt-idx) *collide-work*)))
 +                  (remove-exit)
 +                  (go target-edge-grab-jump (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))))))
            (else (remove-exit) (go target-edge-grab-off)))))
    :code
      (behavior ()
-@@ -835,7 +839,7 @@
+@@ -835,7 +843,7 @@
        (set! (-> self control transv quad) (the-as uint128 0))
        (set! (-> self control unknown-dword70) 0)
        (set-forward-vel (the-as float 16384.0))
@@ -71746,7 +71779,7 @@ index 9313a50e5..52d9c596f 100644
        (go target-jump-forward arg0 arg1))
    :post target-no-move-post)
  
-@@ -848,7 +852,7 @@
+@@ -848,7 +856,7 @@
      (behavior ()
        (ja-channel-set! 1)
        (set-quaternion! (-> self control) (-> self control dir-targ))
@@ -71755,7 +71788,7 @@ index 9313a50e5..52d9c596f 100644
        (let ((gp-0 (new 'stack-no-clear 'vector)))
          (ja-no-eval :group! eichar-edge-grab-off-ja :num! (seek! (ja-aframe (the-as float 191.0) 0)) :frame-num 0.0)
          (until (ja-done? 0)
-@@ -879,8 +883,10 @@
+@@ -879,8 +887,10 @@
        (set! (-> self control mod-surface) *run-attack-mods*)
        (set! (-> *run-attack-mods* turnv) 655360.0)
        (set! (-> *run-attack-mods* turnvv) 655360.0)
@@ -71768,7 +71801,7 @@ index 9313a50e5..52d9c596f 100644
        (set! (-> self control unknown-uint20) (the-as uint 0))
        (set! (-> self control did-move-to-pole-or-max-jump-height) 0)
        (set! (-> self control unknown-uint31) (the-as uint 0))
-@@ -916,7 +922,10 @@
+@@ -916,7 +926,10 @@
          (let ((s5-2 (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat))))
            (set! (-> s5-2 y) 0.0)
            (vector-normalize! s5-2 (-> *TARGET-bank* yellow-projectile-speed))
@@ -71780,7 +71813,7 @@ index 9313a50e5..52d9c596f 100644
              (let ((gp-1 (get-process *default-dead-pool* projectile-yellow #x4000)))
                (set! gp-0
                      (ppointer->handle (when gp-1
-@@ -925,10 +934,12 @@
+@@ -925,10 +938,12 @@
                                          (run-now-in-process gp-1
                                                              projectile-init-by-other
                                                              (-> self entity)
@@ -71795,7 +71828,7 @@ index 9313a50e5..52d9c596f 100644
                                          (-> gp-1 ppointer)))))
              (set-time! (-> self control unknown-dword82))))
          (ja-no-eval :group! eichar-yellow-running-blast-ja :num! (seek!) :frame-num (ja-aframe (the-as float 9.0) 0))
-@@ -1004,18 +1015,23 @@
+@@ -1004,18 +1019,23 @@
                      (vector-float*! (-> self control transv) (-> self control dynam gravity-normal) f2-0)
                      (vector-float*! gp-2 gp-2 (/ f0-7 f1-1)))))
        (ja :num! (seek!))
@@ -71830,7 +71863,7 @@ index 9313a50e5..52d9c596f 100644
        (set-time! (-> self control unknown-dword82))
        (suspend-for (seconds 0.1))
        (ja-no-eval :group! eichar-yellow-jumping-blast-ja :num! (seek!) :frame-num (ja-frame-num 0))
-@@ -1083,7 +1099,7 @@
+@@ -1083,7 +1103,7 @@
    :trans
      (behavior ()
        ((-> self state-hook))
@@ -71839,7 +71872,7 @@ index 9313a50e5..52d9c596f 100644
          (if (logtest? (-> self water flags) (water-flags wt11)) (go target-swim-stance) (go target-stance)))
        (if (and (cpad-hold? (-> self control unknown-cpad-info00 number) l1 r1) (can-duck?)) (go target-duck-stance))
        (if (!= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0) (go target-wade-walk))
-@@ -1113,7 +1129,7 @@
+@@ -1113,7 +1133,7 @@
        ((-> self state-hook))
        (when (and (not (logtest? (-> self water flags) (water-flags wt10))) (time-elapsed? (-> self water wade-time) (seconds 0.1)))
          (if (logtest? (-> self water flags) (water-flags wt11)) (go target-swim-stance) (go target-stance)))
@@ -71848,7 +71881,7 @@ index 9313a50e5..52d9c596f 100644
        (if (and (cpad-hold? (-> self control unknown-cpad-info00 number) l1 r1) (can-duck?)) (go target-duck-walk))
        ;; og:preserve-this - High FPS Fix
        (if (and (recently-pressed? x) (can-jump? #f))
-@@ -1162,8 +1178,10 @@
+@@ -1162,8 +1182,10 @@
                                 (the-as float 32768.0)))
              (gp-6 0))
          (loop
@@ -71861,7 +71894,7 @@ index 9313a50e5..52d9c596f 100644
              (let ((f1-4 (fabs (- f0-10 f30-1)))) (set! f30-1 (seek f30-1 f0-10 (fmax 0.05 (fmin 0.2 (/ f1-4 4))))))
              (let ((f0-14 (fabs (- f24-0 f28-0)))) (set! f28-0 (seek f28-0 f24-0 (fmax 0.05 (fmin 0.2 (/ f0-14 4)))))))
            (ja :chan 3 :group! eichar-walk-down-ja :dist (-> *TARGET-bank* walk-down-cycle-dist))
-@@ -1260,7 +1278,7 @@
+@@ -1260,7 +1282,7 @@
        (if (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
                 (not (logtest? (-> self control status) (cshape-moving-flags on-water))))
          (set-zero! (-> self water bob)))
@@ -71870,7 +71903,7 @@ index 9313a50e5..52d9c596f 100644
          (if (logtest? (-> self water flags) (water-flags wt10)) (go target-wade-stance) (go target-stance)))
        ;; og:preserve-this - High FPS Fix
        (if (and (recently-pressed? x) (can-jump? #f) (time-elapsed? (-> self water enter-swim-time) (seconds 0.1)))
-@@ -1317,7 +1335,7 @@
+@@ -1317,7 +1339,7 @@
        (if (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
                 (not (logtest? (-> self control status) (cshape-moving-flags on-water))))
          (set-zero! (-> self water bob)))
@@ -71879,7 +71912,7 @@ index 9313a50e5..52d9c596f 100644
          (if (logtest? (-> self water flags) (water-flags wt10)) (go target-wade-stance) (go target-stance)))
        ;; og:preserve-this - High FPS Fix
        (if (and (recently-pressed? x) (can-jump? #f) (time-elapsed? (-> self water enter-swim-time) (seconds 0.1)))
-@@ -1326,7 +1344,7 @@
+@@ -1326,7 +1348,7 @@
        (if (and (recently-pressed? square) (< (-> *TARGET-bank* min-dive-depth) (target-height-above-ground)))
          (go target-swim-down))
        (cond
@@ -71888,7 +71921,7 @@ index 9313a50e5..52d9c596f 100644
           (if (>= (the-as uint (- (current-time) (the-as int (-> self control unknown-uint20)))) (the-as uint 15))
             (go target-swim-stance)))
          (else (set! (-> self control unknown-uint20) (the-as uint (current-time)))))
-@@ -1403,7 +1421,7 @@
+@@ -1403,7 +1425,7 @@
          (else
           (set! (-> self control mod-surface) *dive-bottom-mods*)
           (if (or (= (-> self next-state name) 'target-swim-down) (= (-> self next-state name) 'target-swim-stance))
@@ -71897,7 +71930,7 @@ index 9313a50e5..52d9c596f 100644
    :code
      (behavior ()
        (let ((gp-0 60)
-@@ -1440,12 +1458,12 @@
+@@ -1440,12 +1462,12 @@
                        -16384.0)
                       (else (ja-channel-push! 1 (seconds 0.075)) (ja :group! eichar-swim-down-ja :num! min) f30-0))))))
          (loop
@@ -71913,7 +71946,7 @@ index 9313a50e5..52d9c596f 100644
              (go target-swim-up))
            (let ((s4-3 (new-stack-vector0))
                  (f24-0 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
-@@ -1612,9 +1630,9 @@
+@@ -1612,9 +1634,9 @@
        (cond
          ((and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health)))
           (set! (-> self attack-info attacker) (the-as handle #f))
@@ -71925,7 +71958,7 @@ index 9313a50e5..52d9c596f 100644
           (ja-channel-push! 1 1)
           (ja :group! eichar-painful-land-ja :num! min)
           (until (and (ja-done? 0) (= (-> self skel root-channel 0) (-> self skel channel)))
-@@ -1643,7 +1661,7 @@
+@@ -1643,7 +1665,7 @@
        (until (ja-done? 0)
          (suspend)
          (ja :num! (seek! (ja-aframe (the-as float 15.0) 0) 3.0)))
@@ -71934,7 +71967,7 @@ index 9313a50e5..52d9c596f 100644
        (if (nonzero? arg3)
          (process-spawn-function process
            (lambda :behavior process ((arg0 vector) (arg1 time-frame) (arg2 float))
-@@ -1749,13 +1767,13 @@
+@@ -1749,13 +1771,13 @@
      (behavior ((arg0 string) (arg1 handle))
        (let ((gp-0 (the-as art-joint-anim (lookup-art (-> self draw art-group) arg0 art-joint-anim))))
          (when gp-0
@@ -71950,7 +71983,7 @@ index 9313a50e5..52d9c596f 100644
        (go target-stance))
    :post target-no-stick-post)
  
-@@ -1773,11 +1791,12 @@
+@@ -1773,11 +1795,12 @@
        (logior! (-> self state-flags) (state-flags grabbed))
        (vector-reset! (-> self control transv))
        (set! (-> self neck flex-blend) 0.0)
@@ -77217,10 +77250,18 @@ index 114c486a4..e6bb3320f 100644
       (set! (-> this draw color-emissive quad) (-> this deadly-color-emissive quad))
       (set! (-> this deadly-fade) 1.0))
 diff --git a/goal_src/jak1/levels/sunken/target-tube.gc b/goal_src/jak1/levels/sunken/target-tube.gc
-index 778837be9..6f9f3998e 100644
+index 778837be9..31dac2a7d 100644
 --- a/goal_src/jak1/levels/sunken/target-tube.gc
 +++ b/goal_src/jak1/levels/sunken/target-tube.gc
-@@ -297,9 +297,11 @@
+@@ -5,6 +5,7 @@
+ (require "engine/anim/aligner.gc")
+ (require "engine/geometry/path.gc")
+ (define-extern *tube-surface* surface) ;; unknown type
++(define-extern *vr-party-on?* symbol) ;; Jak Quest VR 0.1.6: in a party (mod-game-handler.gc, set each frame)
+ 
+ ;; DECOMP BEGINS
+ 
+@@ -297,9 +298,11 @@
                     'draw
                     (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
        (set! (-> self control reaction) target-collision-reaction)
@@ -77231,11 +77272,11 @@ index 778837be9..6f9f3998e 100644
 +        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-close-by-environment? self))
 +          (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
 +          (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
-+            (find-edge-grabs!  self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
++            (find-edge-grabs! self (if *vr-party-on?* (-> *edge-collide-cache-list* tgt-idx) *collide-cache*) tgt-idx)))) ;; VR 0.1.6: alone the original's cache
        (if *debug-segment*
          (add-frame (-> *display* frames (-> *display* on-screen) frame profile-bar 0)
                     'draw
-@@ -329,7 +331,8 @@
+@@ -329,7 +332,8 @@
           (case message
             (('end-mode)
              (go target-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max) (the-as surface #f)))
@@ -77245,7 +77286,7 @@ index 778837be9..6f9f3998e 100644
             (('attack 'attack-or-shove 'attack-invinc)
              (target-attacked 'attack-or-shove
                               (the-as attack-info (-> block param 1))
-@@ -352,14 +355,14 @@
+@@ -352,14 +356,14 @@
          (set! (-> self control dynam gravity-length) (-> self control standard-dynamics gravity-length))
          (target-collide-set! 'normal 0.0)
          (set! (-> self control reaction) target-collision-reaction)
@@ -77262,7 +77303,7 @@ index 778837be9..6f9f3998e 100644
        (target-exit)
        (set! *display-profile* #f)
        (set! *display-entity-errors* #f)
-@@ -577,7 +580,7 @@
+@@ -577,7 +581,7 @@
                (a0-35 (new-stack-vector0)))
            (set! (-> a0-35 quad) (-> self control transv quad))
            (s5-3 s4-2 (t9-9 a0-35 1.0) (vector-y-quaternion! (new-stack-vector0) (-> self control dir-targ))))
@@ -79176,10 +79217,10 @@ index 0ac587691..62472f127 100644
    (none))
 diff --git a/goal_src/jak1/pc/pc-vr.gc b/goal_src/jak1/pc/pc-vr.gc
 new file mode 100644
-index 000000000..9a362e62c
+index 000000000..e3aa5a932
 --- /dev/null
 +++ b/goal_src/jak1/pc/pc-vr.gc
-@@ -0,0 +1,802 @@
+@@ -0,0 +1,818 @@
 +;;-*-Lisp-*-
 +(in-package goal)
 +(bundles "ENGINE.CGO" "GAME.CGO")
@@ -79765,6 +79806,7 @@ index 000000000..9a362e62c
 +
 +
 +(define *vr-state-was* (the-as symbol #f))
++(define *vr-edge-was* -1) ;; vr-state-trace's last ledge search line (LIST-0.1.6 item 29)
 +
 +(defun vr-state-trace ()
 +  "PC test aid (JAKVR_STATE_TRACE=1, pc-vr-test-flags bit 2): Jak's state in the log as it changes."
@@ -79772,7 +79814,22 @@ index 000000000..9a362e62c
 +    (let ((name (-> *target* next-state name)))
 +      (when (!= name *vr-state-was*)
 +        (set! *vr-state-was* name)
-+        (format 0 "[vr] state ~A~%" name))))
++        (format 0 "[vr] state ~A~%" name)))
++    ;; 0.1.6 (LIST-0.1.6 item 29, "a ledge that should be grabable is not"): while Jak may grab a ledge (falling, high
++    ;; enough), what this frame's ledge search found, each time it changes: the tris of the level and actors in its box
++    ;; that a hand could hold, their edges, and those edges in reach. 0.1.5's search found no tri of a level.
++    (cond
++      ((logtest? (-> *target* control root-prim prim-core action) (collide-action edgegrab-possible))
++       (let* ((w (-> *collide-edge-work-list* 0))
++              ;; the hold list is filled only when edges were found (find-edge-grabs!): otherwise the last one's
++              (reach (if (zero? (-> w num-edges)) 0 (the int (-> w hold-list num-allocs))))
++              (n (+ (* (the int (-> w num-tris)) 1000000) (* (the int (-> w num-edges)) 1000) reach)))
++         (when (!= n *vr-edge-was*)
++           (set! *vr-edge-was* n)
++           (format 0 "[vr] ledge search: ~D tris, ~D edges, ~D in reach; Jak at ~,,2M ~,,2M ~,,2M~%"
++                   (-> w num-tris) (-> w num-edges) reach
++                   (-> *target* control trans x) (-> *target* control trans y) (-> *target* control trans z)))))
++      (else (set! *vr-edge-was* -1))))
 +  ;; PC test aid (JAKVR_TEST_HUD=1, pc-vr-test-flags bit 32): the HUD kept on screen in play, for the HUD tests
 +  (when (and *target* (logtest? (pc-vr-test-flags) 32))
 +    (show-hud))

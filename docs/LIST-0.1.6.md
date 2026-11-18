@@ -215,7 +215,13 @@ text.
    of swamp-tetherrock-break is token for token the original game's (comments and spacing aside), the release where the
    original has it. Checked in play: tests/jak1_tether_rock.sim (Jak put on a rock, JAKVR_TEST_TETHER=1 breaks it as his
    yellow eco would, kmachine.cpp bit 16384 and pc-vr.gc vr-test-tether!, PC only), Jak let go after its scene. Checked
-   again on build 86 (b32, b33): `target-grab` in the scene, then `target-stance`, walking and jumping.
+   again on build 86 (b32, b33): `target-grab` in the scene, then `target-stance`, walking and jumping. Then (the same
+   tester, 2026-11-18, three more 0.1.5 logs): "3rd rock also shoe glue. yep all the cutscene rocks are shoe glue":
+   their logs hold Jak after two more rocks (`swamp-tetherrock-15`, `-14`), 0.1.5's fault above, which 0.1.6 fixes for
+   every rock. Checked on build 89 for each of the four rocks, 13 to 16, in a run of its own (C:\JakQuest\sim\s27,
+   run_tether.sh): `target-grab` in the scene, then `target-stance` and Jak walking (13, 14 and 15 jumping too; after
+   16, the rock's power cell and its save menu came after the script's A, so its last walk and jump went to the menu);
+   no stack line, error, stall or crash.
 28. [x] **Jak II stopped at the prison's warp gate in every Jak II sim** (found by the b31 sims, never released: item 20's
    Jak II put-backs): "suspend called without enough stack", warp-gate-b's idle at 640 of its 512 bytes, then the game
    stopped. Item 20 ran the original's :code as a function (vr-orig-...) called from a :code that also held the mod's
@@ -227,15 +233,38 @@ text.
    :immediate ones are inlined), so a wait holds the small dispatch and one of the two, as the original held its own.
    Jak 1's put-backs are tests of a symbol in the same function, no new stack objects; Jak 3 has none. Checked: the
    eight Jak II sims on build 86 (b32): no stack line, no error, stall or crash.
+29. [x] **Jak 1: a ledge Jak would not grab** (the same tester, three more 0.1.5 logs, 2026-11-18: "a ledge that should
+   be grabable is not, so i cant take on boss fight i need in order to progress to next stage"; their log: three
+   minutes of jumps at the cliff below Klaww in Rock Village, Jak at 266 to 284, 28.1, -1747 to -1757, up to 34.8 m).
+   Cause: Teamruns' multiplayer mod gives each player a ledge search of their own (a collide cache and a collide work
+   each), its fill-using-bounding-box puts the search's box in the work it is given, and the level's tests read that
+   work's box. Our merge (since 0.1.0) kept the original's line there, the box in the global `*collide-work*`, so the
+   ledge search's tests read its own work's box, never set, and found none of the level's own walls: no ledge of the
+   level was ever grabbed, alone or in a party (Teamruns' session 26 scan, trlost.txt, had the line flagged; item 20's
+   audit missed it). Fixed: Teamruns' line back (collide-cache.gc), and alone the ledge search uses the original's
+   `*collide-cache*` and `*collide-work*` (collide-edge-grab.gc, logic-target.gc's four, target2.gc, target-tube.gc),
+   the original game's; in a party each player's own, as Teamruns has it. Every other fill passes `*collide-work*`
+   (C:\JakQuest\sim\audit-0.1.6.txt, the last entry). 0.1.0's and 0.1.5's patches both lack the line. Test aid:
+   JAKVR_STATE_TRACE's `[vr] ledge search: N tris, N edges, N in reach; Jak at x y z` (pc-vr.gc vr-state-trace),
+   while Jak may grab. Checked (C:\JakQuest\sim\s27): at that cliff a run and double jumps top out near 31.4 m (an
+   overhang), `0 tris` in reach; the player's log has Jak twice at 34.85 m, a crouch's high jump (5 to 7 m). With
+   it, straight up from the continue's spot (tests/jak1_ledge_klaww.sim, build 88, then build 89 as ledge-after):
+   `state target-edge-grab`, `[vr] ledge search: 4 tris, 9 edges, 2 in reach; Jak at 270.10 33.62 -1753.70`,
+   Jak hanging (32.70 m), then target-edge-grab-jump and Jak on the grass on top; no error, stall or crash. While
+   he hangs, first person puts the eyes where his head is, just under the ledge's top (the grass seen from under
+   it): HEADSET_CHECKLIST asks how that feels. The party's path ran in mp1 (b35 below), no errors.
 
 ## Checks
 
 18. [x] Builds (gk, Jak 1, II and 3 GOAL), the Quest's ARM64 check, targeted sims: Jak II's scenes from the start
     (tests/jak2_pause_turned.sim, the opening and its cuts), a pause with the stick turned (tests/jak2_pause_stickturn.sim),
     Jak 1's crouch, Light Jak by the left grip and Y and Dark Jak's quick squeeze, Jak 1's scarecrows broken, the
-    options read (old keys left behind). Done: builds 80 to 86 (gk, Jak 1, II and 3 GOAL), each clean (Jak II 16
-    warnings as before); the Quest's ARM64 runtime compiled after build 86 (android_native_check.sh, exit 0); the sims
-    above (b28k to b33).
+    options read (old keys left behind). Done: builds 80 to 86 (gk, Jak 1, II and 3 GOAL) and 87 to 89 (Jak 1 GOAL:
+    item 29 and its trace line), each clean (Jak II 16 warnings as before, Jak 1 its one); the Quest's ARM64 runtime
+    compiled after build 86 (android_native_check.sh, exit 0); the sims
+    above (b28k to b33), and on build 89 (C:\JakQuest\sim\run_b35.sh, s27): ledge-after, the four tether rocks,
+    Jak 1's mp1 party (host and guest, the progress sent and played) and play1, no errors. Builds 87 to 89 are Jak 1 GOAL
+    only: the Quest's ARM64 code is build 86's.
 19. [x] Texts: whats_new.txt, release-notes.md, CONTROLS.md, HEADSET_CHECKLIST.md, README; then publish 0.1.6. Done:
     whats_new.txt, release-notes.md, CONTROLS.md, HEADSET_CHECKLIST.md, MULTIPLAYER.md, README and tests/README.md,
     scanned (no user name, no email but the upstream libraries' copyright lines, as 0.1.5); the APK (versionCode 10699,

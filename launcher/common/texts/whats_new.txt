@@ -45,6 +45,9 @@ Fixed
   when the game lost and got back the controllers.
 - Jak 1: after the scene of any Boggy Swamp tether rock but the last, Jak stayed held where he stood and could not
   walk (since 0.1.5). The rocks' scene is the original game's again and lets him go.
+- Jak 1: Jak grabbed no ledge of a level (since 0.1.0), so the climb to Klaww could not be made. One line of
+  the multiplayer mod's ledge search was lost in our merge; it is back, and alone the search is the original
+  game's.
 - Jak 1 closed at Geyser Rock's scarecrows on a Quest 3: a type the scarecrow's break uses had been lost from the
   game's memory. If one is ever lost again the game puts it back and the log names it, and a crash report now names
   where it happened.

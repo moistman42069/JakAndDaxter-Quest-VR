@@ -38,7 +38,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start (0.1.5: Jak II also Dark Jak, his meter full and his bombs). `JAKVR_TEST_GUN=all` (0.1.5, Jak 3): every gun, Light Jak's powers, and Dark Jak's and Light Jak's meters kept full while he is neither (build 76: a new game has Dark Jak already, and the first aid left his meter empty). |
 | `JAKVR_SKY_TRACE=1` | 0.1.5, PC: every 4 seconds each draw of the sky bucket (Jak 3's `sky`, Jak II's `sky-draw` since build 76): its points' depth (after the scaling to the eyes' near plane), depth test and writes, alpha test, and the near plane (`[vr-sky] frame N draw: ...`). |
 | `JAKVR_TEST_BOARD=1` | Jak II and 3: Jak has the JET-Board from the start. |
-| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). |
+| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). Jak 1 (0.1.6): while he may grab a ledge (falling, high enough), what the ledge search found each time it changes (`[vr] ledge search: N tris, N edges, N in reach; Jak at x y z`; 0.1.5's found no tri of a level, LIST-0.1.6 item 29). |
 | `JAKVR_TEST_TURRETS=1` | Jak II: the sewer's first gun turret destroyed through the game's own instant death once it is made (its die state, LIST-0.1.1 item 22). Jak 3: 2 seconds into play, Spargus' wall turret (`wascity-turret-1`, with `JAKVR_TEST_CONTINUE=wascityb-gungame`) is sent the `'pickup` its Triangle prompt sends, so Jak gets in (`[vr] test: turret: Jak put in ...`). |
 | `JAKVR_TEST_COMBO=1` | Jak II, with `JAKVR_TEST_CONTINUE=gungame-start`: the gun course's yellow gun lesson opened and its manager told to start (`[vr] test: combo: ...`), for the punch-then-shoot combo. |
 | `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
@@ -80,7 +80,8 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 - Body shown (run once for each choice, `body-shown 0` to `6` in the settings folder's vr-options.txt):
   `jak1_body_shown`, `jak2_body_shown`, `jak3_body_shown`; C:\JakQuest\sim\body_shown_all.sh runs them.
 - Moving and the view: `jak1_turn`, `jak1_motion` (Smoother frames), `jak1_hud_stays`, `jak1_ocean`, `jak1_wall`
-  (hands against a wall).
+  (hands against a wall), `jak1_ledge_klaww` (0.1.6: a crouch's high jump to the ledge on the climb to Klaww, grabbed and
+  climbed; with `JAKVR_TEST_CONTINUE=village2-start JAKVR_TEST_WARP=villageb-ogreboss-1`, its header says the rest).
 - Melee (Fists on the right grip): `jak1_melee`, `jak2_melee`, `jak3_melee`.
 - Guns (with `JAKVR_TEST_GUN=1`): `jak2_gun`, `jak2_holster`, `jak3_gun`.
 - Glows at the eyes: `jak3_beam` (through Spargus' light beam, `JAKVR_GLOW_TRACE=1`).
@@ -284,6 +285,19 @@ C:\JakQuest\sim\run_b31.sh (batch28m.sh, OUT=b31), builds 84 and 85:
 - `tether1` (C:\JakQuest\sim\run_tether.sh: `jak1_tether_rock`, `JAKVR_TEST_CONTINUE=swamp-start
   JAKVR_TEST_WARP=swamp-tetherrock-13 JAKVR_TEST_TETHER=1 QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1`, build 86): the
   rock's scene (`target-grab`, mode 1), then `target-stance` and Jak walking and jumping (LIST-0.1.6 item 27).
+
+C:\JakQuest\sim\run_b35.sh (OUT=s27), build 89 (LIST-0.1.6 items 27 and 29):
+
+- `ledge-after` (C:\JakQuest\sim\run_ledge.sh: `jak1_ledge_klaww`, `JAKVR_TEST_CONTINUE=village2-start
+  JAKVR_TEST_WARP=villageb-ogreboss-1 JAKVR_TEST_WARP_OFFSET=23.53,-11.3,8.82 QUEST_SIM_ALIGN=10000
+  JAKVR_STATE_TRACE=1`): the cliff up to Klaww, a crouch (the left trigger) and a high jump straight up:
+  `state target-edge-grab`, `[vr] ledge search: 4 tris, 9 edges, 2 in reach; Jak at 270.10 33.62 -1753.70`, Jak
+  hanging, then `target-edge-grab-jump` and the grass on top (`lk-end`). A run's or a double jump's top there is near
+  31.4 m (an overhang), short of the ledge. The run's `edge grabs:` count is `state target-edge-grab`.
+- `tether-swamp-tetherrock-13` to `-16` (run_tether.sh with `ROCKS=`): each rock in a run of its own, `target-grab`
+  in its scene, then `target-stance` and Jak walking.
+- `mp1` (Jak 1's party, host and guest on this PC, `JAKVR_PARTY_TEST=host` and `join`, the guest playing the host's
+  progress) and `play1` (`jak1_play`): no errors.
 
 ## Without a game
 

@@ -71,6 +71,10 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
   the Zoomer has its own speed.
 - **Jak 1's Boggy Swamp tether rocks**: break one with yellow eco (not the last): after its scene Jak walks and jumps
   at once (0.1.5 held him in place after any of the first three). The last rock's scene shows the Precursor arm.
+- **Jak 1's ledges** (0.1.6: none of a level's was grabbed before): jump at a ledge, Jak hangs from it and climbs
+  up; the climb to Klaww in Rock Village needs one (a high jump: crouch, then jump). With Jak 1's multiplayer, the
+  same in a hosted or joined game. While he hangs, first person puts your eyes where his head is, just under the
+  ledge's top (its grass seen from under it): say how that feels.
 - **Jak II from a new game** (the prison, with its warp gate): the escape plays on into the city; Jak II's other
   warp gates, airlocks, races and the stadium's JET-Board lessons each work as before.
 - **Jak 1's opening, the shot of Jak lying back on the boat** (Quest, Dynamic resolution on): at the cut to that shot

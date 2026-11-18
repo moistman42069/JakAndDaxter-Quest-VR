@@ -10,8 +10,9 @@ OpenGOAL's Android fork. You supply your own discs; no game files are included.<
 > no longer black at their start, Jak II's pause in front of you on SteamVR, the Quest no longer closing when you leave
 > the game for its menu, and a smoother Quest (Smoother frames at twice 0.1.5's game rate, no more black flicker).
 > **Multiplayer** on Jak 1's title screen and pause menu, and a one-player game with Jak 1's or Jak II's multiplayer on
-> plays as the original (Jak 1's Boggy Swamp tether rocks let Jak go again). Jak 3's JET-Board grinds with B and zaps
-> with X, and a held button no longer skips a Jak 3 scene as the controllers come back. New defaults: the Dot
+> plays as the original (Jak 1's Boggy Swamp tether rocks let Jak go again). Jak 1's ledges can be grabbed (lost
+> since 0.1.0; the climb to Klaww needs one). Jak 3's JET-Board grinds with B and zaps with X, and a held button no
+> longer skips a Jak 3 scene as the controllers come back. New defaults: the Dot
 > crosshair, CPU and GPU boost, vibration on everything, 150% eyes on a Quest 3 or 3S, and anti-aliasing and anisotropic
 > filtering off. It is still a test release, tested on a PC with a simulated headset, and its main purpose is still to
 > collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.

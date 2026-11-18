@@ -1,0 +1,39 @@
+# Jak 1: the cliff up to Klaww in Rock Village, where a player on 0.1.5 jumped for three minutes at a ledge Jak never
+# grabbed ("a ledge that should be grabable is not, so i cant take on boss fight"; their log: Jak at 266-284, 28.1,
+# -1747 to -1757, twice at 270.2, 34.85, -1754.0 in the air, a crouch's high jump, 5 to 7 m). LIST-0.1.6 item 29. Run
+# with JAKVR_TEST_CONTINUE=village2-start, JAKVR_TEST_WARP=villageb-ogreboss-1, JAKVR_TEST_WARP_OFFSET=23.53,-11.3,8.82
+# (Jak a metre over that floor at 270.1, 29.1, -1753.7), QUEST_SIM_ALIGN=10000 and JAKVR_STATE_TRACE=1: a new game, the
+# continue, the warp (frame 10000, Jak facing 2.89, the continue's, the cliff ahead), 10 seconds for the levels to
+# load, then a crouch (the left trigger) and a high jump straight up (A held): Jak grabs the ledge over him
+# (`[vr] state target-edge-grab`, `[vr] ledge search: 1 tris, 3 edges, 1 in reach; Jak at 270.10 34.64 -1753.70`) and
+# climbs onto it (target-edge-grab-jump, then the grass on top in the pictures). Then the same again from the top. The
+# sim's 72 frames a second; a double jump here tops out near 31.4 m (an overhang), short of the ledge. Before 0.1.6's
+# fix no ledge of a level was grabbed: the ledge search's box never reached the level's tris (collide-cache.gc
+# fill-using-bounding-box), `0 tris` in every line.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot lk-warp
+10700 shot lk-start
+10710 left_trigger 1
+10740 a 1
+10750 left_trigger 0
+10758 shot lk-grab
+10775 shot lk-up-1
+10790 a 0
+10850 shot lk-up-2
+10950 shot lk-top
+11000 left_y 1
+11030 left_y 0
+11060 left_trigger 1
+11090 a 1
+11100 left_trigger 0
+11130 shot lk-high
+11140 a 0
+11250 shot lk-end
+11300 quit 0
