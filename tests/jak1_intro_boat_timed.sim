@@ -1,0 +1,16 @@
+# Jak 1 intro, the boat shot timed (LIST-0.1.6 item 21; the owner on a Quest 3: a stutter "only ... for that short
+# shot of him laying back on the boat"). jak1_intro_boat.sim with three shots only (pictures slow the run): the cut to
+# him lying back, where the intro first shows Misty Island ("Displaying level misty", "Setting force-all-visible?[misty]
+# to #t": the island drawn whole), is at about frame 5090 to 5430 (the loads move it). Run with JAKVR_FRAME_TRACE=8
+# JAKVR_BUCKET_LOG=1: "[vr-frame]" lines name the game frames over 8 ms of work (none there in 0.1.6's runs), "[vr]
+# bucket" lines each renderer as it starts drawing (Misty's plants, l0-shrub, about 91,000 triangles at the cut).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+5040 shot it-before
+5130 shot it-cut
+5430 shot it-after
+5460 quit 0

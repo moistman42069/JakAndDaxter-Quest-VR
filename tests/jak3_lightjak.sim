@@ -1,0 +1,87 @@
+# Jak 3's Light Jak by the left grip and Y (LIST-0.1.6 item 12; a player on 0.1.5: "dark jak works in 3 but light jak
+# not work"), run with JAKVR_TEST_CONTINUE=templea-start JAKVR_TEST_GUN=all JAKVR_STATE_TRACE=1 (both meters full while
+# he is neither, every Light Jak power given): the opening skipped as jak3_darkjak.sim, then in the temple on foot (the
+# fists on the grips). 1: the grip held, Y pressed and let go (Triangle: full health, so no heal; he stands again, not
+# Dark Jak). 2: the grip held, Y, then B (the shield). 3: Y, then A (the wings). 4: Y, the thumb slid to X (time
+# slows). Each power ended by the right stick's click (R2). 5: Y tapped and everything let go at once (the heal still
+# taken, not Dark Jak). 6: the grip held and Y, the grip let go before a choice with Y still held (L2 alone: Dark Jak,
+# and no Triangle while Y stays held), then L2 again to end him. 7: the grip alone (the left fist, as ever). Expect
+# "[vr-pad] the left grip held and Y" and "Light Jak by the left grip" lines, target-powerjak-get-on then each power's
+# state, target-darkjak-get-on only at 6.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+# the new game's autosave notice holds the game paused (b63: every picture was the notice): A, twice, closes it
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+4500 shot lj-start
+4600 left_grip 1
+4630 y 1
+4660 shot lj-tri-hold
+4680 y 0
+4760 shot lj-tri-after
+4800 left_grip 0
+5000 left_grip 1
+5030 y 1
+5060 b 1
+5066 b 0
+5080 y 0
+5120 shot lj-shield1
+5200 shot lj-shield2
+5240 left_grip 0
+5500 right_click 1
+5506 right_click 0
+5600 shot lj-back1
+5900 left_grip 1
+5930 y 1
+5960 a 1
+5966 a 0
+5980 y 0
+6020 shot lj-wings1
+6100 shot lj-wings2
+6140 left_grip 0
+6400 right_click 1
+6406 right_click 0
+6700 left_grip 1
+6730 y 1
+6760 y 0
+6764 x 1
+6770 x 0
+6820 shot lj-freeze1
+6900 shot lj-freeze2
+6940 left_grip 0
+7200 right_click 1
+7206 right_click 0
+7500 left_grip 1
+7530 y 1
+7536 y 0
+7538 left_grip 0
+7600 shot lj-tap
+7900 left_grip 1
+7930 y 1
+7960 left_grip 0
+8000 shot lj-dark1
+8060 y 0
+8100 shot lj-dark2
+8400 left_click 1
+8402 left_click 0
+8500 shot lj-dark-off
+8800 left_grip 1
+8860 shot lj-fist
+8900 left_grip 0
+9100 quit 0

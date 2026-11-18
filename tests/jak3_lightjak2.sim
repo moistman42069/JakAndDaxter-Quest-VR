@@ -1,0 +1,55 @@
+# Jak 3's Light Jak by the left grip and Y, part 2 (LIST-0.1.6 item 12; jak3_lightjak.sim's wings came after the
+# shield, which the game's flight waits out): run as jak3_lightjak.sim. 1: the grip held and Y, the grip let go before
+# a choice with Y still held: L2 alone, Dark Jak (target-darkjak-get-on), and no Triangle (his invisibility) while Y
+# stays held. 2: a quick click of the left stick ends him. 3: the grip held, Y, then A: the wings first of all
+# (target-lightjak-swoop or the like). 4: the grip held, Y, then the right stick down: the wings by the stick.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+# the new game's autosave notice holds the game paused (b63: every picture was the notice): A, twice, closes it
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+4500 shot lk-start
+4600 left_grip 1
+4630 y 1
+4660 left_grip 0
+4700 shot lk-dark1
+4800 shot lk-dark2
+4900 y 0
+5000 shot lk-dark3
+5300 left_click 1
+5302 left_click 0
+5450 shot lk-dark-off
+5800 left_grip 1
+5830 y 1
+5860 a 1
+5866 a 0
+5880 y 0
+5900 shot lk-wings1
+5960 shot lk-wings2
+6040 shot lk-wings3
+6100 left_grip 0
+6600 left_grip 1
+6630 y 1
+6660 right_y -1
+6672 right_y 0
+6680 y 0
+6700 shot lk-wings-stick1
+6780 shot lk-wings-stick2
+6840 left_grip 0
+7200 quit 0

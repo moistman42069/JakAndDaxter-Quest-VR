@@ -1,0 +1,43 @@
+# Jak 1's title Multiplayer (LIST-0.1.6 item 22; the owner: a Multiplayer section "in the main menu of the games",
+# "like the openrac multiplayer mod"). Start opens the title menu, the right hand pointing away (hand_pitch 70); the
+# left stick down twice (New Game, Load Game, Multiplayer) and A: the VR menu should open on its Multiplayer page
+# (log "[vr-menu] open Multiplayer (the title's Multiplayer)"; shot tm-page). The stick down twice (Multiplayer, Your
+# game, Host a game) and A: Host which save?, with no "This game as it is" at the title (tm-host). B: back to
+# Multiplayer (tm-back). B: closed, the title menu still up (tm-title2). Then the stick up twice and A on New Game:
+# a new game starts as ever (tm-new), the multiplayer mod untouched (no party line in the log).
+2400 menu 1
+2406 menu 0
+2420 hand_pitch 70
+2500 shot tm-title
+2560 left_y -1
+2570 left_y 0
+2600 left_y -1
+2610 left_y 0
+2650 shot tm-row
+2700 a 1
+2706 a 0
+2800 shot tm-page
+2840 left_y -1
+2846 left_y 0
+2870 left_y -1
+2876 left_y 0
+2900 shot tm-hostrow
+2930 a 1
+2936 a 0
+3000 shot tm-host
+3040 b 1
+3046 b 0
+3100 shot tm-back
+3140 b 1
+3146 b 0
+3220 shot tm-title2
+3260 left_y 1
+3270 left_y 0
+3300 left_y 1
+3310 left_y 0
+3340 shot tm-newrow
+3380 a 1
+3386 a 0
+3500 shot tm-new
+3700 shot tm-new2
+3760 quit 0

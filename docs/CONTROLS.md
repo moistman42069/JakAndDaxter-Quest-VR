@@ -17,7 +17,7 @@ the VR menu to turn it off. What each button does in each game, on foot and ridi
 | Right trigger | R1 | Jak II and 3: draw and fire the gun. |
 | Left trigger | L1 | Crouch, roll. |
 | Right grip | (fists), or R2 | With Physical melee and Fists on the right grip (both on to start): hold it to make fists. Only fists punch and kick (below). Jak II and 3: a quick squeeze and let go, with no punch or kick, is R2 (the JET-Board on; since 0.1.3). While the gun is in your hand, the grip just holds it. A controller with no right stick click keeps R2 on the grip with the fist. |
-| Left grip | (left fist) or L2 | With Fists on the right grip, on foot: held, the left fist (all three games, so the left hand punches by its own grip). Jak II and 3 on foot (since 0.1.5): a quick squeeze and let go, with no punch, kick or other button meanwhile, is L2: Dark Jak (a light buzz says so). Squeeze it again within a third of a second and hold it: L2 held, no fist (Jak 3: Light Jak's powers with a face button or the right stick, as the left stick click below; let go alone, Dark Jak). On the front of the drawn gun: the two-hand grip (with the gun drawn, L2 is the left stick click). In a vehicle, on the board and the like, or with Fists on the right grip off: L2 (Jak II: Dark Jak; Jak 3: Dark and Light Jak). |
+| Left grip | (left fist) or L2 | With Fists on the right grip, on foot: held, the left fist (all three games, so the left hand punches by its own grip). Jak II and 3 on foot (since 0.1.5): a quick squeeze and let go, with no punch, kick or other button meanwhile, is L2: Dark Jak (a light buzz says so). Squeeze it again within a third of a second and hold it: L2 held, no fist (Jak 3: Light Jak's powers with Y, A, X or B or the right stick, as the left stick click below; let go alone, Dark Jak). Jak 3 once he has Light Jak (since 0.1.6): the left grip held and Y pressed is L2 held too, then let Y go to heal, or X, A, B or the right stick (Each game, Jak 3). On the front of the drawn gun: the two-hand grip (with the gun drawn, L2 is the left stick click). In a vehicle, on the board and the like, or with Fists on the right grip off: L2 (Jak II: Dark Jak; Jak 3: Dark and Light Jak). |
 | Right stick click | R2 | With Fists on the right grip: the grip's old button. Jak II and 3: the JET-Board on and off; Jak 3: Light Jak's end. With it off: R3. A quick click counts too (since 0.1.3). |
 | Left stick click | L2 or L3 | Jak II and 3 on foot with Fists on the right grip: L2, as the left grip's quick squeeze (Jak II: Dark Jak; Jak 3: click and let go for Dark Jak, or hold it and push the right stick for Light Jak's powers: up heals (Triangle), down flies (Cross), left slows time (Square), right shields (Circle); A and B work too). Where the click is the menu button (SteamVR with Touch), the click with the left grip squeezed. Otherwise L3. |
 | Both stick clicks together | none | Recentre the view. |
@@ -46,7 +46,8 @@ the combo missed). With the gun in your right hand, punch with the left fist or 
 
 The crosshair (Jak II and 3, since 0.1.3): with the gun in your hand, a mark sits where the shot would land: on the
 wall, the ground or the enemy the gun points at, near or far, and it stays the same size to your eye at any distance.
-It turns red on an enemy the gun can reach. It is off to start (0.1.5; 0.1.3 and 0.1.4 started with a small dot). The
+It turns red on an enemy the gun can reach. It starts as the Dot (0.1.6; 0.1.5 started with none, 0.1.3 and 0.1.4 with
+the Dot too); a crosshair you picked yourself is kept. The
 VR menu (and the launcher's VR options)
 has **Crosshair** (Off, Dot, Cross, Cross and dot, Circle, Circle and dot, Plus, Small circle: a thin ring about half a
 degree across, 0.1.5), **Crosshair size**, **Crosshair
@@ -106,6 +107,10 @@ scrolls the list a row at a time. The save and load screens' files and the yes /
 The VR menu: hold the left menu button over a menu, or pick VR Options in the game's Options (Jak II and 3: Options,
 Game Options, VR Options; Jak 1: Options, VR Options). Point at a row and pull the trigger to change it, or choose
 with the stick up and down and change it with A or the stick left and right; B closes it.
+
+Multiplayer (0.1.6): Jak 1's title screen and pause menu have a Multiplayer entry that opens the VR menu's
+Multiplayer page (host, join, the games found, the players); B goes back a page, and closes it from Multiplayer
+itself. Jak II's title has its own Multiplayer (Host Game, Join Game) while Jak II multiplayer is on.
 
 Typing (Jak II's multiplayer: your name, an address, a room code): while a text field is open the sticks type into
 it, as an arcade's name entry. Up or down changes the letter before the cursor, right keeps it and goes on to the
@@ -171,15 +176,15 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Right trigger | R1 | Draw the gun and fire. |
 | Right grip | (fists), R2 | Held: the fists. A quick squeeze and let go: R2, the JET-Board out and away. |
 | Right stick click | R2 | The JET-Board out and away; as Light Jak, back to Jak. |
-| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Squeezed again at once and held: L2 held, for Light Jak's powers: Y heals, A flies, X slows time, B shields (or the right stick: up, down, left, right). |
-| Left stick click | L2 | As the left grip: a click and let go for Dark Jak; held, Light Jak's powers with the right stick or A and B. |
+| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Light Jak (since 0.1.6, once the game has given him Light Jak; the game's "Hold L2 then Press Triangle"): hold the left grip and press Y. That is L2 held (no fist, a light buzz): Jak stops for his power. Then let Y go: Triangle, he heals. Or slide the thumb from Y to X: Square, time slows. Or press A: Cross, the wings. Or press B: Circle, the shield. Or push the right stick: up heals, down the wings, left slows time, right the shield. Let the grip go before choosing: L2 alone, Dark Jak, as on the game's pad. As Dark Jak, Y with the grip held is Y (his invisibility), not Light Jak. The 0.1.5 way works too: squeezed again at once and held, L2 held, then Y, A, X or B or the right stick. |
+| Left stick click | L2 | As the left grip: a click and let go for Dark Jak; held, Light Jak's powers with Y, A, X or B or the right stick. |
 | Left thumb on its rest, right stick | D-pad | The guns: each direction picks a color, and the same direction again the next gun of that color. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (a pause without the menu), the right L3. |
 | Menu button | Start | Pause; held, first and third person. |
 | Riding a city car | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. |
 | Riding a desert vehicle | | A speeds up, X brakes and backs up, the left trigger jumps, the right trigger fires its guns, the right grip the turbo, the left grip held with the right stick looks around, the right stick click its other switch, Y gets out. |
 | On a leaper lizard | | A jumps; the other buttons as the game's own. |
-| On the JET-Board | | As in Jak II. |
+| On the JET-Board | | A jumps. B held grinds a rail (the game's Square) and X zaps (its Circle): swapped from Jak II's board since 0.1.6, so the left thumb stays on the stick. The triggers as the game's board moves; the right grip or the right stick click takes him off. |
 
 ## PC VR controllers
 

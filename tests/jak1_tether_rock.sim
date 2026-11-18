@@ -1,0 +1,38 @@
+# Jak 1: one of Boggy Swamp's tether rocks breaks, its scene plays, and Jak walks off after it (LIST-0.1.6 item 27, a
+# player on 0.1.5: "cutscene after blasting rock in boggy swamp glues your feet to ground", then "i tried a different
+# rock that does the same thing"). Run with JAKVR_TEST_CONTINUE=swamp-start, JAKVR_TEST_WARP=swamp-tetherrock-13,
+# JAKVR_TEST_TETHER=1, QUEST_SIM_ALIGN=10000 and JAKVR_STATE_TRACE=1: a new game, the continue, then Jak put a metre over
+# the rock (frame 10000 is that moment); 3 seconds on, the rock takes a hit of his yellow eco (pc-vr.gc
+# vr-test-tether!) and its scene holds him (target-grab). After it he must be let go (target-stance), walk with the left
+# stick and jump with A. Pictures through the scene and after it. The rock's power cell lands on him (its victory), and
+# with no save slot (a sim's new game) its auto-save opens the game's save menu as he starts to walk: A there, then he
+# walks and jumps again.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot tr-warp
+10150 shot tr-before
+10230 shot tr-scene-1
+10330 shot tr-scene-2
+10430 shot tr-scene-3
+10530 shot tr-scene-4
+10900 shot tr-after
+10920 left_y 1
+11100 left_y 0
+11110 shot tr-walked
+11150 a 1
+11160 a 0
+11180 shot tr-jump
+11400 shot tr-menu-done
+11420 left_y 1
+11620 left_y 0
+11630 shot tr-walked-2
+11660 a 1
+11670 a 0
+11690 shot tr-jump-2
+11900 quit 0

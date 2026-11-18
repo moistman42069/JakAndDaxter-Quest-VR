@@ -5,15 +5,19 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.5](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
-> testers' reports on 0.1.4: no more flat screen between scenes, no more colored square in front of your face from
-> effects, Dark Jak back on the left grip, Jak II's missions and bosses working when you play alone, every game button
-> in reach with a controls table for each game, first person switches for each kind of ride and a **Small circle**
-> crosshair (off to start). It is still a test release, tested on a PC with a simulated headset, and its main purpose
-> is still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
-> [docs/LIST-0.1.5.md](docs/LIST-0.1.5.md) says what changed and how each part was checked
-> ([LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and
-> [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
+> **Test release [0.1.6](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
+> latest reports on 0.1.5: **Light Jak** on the controllers in Jak 3 (hold the left grip and press Y), Jak II's scenes
+> no longer black at their start, Jak II's pause in front of you on SteamVR, the Quest no longer closing when you leave
+> the game for its menu, and a smoother Quest (Smoother frames at twice 0.1.5's game rate, no more black flicker).
+> **Multiplayer** on Jak 1's title screen and pause menu, and a one-player game with Jak 1's or Jak II's multiplayer on
+> plays as the original (Jak 1's Boggy Swamp tether rocks let Jak go again). Jak 3's JET-Board grinds with B and zaps
+> with X, and a held button no longer skips a Jak 3 scene as the controllers come back. New defaults: the Dot
+> crosshair, CPU and GPU boost, vibration on everything, 150% eyes on a Quest 3 or 3S, and anti-aliasing and anisotropic
+> filtering off. It is still a test release, tested on a PC with a simulated headset, and its main purpose is still to
+> collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
+> [docs/LIST-0.1.6.md](docs/LIST-0.1.6.md) says what changed and how each part was checked
+> ([LIST-0.1.5.md](docs/LIST-0.1.5.md), [LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md),
+> [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
 
 ## Built on OpenGOAL
 

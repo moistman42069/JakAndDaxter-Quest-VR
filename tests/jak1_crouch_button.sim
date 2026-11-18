@@ -1,0 +1,17 @@
+# Jak 1 crouched by the button (L1, the left trigger held about 20 seconds), as jak1_crouch.sim's body crouch: the
+# effects Jak's crouch animation plays (JAKVR_STATE_TRACE=1), to tell the game's own sounds from ours (LIST-0.1.6 item 10).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot c-start
+4260 left_trigger 1
+4400 shot c-down1
+5400 shot c-down2
+6000 left_trigger 0
+6200 shot c-up
+6300 quit 0

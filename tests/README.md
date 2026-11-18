@@ -48,6 +48,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_TEST_SOUND_STALL=S` | 0.1.5, Jak 1: the sound processor's player stops answering for S seconds at its 1200th batch of commands (about 20 seconds into a run; `[vr-test] the sound player held for S s`, then `goes on`), and the game, once the player has been busy for 30 frames, sends 300 sound commands at once (`[vr] test: 300 sound commands while the sound player is held`), so the sound queue fills as in the tester's freeze. |
 | `JAKVR_TEST_GAME_STALL=S` | 0.1.5: the game's thread held S seconds at its 1500th frame (`[vr-test] the game held for S s`, then `goes on`), for the stall watch's `[vr-stall]` lines. PC only. |
 | `JAKVR_TEST_BAD_TEXTURE=N` | 0.1.5: the Nth texture page the game uploads has its first entry read as 0 (`[vr-test] page N's first entry read as 0`), as the page in Jak 3's crash on a restart had: the texture guard passes it over. |
+| `JAKVR_TEST_TETHER=1` | 0.1.6, Jak 1, with `JAKVR_TEST_WARP` onto one of Boggy Swamp's tether rocks: 3 seconds after the warp the rock takes a hit of Jak's yellow eco (`[vr] test: yellow eco to swamp-tetherrock-...`), so its scene plays and Jak is seen let go after it (pc-vr.gc vr-test-tether!). |
 | `JAKVR_PARTY_TEST=host` or `=join` | Multiplayer: host a game as soon as the game is up, or look for games and join the first of this build found. |
 | `JAKVR_PARTY_TEST_SAVE=copy` | With `=join`: once the host's Jak is in the game, play the host's progress (Play which save?). |
 | `JAKVR_BODY_TRACE=1` | How the posed body sits, twice a second; the merc models the eyes draw, once each; each frame Jak's bones came from the game, or were posed, with their last column off 0 0 0 1 (made affine). |
@@ -69,6 +70,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `QUEST_SIM_GRIP_TILT=D` | The grip pose turned D degrees up from the aim pose, as on the Quest's controllers. |
 | `QUEST_SIM_SPACE_WARP=0` | No motion pictures (Smoother frames off). |
 | `JAKVR_TEST_LATE=<from>-<to>` | Those display frames count as late for Dynamic resolution (the eyes step down, then back up when the frames are in time again). |
+| `JAKVR_FRAME_TRACE=<ms>` | 0.1.6, Jak 1: each game frame whose own work (vsync to vsync, less its waits for the renderer) took longer than that (`[vr-frame] game frame N: its work X ms (Y ms with its waits)`). |
 
 ## The scripts
 
@@ -234,6 +236,54 @@ gkcfg-warp (`smoother-frames 1`) and gkcfg-full (`frame-rate 1`, the game at the
     head`, the left's `Select: the left stick's click ...` (Jak II alone does nothing with Select; Start opens its
     pause menu). Then a Vive wand (`no_left_click 1`, `no_thumb_rest 1`), the hand by the head: X with the left stick
     at rest `Select: the left touchpad's click ...`, X with it pushed right `d-pad right` alone.
+
+## The checks added in 0.1.6
+
+C:\JakQuest\sim\batch28m.sh (OUT=b30), build 83:
+
+- `titlemp` (`jak1_title_mp`, `JAKVR_POINTER_TRACE=1 JAKVR_STATE_TRACE=1`): Jak 1's title has MULTIPLAYER under Load
+  Game; A on it: `[vr-menu] open Multiplayer (the title's Multiplayer)`, the page's help in two lines above the hints;
+  Host a game: `page: Host which save?` (the four slots and New Game, no "This game as it is" at the title); B:
+  `page: Multiplayer`; B: `closed`, the title menu there with Multiplayer lit; New Game: the game's own save-slot
+  page. No `party` line but `party: on as ...` (nothing hosted or joined).
+- `pausemp` (`jak1_pause_mp`): a new game, Start, the pause's Options: MULTIPLAYER under VR OPTIONS;
+  `[vr-menu] open Multiplayer (the pause menu's Multiplayer)`; B closes it back to Options with Multiplayer lit;
+  Start: play.
+- `load1` (`jak1_make_save` then `jak1_load_game`, gkcfg-load, `KEEP_SAVES=1`): Load Game, still the title's second
+  row, loads the save (`target-continue`, `target-warp-in`, `target-stance`). With it on build 83 (b30d.out): `save1`,
+  `pauseb1` (B in Jak 1's pause pages) and `act1` (the actions and their steadiness), no errors, stalls or crashes.
+- `boatb` (`jak1_intro_boat_timed`, `JAKVR_FRAME_TRACE=8 JAKVR_BUCKET_LOG=1`): the opening's cut to Jak lying back on
+  the boat: `Displaying level misty`, `Setting force-all-visible?[misty] to #t`, then `[vr] bucket [20] l0-shrub draws
+  (25 draws, 91462 triangles)` with Misty's tfrag, tie and merc; no `[vr-frame]` line there (no game frame over
+  8 ms). Misty's render data loaded at about frame 3000 (`Loader::update`), long before.
+- `dynq` (`jak1_play` on gkcfg-perf, `QUEST_SIM_HZ=120 JAKVR_TEST_LATE=3700-4700`): dynamic resolution's quick step
+  down: `the eyes at 90%`, 80%, 70% and 60% within about a second (0.1.5's rule, b64's auto120: one a second), then
+  back up a step each 5 s once the frames are in time.
+- `crouchb` and `crouchp` (C:\JakQuest\sim\b29i: `jak1_crouch_button`, the left trigger held, and `jak1_crouch`, the
+  body's crouch, `JAKVR_STATE_TRACE=1`): the same `[vr] effect breath-in` / `breath-out` lines about once a second in
+  both, from the game's crouch animation.
+- Jak II's one-player restorations (LIST-0.1.6 item 20) compiled for the first time in build 80: four fixes (a cast
+  for trajectory.gc's ignore-process1, the mod's names for the same bits: collide-spec `replica` for the original's
+  `tobot`, traffic-spawn-flags `spawn-rider` / `skip-lwide-entity-hack` for `trsflags-01` / `-00`, and two
+  wrappers that returned nothing where the original returns a value: fort-robotank method 26 and the hoverboard
+  training manager's event handler). Then, with C:\JakQuest\sim\checks016's scripts (python -I): every solo
+  wrapper's last form against its original's (check_wrappers.py, check_events.py: the event handlers return the
+  original's value), every enum member the mod renamed and its uses (enum_renames.py), the VR menu's help over two
+  lines (help_lines.py) and characters the games' font draws as buttons (semis.py: `;` is the Triangle).
+
+C:\JakQuest\sim\run_b31.sh (batch28m.sh, OUT=b31), builds 84 and 85:
+
+- `board3s` (`jak3_board_swap`, `JAKVR_TEST_CONTINUE=templea-start JAKVR_TEST_BOARD=1`): on Jak 3's board, B: `[vr-pad]
+  Jak 3's JET-Board: B, Square (the grind, held)`, X: `X, Circle (the zap)`; off the board X is the punch
+  (`target-running-attack`) and B the kick (`target-attack`) as before.
+- `skip3` (`jak3_scene_skip`, Y every 20 frames from a scene's start): `the scene "intro-drop" skipped: Triangle, 1.1 s
+  in`, never before a second; `buttons3`, `light3` the same.
+- The Jak II sims (`act2 pturn2 pstick2 eyes2 boardon dark2 turret2 combo2`): each stopped at the prison's start,
+  `ERROR: suspend called without enough stack in proc: warp-gate-b ... Stack: 640/512` (LIST-0.1.6 item 28, fixed in
+  build 86: the mod's :code in a lambda of its own). The run's `stack:` count in batch28m.sh is that line.
+- `tether1` (C:\JakQuest\sim\run_tether.sh: `jak1_tether_rock`, `JAKVR_TEST_CONTINUE=swamp-start
+  JAKVR_TEST_WARP=swamp-tetherrock-13 JAKVR_TEST_TETHER=1 QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1`, build 86): the
+  rock's scene (`target-grab`, mode 1), then `target-stance` and Jak walking and jumping (LIST-0.1.6 item 27).
 
 ## Without a game
 

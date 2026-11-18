@@ -1,0 +1,41 @@
+# Jak 1's pause Multiplayer (LIST-0.1.6 item 22). A new game, the intro skipped as jak1_pause_b.sim, at Geyser Rock:
+# Start (the pause's power cell page), B (Circle there: the Options), the right hand pointing away, the left stick
+# down four times (Game, Graphic, Sound, VR Options, Multiplayer) and A: the VR menu should open on its Multiplayer
+# page (log "[vr-menu] open Multiplayer (the pause menu's Multiplayer)"; pm-page). B: closed, the Options still up
+# (pm-options2). Start: play again (pm-play), the multiplayer mod untouched (no party line in the log).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot pm-start
+4400 menu 1
+4406 menu 0
+4520 shot pm-pause
+4560 b 1
+4566 b 0
+4600 hand_pitch 70
+4700 shot pm-options
+4740 left_y -1
+4750 left_y 0
+4780 left_y -1
+4790 left_y 0
+4820 left_y -1
+4830 left_y 0
+4860 left_y -1
+4870 left_y 0
+4900 shot pm-row
+4940 a 1
+4946 a 0
+5040 shot pm-page
+5080 b 1
+5086 b 0
+5160 shot pm-options2
+5200 menu 1
+5206 menu 0
+5340 shot pm-play
+5360 hand_pitch 0
+5400 quit 0

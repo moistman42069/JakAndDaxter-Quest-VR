@@ -32,6 +32,63 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **Jak 3's white screen after its first scene** (Precursor's README): a new game; after the opening scene the desert
   should draw.
 
+## 0.1.6's changes (the owner's Quest 3 logs and players' reports on 0.1.5)
+
+- **Light Jak** (Jak 3, once the game has given him to you): hold the **left grip** and press **Y**: Jak stops for his
+  power (`[vr-pad] the left grip held and Y: L2 held`). Let **Y** go: he heals if hurt (`Light Jak by the left grip:
+  Y let go, Triangle (Regeneration)`); or slide the thumb to **X** (time slows), press **A** (the wings) or **B** (the
+  shield), or push the right stick. Y tapped and everything let go at once still heals. The grip let go before a
+  choice with Y held: Dark Jak, and no invisibility from the Y still held. Dark Jak's quick squeeze of the left grip
+  as before; as Dark Jak, Y with the grip held is his invisibility.
+- **Defaults** (a game with no options saved, or one an older release wrote): `[vr] options: ...` with
+  `cpu-gpu-boost-on on` (the Quest too: `[openxr] performance levels: CPU and GPU boost`), `extra-vibration-kind 2`
+  (Off kept where it was Off) and `crosshair-shape 1` (the Dot, Jak II and 3; a kind picked in 0.1.5 kept). A **Quest 3 or 3S**: `eye-resolution 150` (`[openxr] eye 0: 2520 x 2640 (recommended 1680 x 1760)` on
+  a Quest 3), `sharpening-strength 2`; a **Quest 2** or Pro: `eye-resolution 100`, `sharpening-strength 1`; every
+  headset and the PC: `anti-aliasing 1` and `anisotropic-filtering 1` (both Off). A choice made in 0.1.5
+  other than its start is kept. Say how the Quest 3 runs at 150%: Dynamic resolution's lines (`the eyes at N%`) show
+  how often it draws smaller.
+- **Smoother frames** at 120 Hz (Quest): `[vr-view] the game at 60 frames a second (the headset shows 60)`, not 30;
+  no black flicker. **Dynamic resolution**: `[vr-perf] dynamic resolution: the eyes at ...` lines far fewer than
+  0.1.5's one every five seconds.
+- **The game's thread** (Quest): `[openxr] thread ... (EE) given to the headset as the app's main thread` with no
+  `refused`; `[openxr] the display's thread given to the headset as the renderer`.
+- **Leaving and coming back** (Quest): open the Quest's menu or take the headset off for a while, then come back: the
+  game is where you left it, not closed (`[vr] the headset's session stopped: nothing drawn, the game held until it
+  runs again`, then `... runs again: the game goes on`).
+- **Jak II's scenes**: no black at a scene's start beyond the game's own (`[vr-view] a blackout kept in the eyes,
+  black: N frames` a fraction of a second, not 0.1.5's 4.9 s).
+- **Jak II's pause** (PC, SteamVR): pause after turning around by the stick or the head: the menu ahead of you
+  (`[vr-view] paused: the menu on the HUD, following the head ...`).
+- **Jak 1 at Geyser Rock's scarecrows** (where a Quest 3 closed): break them all. A `[vr-guard]` line in the log means
+  the game lost one of its types and it was put back: please send that log.
+- **Multiplayer on Jak 1's title and pause menu**: **Multiplayer** (under Load Game on the title, under VR Options in
+  the pause menu's Options) opens the VR menu on its Multiplayer page (`[vr-menu] open Multiplayer (the title's
+  Multiplayer)`); **Host a game** at the title offers your saves and a new game, no "This game as it is"; **B** goes
+  back a page and closes it from Multiplayer, the game's menu still there. New Game and Load Game as before.
+- **One player with multiplayer on** (Jak 1 and Jak II, as they start): play as you would alone. Nothing should
+  differ from the original game (Jak 1: the swamp's tether rocks let Jak go, Load Game on an empty slot does
+  nothing; Jak II: the pause holds the game). After leaving a Jak 1 multiplayer game, the others' Jaks are gone and
+  the Zoomer has its own speed.
+- **Jak 1's Boggy Swamp tether rocks**: break one with yellow eco (not the last): after its scene Jak walks and jumps
+  at once (0.1.5 held him in place after any of the first three). The last rock's scene shows the Precursor arm.
+- **Jak II from a new game** (the prison, with its warp gate): the escape plays on into the city; Jak II's other
+  warp gates, airlocks, races and the stadium's JET-Board lessons each work as before.
+- **Jak 1's opening, the shot of Jak lying back on the boat** (Quest, Dynamic resolution on): at the cut to that shot
+  the eyes may get smaller at once (`[vr-perf] dynamic resolution: the eyes at ...% (frames were shown late)`, several
+  within a second), and the shot plays without a stutter of more than a moment. Tell us if it still stutters, with
+  your Graphics settings.
+- **Jak 1's crouch**: crouch by your body or with the left trigger: Jak breathes in and out about once a second, as
+  the game's crouch does with the button. That is the game's own sound.
+- **Jak 3's JET-Board**: on the board, hold **B** near a rail to grind it, and **X** zaps; A jumps. Off the board X and
+  B are as before, and Jak II's board is unchanged (X Square, B Circle).
+- **Controllers back** (PC: open and close the SteamVR dashboard; Quest: the Meta button's menu, or the headset off and
+  on): hold A while you come back. Jak doesn't jump until you press A again (`[openxr] focus lost`, `[openxr] focus
+  back`, `[openxr] focus back with buttons held: ...`).
+- **Jak 3's scenes**: talk to Torn in the Hip Hog (or any scene started with Y): the scene plays; Y in its first second
+  doesn't skip it, Y after that does (`[vr] the scene ... skipped: Triangle`).
+- **Jak II after a mission's load** (the strip mine, the city's missions): the headset comes out of black with the
+  game, not seconds later.
+
 ## 0.1.5's fixes (a tester's reports on 0.1.4: PC, SteamVR with a Quest over Link)
 
 - **The gun's laser** (Jak II and 3, SteamVR): turn on a crosshair, draw the gun and point it around: at the end of

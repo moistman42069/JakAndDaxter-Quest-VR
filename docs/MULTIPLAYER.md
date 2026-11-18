@@ -47,9 +47,11 @@ the VR players' heads and hands. Players of Teamruns' own app or of the Jak II m
 games, nor this port theirs: Teamruns' app goes through Teamruns' online service and the Jak II mod through Steam's
 networking, and neither carries the VR players' head and hands.
 
-## In the game: the VR menu's Multiplayer
+## In the game: Multiplayer
 
-Open the VR menu (Options, VR Options, or pause and hold the left menu button a second): its **Multiplayer** rows are
+Choose **Multiplayer** on the title screen (under Load Game) or in the pause menu (under VR Options). Its rows are
+also in the VR menu (Options, VR Options, or pause and hold the left menu button a second), under **Multiplayer**.
+At the title there is no game yet, so a game is hosted or played from a save or a new game. The rows are
 
 | Row | What it does |
 | --- | --- |
@@ -65,7 +67,7 @@ Open the VR menu (Options, VR Options, or pause and hold the left menu button a 
 
 | Row | What it does |
 | --- | --- |
-| This game as it is | Hosts now, playing on from where you are. |
+| This game as it is | Hosts now, playing on from where you are (not at the title, where there is no game yet). |
 | Save 1 to Save 4 | Loads that save (its level and power cells shown), then hosts. |
 | New game | Hosts a new game, saved nowhere until you save it from the pause menu. |
 
@@ -81,7 +83,7 @@ itself up to date. A joins the chosen one, and **Play which save?** comes up.
 | Row | What it does |
 | --- | --- |
 | The host's progress | The host's game sends its progress (power cells, orbs, scout flies, tasks, as far as it has got) and yours becomes the same. It goes into your game, not onto a save slot: your own saves stay as they are, and auto-save is off until you save from the pause menu. |
-| This game as it is | Plays on from where you are. |
+| This game as it is | Plays on from where you are (not at the title). |
 | Save 1 to Save 4 | Loads one of your own saves. |
 | New game | A new game, saved nowhere until you save it from the pause menu. |
 

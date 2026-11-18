@@ -1,0 +1,20 @@
+# Jak 1 crouching by the body (LIST-0.1.6 item 10; the owner: "when i crouch in jak 1, jak begins breathing heavy"):
+# a new game to Geyser Rock in first person as jak1_down.sim, the head lowered 0.5 m (`head_y -0.5`: the sim adds it to standing 1.7 m; Physical crouch, on to start,
+# holds the game's crouch) for about 20 seconds, then up. Run with JAKVR_STATE_TRACE=1: "[vr] effect <name> in
+# <state>" lines say what Jak's animation plays while he crouches (breath-in, breath-out and their -loud kinds are
+# the art's own sounds).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot c-start
+4260 head_y -0.5
+4400 shot c-down1
+5400 shot c-down2
+6000 head_y 0
+6200 shot c-up
+6300 quit 0

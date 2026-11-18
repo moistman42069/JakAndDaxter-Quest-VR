@@ -1,0 +1,48 @@
+# Jak 3's JET-Board with B and X swapped (LIST-0.1.6 item 23; a tester: "jak3 jet board grind control inconvenient for
+# vr ... on jack 3's jet board x and b's button actions switch"), run with JAKVR_TEST_CONTINUE=templea-start
+# JAKVR_TEST_BOARD=1 JAKVR_STATE_TRACE=1: the opening skipped as jak3_lightjak.sim, then the right stick's click (the
+# board on), B held a second (the game's Square held: the rail grind), X (the game's Circle: the board's zap), A (a jump
+# on the board), the click again (off), then X and B on foot (Square, the punch, and Circle, the spin kick, as before).
+# Expect target-board-start, "[vr-pad] Jak 3's JET-Board: B, Square (the grind)" and "X, Circle (the zap)", a board
+# jump, then on foot target-running-attack (X) and target-attack (B), and no board line for those.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+# the new game's autosave notice holds the game paused (b63: every picture was the notice): A, twice, closes it
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+4500 shot bs-start
+4600 right_click 1
+4606 right_click 0
+4800 shot bs-board
+4900 b 1
+4960 shot bs-grind
+4980 b 0
+5100 x 1
+5106 x 0
+5160 shot bs-zap
+5300 a 1
+5306 a 0
+5500 right_click 1
+5506 right_click 0
+5800 x 1
+5806 x 0
+6000 b 1
+6006 b 0
+6100 shot bs-foot
+6300 quit 0

@@ -1,3 +1,71 @@
+0.1.6: Light Jak on the controllers, a smoother Quest, sharper Quest 3 graphics, and fixes for the latest reports.
+Still a test release: please keep sending your logs.
+
+0.1.6 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+which builds again only what changed). Your saves and options are kept.
+
+New
+- Light Jak (Jak 3), once the game has given him to you: hold the left grip and press Y (the game's "Hold L2"). Jak
+  stops for his power; then let Y go to heal (the game's Triangle), slide your thumb from Y to X to slow time, press
+  A for the wings or B for the shield, or push the right stick (up heals, down the wings, left slows time, right the
+  shield). Let the grip go before choosing for Dark Jak, as on a gamepad. Dark Jak's quick squeeze of the left grip
+  is as before, and as Dark Jak, Y is still his invisibility.
+- Multiplayer on Jak 1's title screen and in its pause menu: host a game (from a save or a new game), join one from
+  the games found on your network and the party server, see the players, leave. B goes back a page. Jak II's title
+  has its Multiplayer (Host Game, Join Game) as before.
+
+Changed
+- The crosshair starts as the Dot again (0.1.5 started with none). A crosshair you picked yourself is kept.
+- CPU and GPU boost is on to start, on the Quest too.
+- Extra vibration starts at The whole world: every step, jump, landing, roll, hit and shake, and the pickups. If you
+  had turned it Off, it stays off.
+- Quest 3 and 3S start with sharper graphics: 150% eye resolution and Strong sharpening (with 120 Hz, Smoother
+  frames, High foveation and Dynamic resolution as before). Quest 2 and Pro keep 100% eyes and Normal sharpening.
+- Anti-aliasing and anisotropic filtering are off to start on every headset and the PC. A setting you changed
+  yourself is kept.
+- Smoother frames (Quest): the game draws half the headset's rate, as it should (at 120 Hz, 60 a second). It drew a
+  quarter (30 a second), so every other frame had no new picture behind it.
+- The game's own thread goes to the Quest as the app's main thread, which the Quest gives more of its time (it
+  refused it as a worker).
+- Dynamic resolution steadier: a step back up must hold for 10 seconds, not 3, so the eyes no longer swing between
+  two sizes every few seconds.
+- Jak 3's JET-Board: B grinds a rail (held) and X zaps, swapped from before, so your left thumb can stay on the stick
+  while you grind. Jak II's board, and Jak 3 off the board, are as before.
+- A button you are holding when the game gets the controllers back (the SteamVR dashboard or the Quest's menu
+  closed, the headset put on again) counts only once you let it go, so it can't skip a scene or jump by itself.
+
+Fixed
+- A black flicker with Smoother frames on (Quest): the quarter-rate frames and the swinging eye size above.
+- Leaving the game on the Quest (its menu, the headset taken off) could close it: the game tried to draw a flat
+  screen at the Quest's full size. Now nothing is drawn while you are away and the game waits for you.
+- Jak II: scenes stayed black for seconds at their start (since 0.1.5), and after a mission's load the screen could
+  stay dark long after play had begun. The headset's black now ends with the game's.
+- Jak 3: Torn's briefing in the Hip Hog could end in its first moments, black, and the mission went on without it.
+  Triangle (Y) skips a Jak 3 scene only once it has run a second now, and the log says when a scene is skipped and
+  when the game lost and got back the controllers.
+- Jak 1: after the scene of any Boggy Swamp tether rock but the last, Jak stayed held where he stood and could not
+  walk (since 0.1.5). The rocks' scene is the original game's again and lets him go.
+- Jak 1 closed at Geyser Rock's scarecrows on a Quest 3: a type the scarecrow's break uses had been lost from the
+  game's memory. If one is ever lost again the game puts it back and the log names it, and a crash report now names
+  where it happened.
+- Jak II's pause menu behind you (PC, SteamVR): the menu and the menu pointer are placed in the same space each frame,
+  and the log says where the pause menu was put.
+- A one-player game with the multiplayer mods on (Jak 1 and Jak II, as they start) is the original game again. Each
+  change the mods make to the game's code was read against the original, and every one that reached a lone player
+  now waits for a hosted or joined game. Among them, Jak II: the pause menu, Daxter's steps and the races' restarts,
+  the tomb's boulder, enemies' hits and knock-backs, gems, orbs and crates, elevators and swing poles, the city's
+  traffic. Jak 1: the swamp's tether rocks (above), the lift down to the sunken city, Load Game on an
+  empty slot (it asked to write over it), the Zoomer's speed and Jak's collision after leaving a game, and the
+  speedrun display's lines. Leaving a multiplayer game now puts everything of it away.
+- Jak 1's opening stuttered on a Quest 3 in the short shot of Jak lying back on the boat, where the game draws all of
+  Misty Island for the first time. Dynamic resolution (on to start) now draws the eyes smaller at once when most
+  frames of a quarter second come late, instead of one step a second, so a sudden heavy shot settles within about a
+  second.
+- The VR menu: four rows' help ran into the hints under it (Extra vibration, Fists on the right grip, the multiplayer
+  rows), and a semicolon showed as the Triangle button. Each fits in two lines now.
+- Checked: Jak 1's breathing while you crouch is the game's own. His crouch animation plays its breathing sounds about
+  once a second, the same with the crouch button as with your own crouch (and standing he breathes too), so it stays.
+
 0.1.5: fixes for a tester's reports on 0.1.4, and a small circle crosshair. Still a test release: please keep sending
 your logs.
 

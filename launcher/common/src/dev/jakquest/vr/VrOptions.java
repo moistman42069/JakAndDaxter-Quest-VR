@@ -46,6 +46,34 @@ public final class VrOptions {
         return QUEST ? quest : pc;
     }
 
+    /**
+     * 0.1.6: a Quest 3 or 3S (Android's device names eureka and panther), which starts with the owner's own Graphics
+     * (their Quest 3's vr-options.txt, 2026-11-17: "make sure the defaults in the log i sent you are the new ones on
+     * quest 3 going forward. keep quest 2 at 100% if possible"; "for quest 3/3s, res in launcher should be 150%"): 150%
+     * eyes and Strong sharpening (anti-aliasing and anisotropic filtering Off, as every headset's start: "anti
+     * aliasing/anisotropic filtering should be off by default"). The Quest 2 and the others keep their eyes at 100% and
+     * Normal sharpening (game/vr/vr_options.cpp strong_quest, the same).
+     */
+    public static final boolean STRONG_QUEST = QUEST && strongDevice(androidDevice());
+
+    static boolean strongDevice(String device) {
+        return "eureka".equals(device) || "panther".equals(device);
+    }
+
+    private static String androidDevice() {
+        try {
+            Object d = Class.forName("android.os.Build").getField("DEVICE").get(null);
+            return d == null ? "" : d.toString();
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            return "";
+        }
+    }
+
+    /** A default by the headset: a Quest 3 or 3S, another Quest, the PC. */
+    private static String byHeadset(String strongQuest, String quest, String pc) {
+        return STRONG_QUEST ? strongQuest : QUEST ? quest : pc;
+    }
+
     /** One option: a row in a launcher tab and a line of vr-options.txt. */
     public static final class Option {
         public final String key, label, help;
@@ -152,11 +180,15 @@ public final class VrOptions {
     }
 
     // ---- Graphics (each read when the game starts) ----
-    public static final Option RESOLUTION = atStart(choice("resolution", "Eye resolution",
+    // 0.1.6 (the owner: "for quest 3/3s, res in launcher should be 150%"): 150% on a Quest 3 or 3S (STRONG_QUEST), under
+    // a new key (read(): their old start, 100%, is left behind once; any other choice, and the other headsets' and the
+    // PC's, is kept)
+    public static final Option RESOLUTION = atStart(choice("eye-resolution", "Eye resolution",
             "Of the headset's own recommended size. Higher is sharper and slower; the biggest effect on performance. "
-                    + "100% to start.",
+                    + "150% to start on a Quest 3 or 3S, 100% elsewhere; Dynamic resolution draws the eyes smaller "
+                    + "while the headset is not keeping up.",
             new String[] {"70%", "80%", "90%", "100%", "110%", "120%", "130%", "150%"},
-            new String[] {"70", "80", "90", "100", "110", "120", "130", "150"}, "100"));
+            new String[] {"70", "80", "90", "100", "110", "120", "130", "150"}, byHeadset("150", "100", "100")));
     public static final Option REFRESH = atStart(choice("refresh-hz", "Refresh rate",
             "How many times a second the headset shows a frame. Higher is smoother and costs more. The headset's own "
                     + "is what it is set to in its settings.",
@@ -176,22 +208,25 @@ public final class VrOptions {
                     + "middle keeps its detail and the game runs faster. High saves the most. On a PC it does nothing.",
             new String[] {"Off", "Low", "Medium", "High", "Highest"}, new String[] {"0", "1", "2", "3", "4"},
             onQuest("3", "2")));
-    public static final Option BOOST = atStart(toggle("cpu-gpu-boost", "CPU and GPU boost",
+    // 0.1.6: on to start on the Quest too (the owner: "put cpu/gpu boost on by default"); its key changed with it, so
+    // the Quest's "off" (its start from 0.1.4) is left behind once, a PC player's own off is kept (read()).
+    public static final Option BOOST = atStart(toggle("cpu-gpu-boost-on", "CPU and GPU boost",
             "The Quest runs its processors at the highest speed it lets a game ask for, so fewer frames are missed. "
                     + "Uses more battery and the headset gets warmer. On a PC it does nothing.",
-            !QUEST));
+            true));
     public static final Option MAX_DRAW = atStart(toggle("max-draw-distance", "Max draw distance",
             "Everything drawn as far as you can see, at its highest detail: enemies, crates, people, effects, the "
                     + "level and the sea, so nothing pops in as you come near. Costs some frame rate. Off: the game's own "
                     + "distances.",
             true));
-    public static final Option MSAA = atStart(choice("msaa", "Anti-aliasing",
-            "Smooths jagged edges. Cheap for the graphics chip, and well worth it in VR.",
-            new String[] {"Off", "2x", "4x"}, new String[] {"1", "2", "4"}, onQuest("1", "2")));
-    public static final Option ANISOTROPY = atStart(choice("anisotropy", "Anisotropic filtering",
-            "Keeps floors and walls sharp at a low angle. 16x is the games' own.",
-            new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"},
-            onQuest("1", "16")));
+    // 0.1.6: Off to start on every headset, the PC too (the owner: "anti aliasing/anisotropic filtering should be off by
+    // default"; the PC started at 2x and 16x until 0.1.5), under new keys (read(): any choice in an older file is kept)
+    public static final Option MSAA = atStart(choice("anti-aliasing", "Anti-aliasing",
+            "Smooths jagged edges. Off to start; 2x or 4x costs the graphics chip more with each step.",
+            new String[] {"Off", "2x", "4x"}, new String[] {"1", "2", "4"}, "1"));
+    public static final Option ANISOTROPY = atStart(choice("anisotropic-filtering", "Anisotropic filtering",
+            "Keeps floors and walls sharp at a low angle. Off to start; 16x is the games' own.",
+            new String[] {"Off", "2x", "4x", "8x", "16x"}, new String[] {"1", "2", "4", "8", "16"}, "1"));
     // ---- Performance (0.1.1, off to start then; 0.1.3, the owner: "do EVERYTHING that can boost performance and have
     // them as options in the launcher ... leave on the ones you see best for performance by default") ----
     // 0.1.3: Automatic to start, under a new key ("frame-rate" was 0.1.1's, 60 to start), so a file an older release
@@ -220,10 +255,11 @@ public final class VrOptions {
             "Far-off things, effects and shadows drawn as the PlayStation 2 drew them: faster, with some pop-in as "
                     + "you come near. While it is on, Max draw distance does nothing.",
             false);
-    public static final Option SHARPEN = atStart(choice("sharpening", "Sharpening",
+    // 0.1.6: Strong on the Quest 3 and 3S (STRONG_QUEST), a new key as anti-aliasing's
+    public static final Option SHARPEN = atStart(choice("sharpening-strength", "Sharpening",
             "The Quest sharpens the picture as it shows it, so a lower Eye resolution keeps its edges. On a PC it "
                     + "does nothing.",
-            new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, onQuest("1", "0")));
+            new String[] {"Off", "Normal", "Strong"}, new String[] {"0", "1", "2"}, byHeadset("2", "1", "0")));
     public static final Option[] GRAPHICS = {RESOLUTION, REFRESH, SPACE_WARP, FOVEATION, BOOST, MAX_DRAW, MSAA,
             ANISOTROPY, FRAME_RATE, DYNAMIC_RESOLUTION, SHARE_EYE_WORK, SHOW_PERFORMANCE, PS2_DETAIL, SHARPEN};
 
@@ -366,9 +402,10 @@ public final class VrOptions {
             "Punch to punch, sweep a hand across to spin kick, punch upward from a crouch to uppercut.", true);
     public static final Option MELEE_GRIP = toggle("melee-grip", "Fists on the right grip",
             "Hold the right grip to make fists: only fists hit, so moving your hands never hits by accident. The left "
-                    + "grip makes the left fist too. On foot the grips' old buttons move to the stick clicks: the right "
-                    + "grip's (the JET-Board) to the right stick, the left grip's (Dark Jak; in Jak 3 hold it and the "
-                    + "right stick picks Light Jak's powers) to the left stick.",
+                    + "grip makes the left fist too. On foot a grip's quick squeeze and let go, or its stick's click, is "
+                    + "its old button: the right one the JET-Board, the left one Dark Jak. Jak 3's Light Jak: hold the "
+                    + "left grip and press Y, then let Y go to heal, or press X (slow time), A (wings) or B (shield), "
+                    + "or push the right stick.",
             true);
     public static final Option STICK_CLICK_MENU = toggle("stick-click-menu", "Stick click as menu button",
             "When SteamVR keeps the left menu button (Touch controllers there), the left stick's click is the menu "
@@ -392,11 +429,13 @@ public final class VrOptions {
             "The gun tilted up or down from the controller.", -45, 45, 5, " degrees", 0));
     // 0.1.3 the gun's crosshair (LIST-0.1.3 item 27; game/vr/crosshair.h, the in-game VR menu's same rows). 0.1.5
     // (LIST-0.1.5 items 2 and 3): Off to start, under a new key (0.1.3's "crosshair" started with the Dot: read keeps
-    // a kind a player chose), and the Small circle.
-    public static final Option CROSSHAIR = guns(choice("crosshair-kind", "Crosshair",
+    // a kind a player chose), and the Small circle. 0.1.6 (the owner: "lets turn the dot crosshair on by default again
+    // for this release"): the Dot to start, under a new key again, "crosshair-shape" (read: 0.1.5's Off start is the
+    // Dot, any other kind a player chose is kept, and 0.1.3's and 0.1.4's own Off).
+    public static final Option CROSSHAIR = guns(choice("crosshair-shape", "Crosshair",
             "A mark on whatever your shot would hit first, the same size however far. First person, aiming with your hand.",
             new String[] {"Off", "Dot", "Cross", "Cross and dot", "Circle", "Circle and dot", "Plus", "Small circle"},
-            new String[] {"0", "1", "2", "3", "4", "5", "6", "7"}, "0"));
+            new String[] {"0", "1", "2", "3", "4", "5", "6", "7"}, "1"));
     public static final Option CROSSHAIR_SIZE = guns(number("crosshair-size", "Crosshair size",
             "How big the crosshair looks. It stays that size near or far.", 50, 300, 25, "%", 100));
     public static final Option CROSSHAIR_COLOR = guns(choice("crosshair-color", "Crosshair color",
@@ -416,11 +455,13 @@ public final class VrOptions {
             "A quick pulse in the stick's hand each time a d-pad direction goes in.", true);
     public static final Option GUN_SWITCH_BUZZ = guns(toggle("gun-switch-buzz", "Buzz on gun switch",
             "A quick pulse in the gun's hand as you change guns.", true));
-    // 0.1.4 (LIST-0.1.4 item 1; game/vr/vr_options.h extra_vibration, the in-game VR menu's same row)
-    public static final Option EXTRA_VIBRATION = choice("extra-vibration", "Extra vibration",
+    // 0.1.4 (LIST-0.1.4 item 1; game/vr/vr_options.h extra_vibration, the in-game VR menu's same row). 0.1.6: the whole
+    // world to start (the owner: "make vibarations on everything the new default"), its key changed with it (read():
+    // a player's Off is kept, Pickups, the start then, becomes the whole world).
+    public static final Option EXTRA_VIBRATION = choice("extra-vibration-kind", "Extra vibration",
             "Pickups: a buzz for each orb, eco, cell and the like you collect. The whole world: also each step, jump,"
             + " landing, roll, punch and kick, each hit, and the world's shakes.",
-            new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "1");
+            new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "2");
     public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
             HOLSTER_ON_FOOT, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
@@ -439,7 +480,8 @@ public final class VrOptions {
     public static final Option MULTIPLAYER = toggle("multiplayer", "Jak 1 multiplayer",
             "Jak 1: play together, built on Teamruns, the community's Jak 1 multiplayer. One player hosts and the others "
             + "join, on this network or through a party server: their Jaks are in your game, and what one takes, "
-            + "everyone has. In the game: Options, VR Options, Multiplayer, to host or join. Until you do, it changes "
+            + "everyone has. In the game: Multiplayer on the title or in the pause menu, to host, join or browse the "
+            + "games. Until you do, it changes "
             + "nothing in the game; turn it off to keep it out altogether.", true);
     /**
      * 0.1.3 (LIST-0.1.3 item 15): Jak II's multiplayer (the community's Jak II multiplayer mod, game/multiplayer/jak2),
@@ -545,28 +587,29 @@ public final class VrOptions {
     /** Graphics presets (the launcher's buttons): the Graphics options each sets. */
     public static final String[] PRESETS = {"Performance", "Balanced", "Quality"};
     public static final String[] PRESET_HELP = {
-            "Quest 2, or wherever the game stutters: 80% eyes, high foveation, the game's own distances, no anti-aliasing.",
-            "Quest 3 and 3S, and most PCs: the defaults.",
+            "Wherever the game stutters: 80% eyes, high foveation, the game's own distances, no anti-aliasing.",
+            "The defaults for this headset (a Quest 3 or 3S: 150% eyes and Strong sharpening; a Quest 2: its eyes "
+                    + "at 100%; anti-aliasing and anisotropic filtering off), and most PCs.",
             "A strong PC: 120% eyes, 4x anti-aliasing, low foveation."};
 
     public static Map<String, String> preset(int which) {
         Map<String, String> m = new LinkedHashMap<>();
         switch (which) {
             case 0:
-                m.put("resolution", "80");
+                m.put(RESOLUTION.key, "80");
                 m.put("foveation", "3");
                 m.put("max-draw-distance", "off");
-                m.put("msaa", "1");
-                m.put("anisotropy", onQuest("1", "4"));  // 0.1.4: the Quest starts at Off now
+                m.put(MSAA.key, "1");
+                m.put(ANISOTROPY.key, "1");  // 0.1.6: Off, as every headset's start now
                 // (Smoother frames is left as the player has it: off to start since 0.1.1, as it flickers some screens)
-                m.put("cpu-gpu-boost", "on");
+                m.put(BOOST.key, "on");
                 break;
             case 2:
-                m.put("resolution", "120");
+                m.put(RESOLUTION.key, "120");
                 m.put("foveation", "1");
                 m.put("max-draw-distance", "on");
-                m.put("msaa", "4");
-                m.put("anisotropy", "16");
+                m.put(MSAA.key, "4");
+                m.put(ANISOTROPY.key, "16");
                 break;
             default:
                 for (Option o : GRAPHICS) m.put(o.key, o.fallback);
@@ -600,7 +643,18 @@ public final class VrOptions {
         Map<String, String> values = new LinkedHashMap<>();
         for (Option o : all()) values.put(o.key, o.fallback);
         boolean gameRate = false;  // 0.1.3: "game-frame-rate" in the file (else 0.1.1's "frame-rate" 1 or 2 is kept)
-        boolean crossKind = false;  // 0.1.5: "crosshair-kind" in the file (else 0.1.3's "crosshair" 2 to 6 is kept)
+        boolean crossKind = false;  // 0.1.6: "crosshair-shape" in the file (else 0.1.5's or 0.1.3's kind: below)
+        boolean extraKind = false;  // 0.1.6: "extra-vibration-kind" in the file (else 0.1.4's Off is kept)
+        boolean boostOn = false;    // 0.1.6: "cpu-gpu-boost-on" in the file (else a PC's own off is kept)
+        // 0.1.6: anti-aliasing, anisotropic filtering, sharpening and Eye resolution under new keys (the Quest 3's new
+        // start)
+        final Option[] gfx = {MSAA, ANISOTROPY, SHARPEN, RESOLUTION};
+        final String[] oldGfx = {"msaa", "anisotropy", "sharpening", "resolution"};
+        // the old start, left behind for the new (vr_options.cpp load_options, the same): every Quest's in 0.1.4 and
+        // 0.1.5, the PC's up to 0.1.5 (2x and 16x; Off and Off now, the owner: "anti aliasing/anisotropic filtering
+        // should be off by default")
+        final String[] oldStart = QUEST ? new String[] {"1", "1", "1", "100"} : new String[] {"2", "16", "0", "100"};
+        boolean[] newGfx = new boolean[4];
         if (file.isFile()) {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8))) {
@@ -614,6 +668,9 @@ public final class VrOptions {
                     values.put(words[0], o == null ? value : o.clean(value));
                     if (o == FRAME_RATE) gameRate = true;
                     if (o == CROSSHAIR) crossKind = true;
+                    if (o == EXTRA_VIBRATION) extraKind = true;
+                    if (o == BOOST) boostOn = true;
+                    for (int g = 0; g < gfx.length; g++) if (o == gfx[g]) newGfx[g] = true;
                 }
             } catch (IOException ignored) {
                 // the defaults
@@ -621,9 +678,33 @@ public final class VrOptions {
         }
         String oldRate = values.get("frame-rate");
         if (!gameRate && ("1".equals(oldRate) || "2".equals(oldRate))) values.put(FRAME_RATE.key, oldRate);
+        // 0.1.5's "crosshair-kind" (Off to start then): a kind the player chose is kept, its Off is the Dot now; with
+        // none, 0.1.3's and 0.1.4's "crosshair" (the Dot to start then): the player's own kind, Off too
+        String kindCross = values.get("crosshair-kind");
         String oldCross = values.get("crosshair");
-        if (!crossKind && oldCross != null && oldCross.matches("[2-6]")) values.put(CROSSHAIR.key, oldCross);
-        values.remove("crosshair");  // the game reads it no more
+        if (!crossKind) {
+            if (kindCross != null) {
+                if (kindCross.matches("[1-7]")) values.put(CROSSHAIR.key, kindCross);
+            } else if (oldCross != null && oldCross.matches("[0-6]")) {
+                values.put(CROSSHAIR.key, oldCross);
+            }
+        }
+        values.remove("crosshair-kind");  // the game reads them no more
+        values.remove("crosshair");
+        if (!extraKind && "0".equals(values.get("extra-vibration"))) values.put(EXTRA_VIBRATION.key, "0");
+        values.remove("extra-vibration");
+        String oldBoost = values.get("cpu-gpu-boost");
+        if (!boostOn && !QUEST && oldBoost != null && !"on".equals(oldBoost) && !"1".equals(oldBoost)
+                && !"true".equals(oldBoost)) {
+            values.put(BOOST.key, "off");
+        }
+        values.remove("cpu-gpu-boost");
+        for (int g = 0; g < gfx.length; g++) {
+            String old = values.remove(oldGfx[g]);
+            if (newGfx[g] || old == null) continue;
+            if (oldStart[g].equals(old)) continue;  // the old start: the new one
+            values.put(gfx[g].key, gfx[g].clean(old));
+        }
         return values;
     }
 
