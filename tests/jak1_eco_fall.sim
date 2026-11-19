@@ -1,0 +1,41 @@
+# Jak 1, 0.1.7 (LIST-0.1.7 item 6, a tester: "i fell from high area fueled by blue eco was unable to move until a enemy
+# hit me"; the log: Jak by eco-321 on the ledge over Snowy's fort, then 34 m lower in front of the fort gate, the game
+# not drawing him and 2,737 touching-list::get-shapes-entry errors until a hit). Run with JAKVR_TEST_CONTINUE=snow-fort,
+# JAKVR_TEST_WARP=eco-321, QUEST_SIM_ALIGN=10000 and JAKVR_STATE_TRACE=1: Jak put a metre over the eco (frame 10000),
+# he takes it, then walks two seconds each way in turn (the head turned 170, 80, -10 and -100 degrees) until he drops
+# off the ledge; pictures as he goes and after he lands, then he tries to walk again.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot ef-warp
+10060 shot ef-eco
+10100 head_yaw 170
+10110 left_y 1
+10230 left_y 0
+10240 shot ef-walk1
+10300 head_yaw 80
+10310 left_y 1
+10430 left_y 0
+10440 shot ef-walk2
+10500 head_yaw -10
+10510 left_y 1
+10630 left_y 0
+10640 shot ef-walk3
+10700 head_yaw -100
+10710 left_y 1
+10830 left_y 0
+10840 shot ef-walk4
+10900 head_yaw 0
+11000 shot ef-landed
+11100 left_y 1
+11220 left_y 0
+11240 shot ef-after
+11300 a 1
+11306 a 0
+11400 shot ef-jump
+11500 quit 0

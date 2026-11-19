@@ -1,0 +1,42 @@
+# Jak 3, 0.1.7 (LIST-0.1.7 item 7, a tester: the game closed about 2 seconds into the forest, twice). Run with
+# JAKVR_TEST_TASK=43: a new game started as jak3_task_restart.sim does, then vr-test-task! plays forest-kill-plants (43)
+# from its continue; then Jak walks ahead and turns, pictures every 5 s.
+# the new game's autosave notice holds the game paused: A closes it (b63: the first three pictures were the notice)
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+3300 a 1
+3306 a 0
+3600 shot f-3600
+4200 shot f-4200
+4800 shot f-4800
+5400 shot f-5400
+5400 left_y 1
+6000 shot f-6000
+6600 shot f-6600
+6600 left_y 0
+6700 left_x 1
+6800 left_x 0
+6900 left_y 1
+7200 shot f-7200
+7800 shot f-7800
+8400 shot f-8400
+8400 left_y 0
+9000 shot f-9000
+9600 shot f-9600
+10200 shot f-10200
+10800 shot f-10800
+11400 quit 0

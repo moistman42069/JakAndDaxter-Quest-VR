@@ -154,7 +154,10 @@ A change counts from the game's next start.
 
 **To play together**, the title's **Multiplayer** has **Host Game** (then New Game or Load Game, the save everyone
 plays) and **Join Game** (games on this network, or **Direct Connect** to a host's address); **Options**,
-**Multiplayer** has your name, your Jak's colors and the mod's settings.
+**Multiplayer** has your name, your Jak's colors and the mod's settings. Since 0.1.7 the pause menu has it too: **Game
+Options**, **Multiplayer** (under VR Options). Outside a game together: **Host Game** (one of your saves, as the
+title's Load Game) and **Join Game**. In one: **Players** (the player list, as Select in play) and **Leave the game**
+(Yes or No; back to the title). Playing alone, nothing changes until you host or join.
 
 **The network.** A hosted game says so on the local network (UDP port 26211) and the others' **Join Game** lists it.
 The game itself uses one port, 26210 to start (**Options**, **Multiplayer**, **Port**), for both TCP and UDP. Over the

@@ -1,0 +1,26 @@
+# Jak 1, 0.1.7 (LIST-0.1.7 item 6): the original's painful landing (target-hit-ground-hard, a fall of over 30 m) with no
+# blue eco, the control for tests/jak1_eco_fall.sim. Run with JAKVR_TEST_CONTINUE=snow-fort, JAKVR_TEST_WARP=eco-321,
+# JAKVR_TEST_WARP_OFFSET=0,2,-21, QUEST_SIM_ALIGN=10000 and JAKVR_STATE_TRACE=1: Jak put 37 m over the ground in front of
+# Snowy's fort gate (frame 10000), clear of the eco on the ledge; he falls and lands hard, in third person while he is
+# down (0.1.7); the stick is held forward from frame 10200, so the trace's times say when he could walk again
+# (`[vr] state target-hit-ground-hard (at N s)`, then `target-stance` or `target-walk`).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot hl-warp
+10060 shot hl-fall
+10150 shot hl-land-1
+10200 left_y 1
+10240 shot hl-land-2
+10330 shot hl-land-3
+10420 shot hl-land-4
+10510 shot hl-land-5
+10600 shot hl-land-6
+10700 left_y 0
+10720 shot hl-walked
+10800 quit 0

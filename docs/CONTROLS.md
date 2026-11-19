@@ -19,7 +19,7 @@ the VR menu to turn it off. What each button does in each game, on foot and ridi
 | Right grip | (fists), or R2 | With Physical melee and Fists on the right grip (both on to start): hold it to make fists. Only fists punch and kick (below). Jak II and 3: a quick squeeze and let go, with no punch or kick, is R2 (the JET-Board on; since 0.1.3). While the gun is in your hand, the grip just holds it. A controller with no right stick click keeps R2 on the grip with the fist. |
 | Left grip | (left fist) or L2 | With Fists on the right grip, on foot: held, the left fist (all three games, so the left hand punches by its own grip). Jak II and 3 on foot (since 0.1.5): a quick squeeze and let go, with no punch, kick or other button meanwhile, is L2: Dark Jak (a light buzz says so). Squeeze it again within a third of a second and hold it: L2 held, no fist (Jak 3: Light Jak's powers with Y, A, X or B or the right stick, as the left stick click below; let go alone, Dark Jak). Jak 3 once he has Light Jak (since 0.1.6): the left grip held and Y pressed is L2 held too, then let Y go to heal, or X, A, B or the right stick (Each game, Jak 3). On the front of the drawn gun: the two-hand grip (with the gun drawn, L2 is the left stick click). In a vehicle, on the board and the like, or with Fists on the right grip off: L2 (Jak II: Dark Jak; Jak 3: Dark and Light Jak). |
 | Right stick click | R2 | With Fists on the right grip: the grip's old button. Jak II and 3: the JET-Board on and off; Jak 3: Light Jak's end. With it off: R3. A quick click counts too (since 0.1.3). |
-| Left stick click | L2 or L3 | Jak II and 3 on foot with Fists on the right grip: L2, as the left grip's quick squeeze (Jak II: Dark Jak; Jak 3: click and let go for Dark Jak, or hold it and push the right stick for Light Jak's powers: up heals (Triangle), down flies (Cross), left slows time (Square), right shields (Circle); A and B work too). Where the click is the menu button (SteamVR with Touch), the click with the left grip squeezed. Otherwise L3. |
+| Left stick click | L2 or L3 | Jak II and 3 on foot with Fists on the right grip: L2, as the left grip's quick squeeze (Jak II: Dark Jak; Jak 3: click and let go for Dark Jak, or hold it and push the right stick for Light Jak's powers: up heals (Triangle), down flies (Cross), left slows time (Square), right shields (Circle, up while the stick stays right); A and B work too, B kept held for the shield). Where the click is the menu button (SteamVR with Touch), the click with the left grip squeezed. Otherwise L3. |
 | Both stick clicks together | none | Recentre the view. |
 | Menu button | Start | Pause. Held one second: switch first and third person, in play and in a scene (a scene through Jak's eyes or around you); over a menu, the VR menu. |
 | Left thumb on its thumb rest | D-pad | The right stick is the d-pad (Jak 1: the warp gates; Jak II and 3: the guns), and its click Select (Jak 1 and 3: a pause without the menu; Jak II: the multiplayer player list), except where the click is R2 (Jak II and 3 on foot with Fists on the right grip, and on the JET-Board): it stays R2 there, so the click for the board never pauses Jak 3 (since 0.1.3). A quick pulse in that hand as each direction goes in, and a light one as the thumb rest makes it the d-pad (the VR menu's "Buzz on d-pad presses"). The VR menu's other choice: the left hand held by your head makes the left stick the d-pad. |
@@ -46,8 +46,8 @@ the combo missed). With the gun in your right hand, punch with the left fist or 
 
 The crosshair (Jak II and 3, since 0.1.3): with the gun in your hand, a mark sits where the shot would land: on the
 wall, the ground or the enemy the gun points at, near or far, and it stays the same size to your eye at any distance.
-It turns red on an enemy the gun can reach. It starts as the Dot (0.1.6; 0.1.5 started with none, 0.1.3 and 0.1.4 with
-the Dot too); a crosshair you picked yourself is kept. The
+It turns red on an enemy the gun can reach. It starts Off (0.1.7, as 0.1.5 did; 0.1.3, 0.1.4 and 0.1.6 started with
+the Dot, so their Dot is read as Off); any other crosshair you picked yourself is kept. The
 VR menu (and the launcher's VR options)
 has **Crosshair** (Off, Dot, Cross, Cross and dot, Circle, Circle and dot, Plus, Small circle: a thin ring about half a
 degree across, 0.1.5), **Crosshair size**, **Crosshair
@@ -87,6 +87,16 @@ start; each shown in the games that have it): **Zoomer**, **Flut Flut**, **JET-B
 bikes**, **Titan suit**, **Leaper lizards**, **Desert vehicles** and **Other rides** (slides, turrets, the glider) **in
 first person**. **Steady view when riding** (on to start, since 0.1.3) keeps the view in Jak's seat and facing where the ride
 goes without each bounce of it (Jak 3's leaper lizards bound under him); off, the view follows his head's every bob.
+
+Round a pole the view is the game's camera (first person there spins with him). Since 0.1.7 it stays there after the
+jump off until his feet are on the ground (**Third person after a pole until you land**, on to start; swimming, a
+ledge, a death or a scene end it too, and so do 6 seconds in the air), so your aim does not jump in the air; off, the view goes back in his eyes as he lets go. A painful landing from a long fall (over 30 m: a health pip
+lost, and no control until he is up again) is seen from the game's camera as well (0.1.7), so you see him land and
+get up, then back in his eyes.
+
+**Eco sparks in first person** (on to start, since 0.1.7): while Jak holds eco, the game throws sparks off his body,
+his head too, so in his eyes they burst right at yours (Jak II's and 3's Dark and Light Jak the same). Off, they are
+left out while you see through his eyes; the eco works and sounds the same, and the game's camera still shows them.
 
 ## Menus
 
@@ -176,7 +186,7 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Right trigger | R1 | Draw the gun and fire. |
 | Right grip | (fists), R2 | Held: the fists. A quick squeeze and let go: R2, the JET-Board out and away. |
 | Right stick click | R2 | The JET-Board out and away; as Light Jak, back to Jak. |
-| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Light Jak (since 0.1.6, once the game has given him Light Jak; the game's "Hold L2 then Press Triangle"): hold the left grip and press Y. That is L2 held (no fist, a light buzz): Jak stops for his power. Then let Y go: Triangle, he heals. Or slide the thumb from Y to X: Square, time slows. Or press A: Cross, the wings. Or press B: Circle, the shield. Or push the right stick: up heals, down the wings, left slows time, right the shield. Let the grip go before choosing: L2 alone, Dark Jak, as on the game's pad. As Dark Jak, Y with the grip held is Y (his invisibility), not Light Jak. The 0.1.5 way works too: squeezed again at once and held, L2 held, then Y, A, X or B or the right stick. |
+| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Light Jak (since 0.1.6, once the game has given him Light Jak; the game's "Hold L2 then Press Triangle"): hold the left grip and press Y. That is L2 held (no fist, a light buzz): Jak stops for his power. Then let Y go: Triangle, he heals. Or slide the thumb from Y to X: Square, time slows. Or press A: Cross, the wings. Or press B and keep it held: Circle, the shield, up while B stays held (the game's own rule: up 3 s by itself, then only while Circle is held; only once the story has given it, and it takes light eco; the log says why when the game refuses it). Or push the right stick: up heals, down the wings, left slows time, right the shield (up while the stick stays right, the view still meanwhile). Let the grip go before choosing: L2 alone, Dark Jak, as on the game's pad. As Dark Jak, Y with the grip held is Y (his invisibility), not Light Jak. The 0.1.5 way works too: squeezed again at once and held, L2 held, then Y, A, X or B or the right stick. |
 | Left stick click | L2 | As the left grip: a click and let go for Dark Jak; held, Light Jak's powers with Y, A, X or B or the right stick. |
 | Left thumb on its rest, right stick | D-pad | The guns: each direction picks a color, and the same direction again the next gun of that color. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (a pause without the menu), the right L3. |
@@ -198,10 +208,20 @@ controller binding page can change any of them. Where a controller lacks a butto
 | Pico 4 and Neo 3, Vive Cosmos, HP Reverb G2 | No thumb rest: the d-pad is the left hand held by your head (below). |
 | Valve Index | Its A and B are A and B on the right hand, X and Y on the left. A firm squeeze of the left touchpad is the menu button (Start). No thumb rest: the d-pad is the left hand held by your head. |
 | Windows Mixed Reality (and the Samsung Odyssey) | Sticks as above. Right touchpad click: A; right menu button: B. Left touchpad click: X, or Y on its upper half; left menu button: Start. The d-pad is the left hand held by your head. |
-| Vive wand | The touchpads are the sticks. Right touchpad click: A, or B on its upper half; right menu button: the right stick click (the JET-Board with fists on the grip). Left touchpad click: X, or Y on its upper half; left menu button: Start. No left stick click, so on foot the left grip stays L2 (Dark Jak) as well as the left fist. The d-pad is the left hand held by your head, the left touchpad touched; there its click in the middle is Select (since 0.1.5; before, the wand had no Select), and the right menu button L3. |
+| Vive wand | The touchpads are the sticks. Right touchpad click: A, or B on its upper half; right menu button: the right stick click (the JET-Board with fists on the grip). Left touchpad click: X, or Y on its upper half; left menu button: Start. No left stick click, so on foot the left grip stays L2 (Dark Jak) as well as the left fist. The d-pad is the left hand held by your head, the left touchpad touched; there its click in the middle is Select (since 0.1.5; before, the wand had no Select), and the right menu button L3. The roll (L1 while he moves): keep the left thumb on the touchpad away from its middle, so he keeps moving, and pull the left trigger; jump with a click on the lower half of the right touchpad (its upper half is B). Or play with a gamepad: **Gamepad only** (below). |
 
 Any controller without a thumb rest gets the "Left hand at your head" d-pad whatever the VR menu says, and the log says
 so on its first input line (`[openxr] left hand: ... thumb rest no`). The same way, any controller whose left menu button
 the runtime keeps for itself has the left stick's click as the menu button (`menu button no (the left stick's click is
 the menu button)`). A controller without touch sensors has the finger
 on the trigger when the trigger is pressed and the thumb resting on the controller.
+
+## Gamepad only
+
+**Gamepad only (no VR controllers)** (since 0.1.7; the VR menu's Controls and both launchers' VR options, off to
+start): play with a gamepad alone, its buttons and sticks as the flat game's. The VR controllers are left out of the
+game: their buttons, sticks, gestures and hands (no hand aim, no laser). The headset still turns the view, and in
+first person the gamepad's right stick turns you as **Turning** says (snap or smooth). The game's rumble goes to the
+gamepad alone. The VR menu takes both: the controllers, and the gamepad's left stick or d-pad, Cross to choose, Circle
+or Triangle to go back. With the controllers left out, open it from the game's pause menu (VR Options). The log says
+`[vr-pad] Gamepad only: the VR controllers are left out of the game` as it starts.

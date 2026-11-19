@@ -1,0 +1,52 @@
+# Jak 3's Light Jak shield held (LIST-0.1.7 item 8; a tester: "seemed like light shield didn't work"). Run as
+# jak3_lightjak.sim (JAKVR_TEST_CONTINUE=templea-start JAKVR_TEST_GUN=all JAKVR_STATE_TRACE=1: both meters full, every
+# power given). The game keeps the shield up only while Circle is held (3 s by itself after the choice). 1: the left grip
+# held, Y, then B kept held about 5 s: `[vr] Light Jak's shield asked (...): up while Circle stays held`, still up at
+# ls-b-up2 (4 s on), `[vr] Light Jak's shield down: Circle let go` only after B is let go. 2: the grip held, Y, then
+# the right stick kept right about 5 s: the shield up while the stick stays right (the view still), down as it goes
+# back (`[vr-pad] Light Jak's shield by the right stick: the stick let go, Circle let go`). Each ended by the right
+# stick's click (R2).
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+4500 shot ls-start
+4600 left_grip 1
+4630 y 1
+4660 b 1
+4680 y 0
+4720 shot ls-b-up1
+4950 shot ls-b-up2
+5000 b 0
+5020 left_grip 0
+5080 shot ls-b-down
+5300 right_click 1
+5306 right_click 0
+5600 left_grip 1
+5630 y 1
+5660 right_x 1
+5680 y 0
+5720 shot ls-s-up1
+5950 shot ls-s-up2
+6000 right_x 0
+6020 left_grip 0
+6080 shot ls-s-down
+6300 right_click 1
+6306 right_click 0
+6500 quit 0

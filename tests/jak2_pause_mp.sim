@@ -1,0 +1,56 @@
+# Jak II's pause menu Multiplayer (LIST-0.1.7 item 1). As jak2_pause_turned.sim to play at the fortress exit, then Start
+# (the pause menu), the right hand pointing away, the left stick down three times (Missions, Show Map, Highscores, Game
+# Options) and A: Game Options, its first row VR Options; down once and A: the Multiplayer page (log `[vr-mp] pause
+# Multiplayer: Host Game, Join Game`; pmp-mp, its two rows). B: back to Game Options (pmp-back); Start: play again
+# (pmp-play), no session (no `[mp-session]` line). On C:\JakQuest\sim\gkcfg-mpoff ("multiplayer off"): no Multiplayer row,
+# so the same down and A opens the next row (Multiplayer Options greyed is gone too: Input Options) and no `[vr-mp]`
+# line.
+1200 shot pmp-boot
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4600 shot pmp-start
+4620 hand_pitch 70
+4800 menu 1
+4806 menu 0
+4960 shot pmp-pause
+5000 left_y -1
+5010 left_y 0
+5050 left_y -1
+5060 left_y 0
+5100 left_y -1
+5110 left_y 0
+5160 shot pmp-ring
+5180 a 1
+5186 a 0
+5300 shot pmp-gameopts
+5320 left_y -1
+5330 left_y 0
+5380 shot pmp-row
+5400 a 1
+5406 a 0
+5520 shot pmp-mp
+5540 b 1
+5546 b 0
+5660 shot pmp-back
+5680 menu 1
+5686 menu 0
+5860 shot pmp-play
+5900 quit 0

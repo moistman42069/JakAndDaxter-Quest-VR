@@ -5,20 +5,19 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.6](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
-> latest reports on 0.1.5: **Light Jak** on the controllers in Jak 3 (hold the left grip and press Y), Jak II's scenes
-> no longer black at their start, Jak II's pause in front of you on SteamVR, the Quest no longer closing when you leave
-> the game for its menu, and a smoother Quest (Smoother frames at twice 0.1.5's game rate, no more black flicker).
-> **Multiplayer** on Jak 1's title screen and pause menu, and a one-player game with Jak 1's or Jak II's multiplayer on
-> plays as the original (Jak 1's Boggy Swamp tether rocks let Jak go again). Jak 1's ledges can be grabbed (lost
-> since 0.1.0; the climb to Klaww needs one). Jak 3's JET-Board grinds with B and zaps with X, and a held button no
-> longer skips a Jak 3 scene as the controllers come back. New defaults: the Dot
-> crosshair, CPU and GPU boost, vibration on everything, 150% eyes on a Quest 3 or 3S, and anti-aliasing and anisotropic
-> filtering off. It is still a test release, tested on a PC with a simulated headset, and its main purpose is still to
-> collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
-> [docs/LIST-0.1.6.md](docs/LIST-0.1.6.md) says what changed and how each part was checked
-> ([LIST-0.1.5.md](docs/LIST-0.1.5.md), [LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md),
-> [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
+> **Test release [0.1.7](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
+> latest reports on 0.1.6: Jak 3 no longer closes entering the forest, Jak II's stadium race no longer closes as Jak
+> gets into the racer, Jak 1 no longer stays black after loading a save at Snowy Mountain, and Jak II's pause menu ring
+> is in front of you, not behind. Every crash and close now ends the game's own log with a record of what and where.
+> New options: **Gamepad only** (the VR controllers left out), **Third person after a pole until you land** and **Eco
+> sparks in first person**. Jak 3's Light Shield stays up while you hold B, Jak II's pause menu has **Multiplayer**,
+> a long fall is seen from the game's camera while Jak gets up, and the crosshair is off to start again. It is still a
+> test release, tested on a PC with a simulated headset, and its main purpose is still to collect logs. Whatever
+> happens, please send yours: the [release notes](docs/release-notes.md) say how.
+> [docs/LIST-0.1.7.md](docs/LIST-0.1.7.md) says what changed and how each part was checked
+> ([LIST-0.1.6.md](docs/LIST-0.1.6.md), [LIST-0.1.5.md](docs/LIST-0.1.5.md), [LIST-0.1.4.md](docs/LIST-0.1.4.md),
+> [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for
+> the releases before).
 
 ## Built on OpenGOAL
 

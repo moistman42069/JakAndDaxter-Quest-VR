@@ -1,3 +1,40 @@
+0.1.7: fixes for the latest reports (Jak 3's forest, Jak II's stadium race, Jak 1 at Snowy Mountain), Gamepad only,
+and every close in the game's own log. Still a test release: please keep sending your logs.
+
+0.1.7 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+which builds again only what changed). Your saves and options are kept.
+
+New
+- Gamepad only (off to start; the VR menu and the launchers): play with a gamepad alone. The VR controllers are left
+  out of the game; the headset turns the view, the gamepad's right stick turns you in first person, and the rumble is
+  the gamepad's. The VR menu takes the gamepad too: open it from the game's pause menu (VR Options).
+- Third person after a pole until you land (on to start): after a pole swing the view stays the game's camera until
+  Jak's feet are on the ground, so your aim does not jump in the air.
+- Eco sparks in first person (on to start): turn it off and the sparks eco throws off Jak's body no longer burst at
+  your eyes (Dark and Light Jak's too); the game's camera still shows them.
+- Multiplayer in Jak II's pause menu: Game Options, Multiplayer (Host Game, Join Game; in a game together, Players and
+  Leave the game).
+
+Changed
+- The crosshair is off to start again (Jak II and 3). A crosshair you picked yourself, other than 0.1.6's Dot, is kept.
+- A long fall (over 30 m, a health pip lost) is seen from the game's camera while Jak is down, then back in his eyes:
+  the original's painful landing takes control away for about 6 seconds, which looked like being stuck.
+- Jak 3's Light Shield stays up while B stays held (or the right stick stays pushed right), as the game wants its
+  button held; the log says why when the game refuses it.
+- A Vive wand's roll: the left trigger with the thumb on the left touchpad away from its middle.
+- Every crash and close ends the game's log with a [crash] record saying what and where (also an abort, a stack
+  overflow, the game stopping itself), and a hang says where the game is stuck.
+
+Fixed
+- Jak 3: the game closing as you enter the forest (its frame's drawing outgrew the game's buffer).
+- Jak II: the stadium race closing the game as Jak gets into the racer.
+- Jak 1: a black screen after loading a save at Snowy Mountain.
+- Jak 3: its HUD at the end of the gun's laser with a crosshair on (SteamVR).
+- Jak II: the pause menu's ring behind you (it was put in front of the game's camera, behind Jak's eyes); now it is in
+  front of your view.
+- Jak 1: with blue eco by an orb cache, the game's list of things touching filled up and left the next ones out.
+- Jak 1: platforms take riders by the original's rule again in a one-player game.
+
 0.1.6: Light Jak on the controllers, a smoother Quest, sharper Quest 3 graphics, and fixes for the latest reports.
 Still a test release: please keep sending your logs.
 

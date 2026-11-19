@@ -1,0 +1,40 @@
+# Jak II, 0.1.7 (LIST-0.1.7 item 11, a tester: "jak 2 race mission crashed game as soon as i got in vehicle", twice).
+# Run with JAKVR_TEST_TASK=43 (stadium-race-class3), JAKVR_TEST_WARP=vehicle-racer, QUEST_SIM_ALIGN=10000 and
+# JAKVR_STATE_TRACE=1: a new game as jak2_dark_city.sim starts one, vr-test-task! plays the race's task from its
+# continue (the stadium, the race begun, Jak on foot by the start), then vr-test-warp! puts him 2 m from the racer that
+# waits for him (frame 10000 is that moment). Triangle gets him in, as the tester did; pictures as he sits down, at the
+# count down and the start (A held: the throttle).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot rr-warp
+10060 y 1
+10070 y 0
+10090 shot rr-in-1
+10120 shot rr-in-2
+10180 shot rr-in-3
+10300 shot rr-seated
+10600 shot rr-wait
+11000 a 1
+11400 shot rr-go-1
+11800 shot rr-go-2
+12200 a 0
+12300 shot rr-end
+12400 quit 0

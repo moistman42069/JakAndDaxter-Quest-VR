@@ -276,6 +276,14 @@ public final class VrOptions {
                     + "titles, a ride, a shot of somewhere else), and back through his eyes when he is.", true);
     public static final Option TALKS = toggle("first-person-in-talks", "Talks in first person",
             "A talk during play seen from his eyes too, rather than the game's camera around you.", true);
+    // 0.1.7 (LIST-0.1.7 item 4; the owner: "make the new 3rd person pole swing toggle on by default")
+    public static final Option POLE = toggle("pole-third-person", "Third person after a pole until you land",
+            "After a pole swing the view stays third person until his feet are on the ground, so your aim does not "
+                    + "jump in the air. Off: back in his eyes as soon as he lets go.", true);
+    // 0.1.7 (LIST-0.1.7 item 2; the owner: "option to turn off eco effects in 1st person")
+    public static final Option ECO_SPARKS = toggle("eco-sparks-first-person", "Eco sparks in first person",
+            "The sparks eco throws off Jak's body, seen from his eyes too. Off: left out while you see through his eyes "
+                    + "(they burst right at your eyes); the eco still works and sounds the same.", true);
     // 0.1.3 (the owner: "make that the new default"): on to start, under a new key, so a file an older release wrote
     // (where it was off to start) starts on too
     public static final Option VEHICLES = toggle("first-person-vehicles-on", "First person in vehicles",
@@ -370,7 +378,7 @@ public final class VrOptions {
     public static final Option HUD_FOLLOWS = toggle("hud-follows-head", "HUD follows your head",
             "On, the HUD moves with your head. Off, it stays put ahead of you, and moves only when you look well away.",
             true);
-    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, VEHICLES, FP_ZOOMER, FP_FLUT, FP_BOARD,
+    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, POLE, ECO_SPARKS, VEHICLES, FP_ZOOMER, FP_FLUT, FP_BOARD,
             FP_CARS, FP_BIKES, FP_TITAN, FP_LEAPERS, FP_DESERT, FP_OTHER, VEHICLE_HEIGHT, VEHICLE_FORWARD,
             VEHICLE_TILT, STEADY_RIDE, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
             BODY_SHOWN, HIDE_ARMS_NEAR_EYES, FADE_BODY, KEEP_UPRIGHT, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
@@ -404,9 +412,14 @@ public final class VrOptions {
             "Hold the right grip to make fists: only fists hit, so moving your hands never hits by accident. The left "
                     + "grip makes the left fist too. On foot a grip's quick squeeze and let go, or its stick's click, is "
                     + "its old button: the right one the JET-Board, the left one Dark Jak. Jak 3's Light Jak: hold the "
-                    + "left grip and press Y, then let Y go to heal, or press X (slow time), A (wings) or B (shield), "
-                    + "or push the right stick.",
+                    + "left grip and press Y, then let Y go to heal, or press X (slow time) or A (wings), or hold B "
+                    + "(the shield, up while B stays held), or push the right stick.",
             true);
+    // 0.1.7 (LIST-0.1.7 item 9; a tester: "is there a way to implement just the gamepad"): off to start
+    public static final Option GAMEPAD_ONLY = toggle("gamepad-only", "Gamepad only (no VR controllers)",
+            "Play with a gamepad alone: the VR controllers are left out of the game (their buttons, sticks, gestures "
+                    + "and hands); the headset still turns the view. The in-game VR menu takes both, from the game's "
+                    + "pause menu (VR Options).", false);
     public static final Option STICK_CLICK_MENU = toggle("stick-click-menu", "Stick click as menu button",
             "When SteamVR keeps the left menu button (Touch controllers there), the left stick's click is the menu "
                     + "button: Start, held a second the view or the VR menu. Off: it stays L3.", true);
@@ -431,11 +444,13 @@ public final class VrOptions {
     // (LIST-0.1.5 items 2 and 3): Off to start, under a new key (0.1.3's "crosshair" started with the Dot: read keeps
     // a kind a player chose), and the Small circle. 0.1.6 (the owner: "lets turn the dot crosshair on by default again
     // for this release"): the Dot to start, under a new key again, "crosshair-shape" (read: 0.1.5's Off start is the
-    // Dot, any other kind a player chose is kept, and 0.1.3's and 0.1.4's own Off).
-    public static final Option CROSSHAIR = guns(choice("crosshair-shape", "Crosshair",
+    // Dot, any other kind a player chose is kept, and 0.1.3's and 0.1.4's own Off). 0.1.7 (LIST-0.1.7 item 5, the
+    // owner: "make it so crosshair is off by default again this update"): Off to start, under a new key again,
+    // "crosshair-mark" (read: the Dot of 0.1.6, 0.1.3 and 0.1.4, their start, is Off; any other shape chosen is kept).
+    public static final Option CROSSHAIR = guns(choice("crosshair-mark", "Crosshair",
             "A mark on whatever your shot would hit first, the same size however far. First person, aiming with your hand.",
             new String[] {"Off", "Dot", "Cross", "Cross and dot", "Circle", "Circle and dot", "Plus", "Small circle"},
-            new String[] {"0", "1", "2", "3", "4", "5", "6", "7"}, "1"));
+            new String[] {"0", "1", "2", "3", "4", "5", "6", "7"}, "0"));
     public static final Option CROSSHAIR_SIZE = guns(number("crosshair-size", "Crosshair size",
             "How big the crosshair looks. It stays that size near or far.", 50, 300, 25, "%", 100));
     public static final Option CROSSHAIR_COLOR = guns(choice("crosshair-color", "Crosshair color",
@@ -462,7 +477,7 @@ public final class VrOptions {
             "Pickups: a buzz for each orb, eco, cell and the like you collect. The whole world: also each step, jump,"
             + " landing, roll, punch and kick, each hit, and the world's shakes.",
             new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "2");
-    public static final Option[] VR_CONTROLS = {TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
+    public static final Option[] VR_CONTROLS = {GAMEPAD_ONLY, TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
             HOLSTER_ON_FOOT, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
             VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, EXTRA_VIBRATION, GUN_SWITCH_BUZZ};
@@ -643,7 +658,7 @@ public final class VrOptions {
         Map<String, String> values = new LinkedHashMap<>();
         for (Option o : all()) values.put(o.key, o.fallback);
         boolean gameRate = false;  // 0.1.3: "game-frame-rate" in the file (else 0.1.1's "frame-rate" 1 or 2 is kept)
-        boolean crossKind = false;  // 0.1.6: "crosshair-shape" in the file (else 0.1.5's or 0.1.3's kind: below)
+        boolean crossKind = false;  // 0.1.7: "crosshair-mark" in the file (else 0.1.6's, 0.1.5's or 0.1.3's: below)
         boolean extraKind = false;  // 0.1.6: "extra-vibration-kind" in the file (else 0.1.4's Off is kept)
         boolean boostOn = false;    // 0.1.6: "cpu-gpu-boost-on" in the file (else a PC's own off is kept)
         // 0.1.6: anti-aliasing, anisotropic filtering, sharpening and Eye resolution under new keys (the Quest 3's new
@@ -678,18 +693,24 @@ public final class VrOptions {
         }
         String oldRate = values.get("frame-rate");
         if (!gameRate && ("1".equals(oldRate) || "2".equals(oldRate))) values.put(FRAME_RATE.key, oldRate);
-        // 0.1.5's "crosshair-kind" (Off to start then): a kind the player chose is kept, its Off is the Dot now; with
-        // none, 0.1.3's and 0.1.4's "crosshair" (the Dot to start then): the player's own kind, Off too
+        // 0.1.6's "crosshair-shape" (the Dot to start then): a shape the player chose is kept, its Dot is Off now; with
+        // none, 0.1.5's "crosshair-kind" (Off to start then): a kind the player chose is kept; with none, 0.1.3's and
+        // 0.1.4's "crosshair" (the Dot to start then): a kind the player chose is kept, the Dot is Off now
+        // (vr_options.cpp load_options, the same)
+        String shapeCross = values.get("crosshair-shape");
         String kindCross = values.get("crosshair-kind");
         String oldCross = values.get("crosshair");
         if (!crossKind) {
-            if (kindCross != null) {
+            if (shapeCross != null) {
+                if (shapeCross.matches("[2-7]")) values.put(CROSSHAIR.key, shapeCross);
+            } else if (kindCross != null) {
                 if (kindCross.matches("[1-7]")) values.put(CROSSHAIR.key, kindCross);
-            } else if (oldCross != null && oldCross.matches("[0-6]")) {
+            } else if (oldCross != null && oldCross.matches("[2-6]")) {
                 values.put(CROSSHAIR.key, oldCross);
             }
         }
-        values.remove("crosshair-kind");  // the game reads them no more
+        values.remove("crosshair-shape");  // the game reads them no more
+        values.remove("crosshair-kind");
         values.remove("crosshair");
         if (!extraKind && "0".equals(values.get("extra-vibration"))) values.put(EXTRA_VIBRATION.key, "0");
         values.remove("extra-vibration");

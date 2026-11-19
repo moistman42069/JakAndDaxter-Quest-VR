@@ -1,0 +1,18 @@
+# Jak 1 with "Gamepad only" on (LIST-0.1.7 item 9), on C:\JakQuest\sim\gkcfg-padonly (`gamepad-only on`): the log says
+# `[vr-pad] Gamepad only: the VR controllers are left out of the game ...` and the controllers' presses of
+# jak1_newgame.sim (Start, then A on New Game and on the save slot) reach nothing: the title stays (gp-title2 as
+# gp-title1), no new game. The headset still turns the view (head_yaw 60: gp-head). The sim has no gamepad, so the
+# gamepad's side is the code's (fill_pad); run the same script on gkcfg to see the new game start.
+1800 shot gp-title1
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3200 left_y 1
+3300 left_y 0
+3400 shot gp-title2
+3500 head_yaw 60
+3600 shot gp-head
+3700 quit 0

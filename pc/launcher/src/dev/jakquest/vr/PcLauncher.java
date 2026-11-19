@@ -18,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
@@ -750,6 +751,7 @@ public final class PcLauncher {
                 }
                 final int exit = code;
                 log(game + " closed (" + exit + ")");
+                appendExit(output, exit);
                 SwingUtilities.invokeLater(() -> {
                     this.game = null;
                     if (exit != 0) {
@@ -763,6 +765,76 @@ public final class PcLauncher {
             playFailure = "The game did not start: " + e.getMessage();
         }
         redraw();
+    }
+
+    /**
+     * 0.1.7 (LIST-0.1.7 item 13): how the game ended, at the end of its own log, whatever ended it: Windows gives
+     * the launcher the game's exit code even when nothing inside the game could write (a fast fail, the driver or the
+     * VR runtime ending it, Task Manager).
+     */
+    private void appendExit(File output, int exit) {
+        String line = exit == 0
+            ? "\n[launcher] the game closed normally (exit code 0)\n"
+            : String.format("%n[crash] the game closed with exit code 0x%08X (%d): %s%n", exit, exit, exitMeaning(exit));
+        try (FileOutputStream out = new FileOutputStream(output, true)) {
+            out.write(line.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            log("the game's exit code could not be added to its log: " + e.getMessage());
+        }
+    }
+
+    /** What a Windows exit code means, in plain words. */
+    static String exitMeaning(int exit) {
+        switch (exit) {
+            case 1:
+                return "it was ended from outside (Task Manager's End task, or Windows), or it stopped on an error it "
+                    + "reported above";
+            case 3:
+                return "abort(): a failed check in the game's C++ code or the C runtime (the [crash] record above says "
+                    + "which)";
+            case -1:
+                return "the launcher lost track of the game";
+            case 0xC0000005:
+                return "an access violation (memory read, written or run where it may not be)";
+            case 0xC00000FD:
+                return "a stack overflow";
+            case 0xC0000409:
+                return "a fast fail (a security check, or the C runtime ending the game at once)";
+            case 0xC0000374:
+                return "heap corruption (memory written past its end, or freed twice)";
+            case 0xC000001D:
+                return "an illegal instruction";
+            case 0xC0000096:
+                return "a privileged instruction";
+            case 0xC0000094:
+                return "a whole-number division by zero";
+            case 0xC0000417:
+                return "the C runtime was given a bad value (an invalid parameter)";
+            case 0xC0000602:
+                return "a fail fast exception";
+            case 0xC000041D:
+                return "an exception in a window's callback";
+            case 0xC0000006:
+                return "a page of memory could not be read in (the disk, or the file under it)";
+            case 0xC0000017:
+                return "Windows had no memory left to give";
+            case 0xC0000135:
+                return "a file the game needs (a DLL) is missing";
+            case 0xC0000142:
+                return "a file the game needs (a DLL) did not start";
+            case 0xC000013A:
+                return "it was closed with Ctrl+C or its console window";
+            case 0xCFFFFFFF:
+                return "Windows ended it as not responding";
+            case 0xE06D7363:
+                return "a C++ exception nothing caught";
+            case 0x80000003:
+                return "a breakpoint";
+            case 0x40010004:
+                return "it was ended as the Windows session closed";
+            default:
+                return "see the [crash] lines above, if any";
+        }
     }
 
     private void showUpdates() {

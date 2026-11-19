@@ -32,19 +32,20 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | --- | --- |
 | `JAKVR_TEST_CONTINUE=<continue point>` | Once Jak has been in play on foot for 2 seconds, the game starts again at that continue point (each game's level-info.gc, e.g. Jak 1 `firecanyon-start`, Jak II `ctysluma-start`, Jak 3 `wasdoors-desert-turtle`). |
 | `JAKVR_TEST_WARP=<actor>` | Jak 1: once Jak has been in play on foot for 3 seconds after any test continue, he is put a metre over that actor (its entity name, e.g. `sunken-elevator-2`, or its type's name for the first of that type), and the sim's `QUEST_SIM_ALIGN` frames count from then. `=list` logs each actor of the levels loaded (`[vr-test] actor <level> <name> <type> at x y z`, metres). |
+| `JAKVR_TEST_WARP=<type>` (Jak II) | 0.1.7: once Jak has been in play on foot, the blackout over and any test continue or task started, and 3 seconds more, he is put 2 m from the nearest process of that type (one waiting for its race first: `vehicle-racer` for the stadium's racer), and the sim's `QUEST_SIM_ALIGN` frames count from then (`[vr-test] warp: Jak put 2 m from ...`, or `no ... in play`). |
 | `JAKVR_TEST_WARP_OFFSET=dx,dy,dz` | Jak 1, with `JAKVR_TEST_WARP`: that many metres from the actor instead of a metre over it (the pipe game's buttons, which are not entities: `sunken-pipegame-1` with `7.5,1.3,1.25` for the right one). |
 | `JAKVR_TEST_WARP_APPROACH=1` | Jak 1, with `JAKVR_TEST_WARP_OFFSET`: first to the offset, then onto the actor once the levels there have loaded, as a player walking up to it (the elevator down to the underwater city asks for the city as it starts). |
 | `JAKVR_TEST_KILL_SCENE=1` | Jak 1: a scene's camera (pov-camera) dies a second into its scene, to see Jak let go (`[vr] the scene ... ended before it let Jak go`). |
 | `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start (0.1.5: Jak II also Dark Jak, his meter full and his bombs). `JAKVR_TEST_GUN=all` (0.1.5, Jak 3): every gun, Light Jak's powers, and Dark Jak's and Light Jak's meters kept full while he is neither (build 76: a new game has Dark Jak already, and the first aid left his meter empty). |
 | `JAKVR_SKY_TRACE=1` | 0.1.5, PC: every 4 seconds each draw of the sky bucket (Jak 3's `sky`, Jak II's `sky-draw` since build 76): its points' depth (after the scaling to the eyes' near plane), depth test and writes, alpha test, and the near plane (`[vr-sky] frame N draw: ...`). |
 | `JAKVR_TEST_BOARD=1` | Jak II and 3: Jak has the JET-Board from the start. |
-| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). Jak 1 (0.1.6): while he may grab a ledge (falling, high enough), what the ledge search found each time it changes (`[vr] ledge search: N tris, N edges, N in reach; Jak at x y z`; 0.1.5's found no tri of a level, LIST-0.1.6 item 29). |
+| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`; Jak 1 since 0.1.7 with the game's clock, `(at 1055.57 s)`, to time a state). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). Jak 1 (0.1.6): while he may grab a ledge (falling, high enough), what the ledge search found each time it changes (`[vr] ledge search: N tris, N edges, N in reach; Jak at x y z`; 0.1.5's found no tri of a level, LIST-0.1.6 item 29). |
 | `JAKVR_TEST_TURRETS=1` | Jak II: the sewer's first gun turret destroyed through the game's own instant death once it is made (its die state, LIST-0.1.1 item 22). Jak 3: 2 seconds into play, Spargus' wall turret (`wascity-turret-1`, with `JAKVR_TEST_CONTINUE=wascityb-gungame`) is sent the `'pickup` its Triangle prompt sends, so Jak gets in (`[vr] test: turret: Jak put in ...`). |
 | `JAKVR_TEST_COMBO=1` | Jak II, with `JAKVR_TEST_CONTINUE=gungame-start`: the gun course's yellow gun lesson opened and its manager told to start (`[vr] test: combo: ...`), for the punch-then-shoot combo. |
 | `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
 | `QUEST_SIM_HZ=N` | The refresh rate the simulated headset tells (72 to start), for Game frame rate: Automatic. |
 | `QUEST_SIM_PERIOD_BLIPS=N` | 0.1.5: every Nth frame the simulated headset tells a doubled frame period, as SteamVR does for each frame it missed; Automatic keeps the game's rate (a change of the headset's rate is followed once it has held a second: `[vr-view] the headset at ...`). |
-| `JAKVR_TEST_TASK=<number>`, `JAKVR_TEST_RESTARTS=N` | 0.1.5, Jak 3: once Jak has been in play for 2 seconds, that mission played from its start (the game's play-task and its continue), then restarted N times as the pause menu's Restart mission does, a minute after and then every 20 seconds (`[vr] test: task ...`, `restart mission N`; 17 is the leaper race). |
+| `JAKVR_TEST_TASK=<number>`, `JAKVR_TEST_RESTARTS=N` | 0.1.5, Jak 3 (and 0.1.7, Jak II, `JAKVR_TEST_TASK` alone; with `JAKVR_TEST_CONTINUE` it starts after the continue; 43 is the stadium's class 3 race): once Jak has been in play for 2 seconds, that mission played from its start (the game's play-task and its continue), then restarted N times as the pause menu's Restart mission does, a minute after and then every 20 seconds (`[vr] test: task ...`, `restart mission N`; 17 is the leaper race). |
 | `JAKVR_TEST_SOUND_STALL=S` | 0.1.5, Jak 1: the sound processor's player stops answering for S seconds at its 1200th batch of commands (about 20 seconds into a run; `[vr-test] the sound player held for S s`, then `goes on`), and the game, once the player has been busy for 30 frames, sends 300 sound commands at once (`[vr] test: 300 sound commands while the sound player is held`), so the sound queue fills as in the tester's freeze. |
 | `JAKVR_TEST_GAME_STALL=S` | 0.1.5: the game's thread held S seconds at its 1500th frame (`[vr-test] the game held for S s`, then `goes on`), for the stall watch's `[vr-stall]` lines. PC only. |
 | `JAKVR_TEST_BAD_TEXTURE=N` | 0.1.5: the Nth texture page the game uploads has its first entry read as 0 (`[vr-test] page N's first entry read as 0`), as the page in Jak 3's crash on a restart had: the texture guard passes it over. |
@@ -65,6 +66,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_HIDE_JOINTS=14,64,...` | Those nodes shrunk out of the eyes (which joint is in the way?). |
 | `JAKVR_BUCKET_LOG=1` | In the left eye: each draw bucket starting and stopping, and the share of the picture the shadow pass darkens. |
 | `JAKVR_REPROJECT=0` | What the game had already put on the screen for its own camera is drawn as it was, not taken to each eye's view (to compare). |
+| `JAKVR_TEST_CRASH=av`, `abort`, `stack`, `terminate` or `invalid` | 0.1.7 (LIST-0.1.7 item 13), PC: the game made to end that way at its 1500th frame (`stack`: a stack overflow on the display's thread, since the game's own code runs on stacks in its memory), so the `[crash]` record and the launcher's exit line can be seen. |
 | `JAKVR_CRASH_DUMP=<folder>` | The first access violation writes a dump there: crash.txt (the registers, the stack's words, rip and the game memory's base) and ee.bin (the game's memory from 512 KB on). A rip or stack word minus the base, inside the game's memory, is GOAL code: its function is found from the symbol table in ee.bin (Jak II and 3: s7 is r14, a symbol's name pointer at it + 0xff37). |
 | `QUEST_SIM_ALIGN=F` | Script frames from F on count from the frame the test's set-up was done. |
 | `QUEST_SIM_GRIP_TILT=D` | The grip pose turned D degrees up from the aim pose, as on the Quest's controllers. |
@@ -299,6 +301,84 @@ C:\JakQuest\sim\run_b35.sh (OUT=s27), build 89 (LIST-0.1.6 items 27 and 29):
 - `mp1` (Jak 1's party, host and guest on this PC, `JAKVR_PARTY_TEST=host` and `join`, the guest playing the host's
   progress) and `play1` (`jak1_play`): no errors.
 
+## The checks added in 0.1.7
+
+Runs in C:\JakQuest\sim\s07 (scratch), builds 87 to 98 (LIST-0.1.7). Each "the close, as the tester's" run is before
+its fix, the next after it.
+
+- `snow1`, `snow2` then `snow3` (`jak1_snow_load`, `JAKVR_TEST_CONTINUE=snow-fort JAKVR_STATE_TRACE=1`; item 12): before,
+  the continue waited in black (no `Swapping in sno VIS`); after, `Swapping in sno VIS`, `snow is loaded`, Jak walking
+  in first person, no stall.
+- `hardland1` (`jak1_hard_land`, `JAKVR_TEST_CONTINUE=snow-fort JAKVR_TEST_WARP=eco-321 JAKVR_TEST_WARP_OFFSET=0,2,-21
+  QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1`; item 6): a 30 m drop at Snowy's fort: `state target-hit-ground-hard`, the
+  game's camera while he is down (about 6.2 s), then his eyes as he walks. `ecofall1` to `ecofall3` (`jak1_eco_fall`,
+  `JAKVR_TEST_WARP=eco-321`, blue eco by the orb caches): before, `ERROR: touching-list::get-shapes-entry() failed!`;
+  after (64 pairs), none. The run's `get-shapes:` count is that line.
+- `forest1`, `forest2` then `forest3` (`jak3_forest_task`, `JAKVR_TEST_TASK=43 JAKVR_TEST_CONTINUE=mhcitya-forestx
+  JAKVR_STATE_TRACE=1`; item 7): before, the game stopped itself on the mission's first frame (`[crash]` with
+  `finish-background` named, the game's own stop); after, `the frame's draw list: 1459 KB of 5120 KB used`, the mission
+  plays on.
+- `race1` (C:\JakQuest\sim\race_task.sim, `JAKVR_TEST_TASK=43`: the race's task, Jak standing at its start) then
+  `race2` (`jak2_race_ride`, `JAKVR_TEST_TASK=43 JAKVR_TEST_WARP=vehicle-racer QUEST_SIM_ALIGN=10000
+  JAKVR_STATE_TRACE=1`; item 11): the close as Jak got in (build 91, the record naming the racer's event handler);
+  after the fix (build 92), `vehicle::event-handler: pilot-on`,
+  `target-pilot-start`, `target-pilot-get-on`, the countdown and about 250 m of the race in first person.
+- `crash-av`, `crash-abort`, `crash-stack`, `crash-terminate`, `crash-invalid` (`jak1_play` with `JAKVR_TEST_CRASH=`) and
+  `crash-stall` (`JAKVR_TEST_GAME_STALL=12`; item 13): a full `[crash]` record for each (what, the thread, module and
+  offset, the registers, the calls with the game's functions named, `the game was:`), and for the stall the
+  `[vr-stall]` lines saying which thread and where.
+
+C:\JakQuest\sim\batch29a.sh (and batch29b.sh, build 97), the options and menus; the run's `opts` line is the options
+as the game read them:
+
+- `pole1`, `pole0` (`jak1_pole`, `JAKVR_TEST_CONTINUE=swamp-start JAKVR_TEST_WARP=swingpole-81 QUEST_SIM_ALIGN=10000
+  JAKVR_STATE_TRACE=1`, gkcfg and gkcfg-poleoff; item 4): on, the game's camera from the pole through the fall, `view in
+  play: first person` with Jak at the ground's height; off, his eyes as he flips off, mid-air.
+- `spark0` (`jak1_eco_fall`, gkcfg-sparksoff; item 2): `[vr] eco sparks off Jak's body: left out (in his eyes ...)`, then
+  `shown again` in third person.
+- `pad1`, `pad0` (`jak1_gamepad_only`, gkcfg-padonly and gkcfg; item 9): on, `[vr-pad] Gamepad only: ...`, the
+  controllers' presses leave the title as it is and the head still turns the view; off, the same presses start the game.
+- `crossdef3`, `x016a`, `x016b` (`jak3_gun`, `JAKVR_TEST_GUN=1`, gkcfg, gkcfg-x016a and gkcfg-x016b; item 5): fresh
+  options, `crosshair-mark 0`, nothing drawn; a 0.1.6 file's `crosshair-shape 1`, Off; its `crosshair-shape 3`, kept and
+  drawn (`[sim] crosshair: kind 3 at 10.02 m`).
+- `pmp1`, `pmp0` (`jak2_pause_mp`, gkcfg and gkcfg-mpoff; item 1): the pause ring's Game Options, its second row
+  Multiplayer: `[vr-mp] pause Multiplayer: "Host Game, Join Game"`; B: Game Options with Multiplayer lit (build 97); with
+  the mod off, no such row.
+- `shield3` (`jak3_light_shield`, `JAKVR_TEST_CONTINUE=templea-start JAKVR_TEST_GUN=all JAKVR_STATE_TRACE=1`; item 8):
+  the shield up while B is held and down as it is let go (`[vr] Light Jak's shield down: "Circle let go"`), the same by
+  the right stick held right.
+- `pturn3`, `pstick3` (`jak2_pause_turned`, `jak2_pause_stickturn`; item 10): `[vr-view] paused: the menu on the HUD,
+  following the head (1.60 m ahead ...)`, with the head turned 150 degrees and after a stick turn.
+- The launchers' options files: `VrOptionsTest` (below, 21 checks).
+- `mp1`, `mp2` (C:\JakQuest\sim\mp017.sh, build 97; items 1 and 3; Port mapping off, nothing sent to the router):
+  Jak 1's party as in 0.1.6 (host and guest on this PC, the guest playing the host's progress): both joined, the
+  progress sent, the VR bodies shown, no error, no `[crash]`, no `max number of riders`. Jak II's (C:\JakQuest\sim\mp2.sh,
+  LAN host, the guest by address, its script C:\JakQuest\sim\mp2_guest_pmp.sim): connected, and the guest's pause
+  Multiplayer in the session, `[vr-mp] pause Multiplayer: in a session (Players, Leave the game)`, those two rows shown.
+- `null17` (C:\JakQuest\sim\pcvr_null_jak.ps1 `-Game jak2 -Name null17 -Out C:\JakQuest\sim\s07`; item 10): Jak II on
+  SteamVR's OpenXR with its null driver for 90 s (`system: SteamVR/OpenXR : null`, the session begun, 90 frames/s),
+  steamvr.vrsettings put back after it. Its head and eyes are together (upside down, as that driver's view is), so no
+  `[openxr] the runtime's head space is N degrees from its eyes` line: the guard stays silent where they agree.
+
+C:\JakQuest\sim\batch30.sh (build 98: Jak II's GOAL, the pause menu's ring in front of the headset's view, item 10):
+
+- `ring1` (`jak2_pause_ring`, gkcfg): paused facing ahead (`pr-ahead`) and with the head turned 150 degrees
+  (`pr-turned-pause`): the ring (skel-hud-ring, the menu's icons round it, the lit one green) centred ahead of the eyes
+  both times, the HUD's words at its middle; gone once the menu closes (`pr-closed1`, `pr-closed2`). Before (build 97,
+  `pturn3`'s `pt-pause`): the ring was in front of the game's own camera, seen only with the head turned toward it.
+- `pstick4` (`jak2_pause_stickturn`): after a stick turn the ring ahead; the head turned 60 degrees while paused, the
+  ring still centred.
+- `pmp2` (`jak2_pause_mp`): `pmp1` again on build 98: the ring ahead, Game Options' Multiplayer, B back with
+  Multiplayer lit.
+- `rider1` (`jak1_city_scene`, as batch28a.sh's `elev2`: `JAKVR_TEST_CONTINUE=village2-dock
+  JAKVR_TEST_WARP=sunken-elevator-2 JAKVR_TEST_WARP_OFFSET=-47.21,-3.77,8.24 JAKVR_TEST_WARP_APPROACH=1
+  QUEST_SIM_ALIGN=10000`; item 3, Jak 1's GOAL at build 97): Jak alone rides the elevator down, 5.2 m to -142.3 m,
+  `GAMEPLAY: enter sunken`, then walks off; no error and no `max number of riders`.
+- `title1` (C:\JakQuest\sim\jak2_title_ring.sim, build 98; item 10): Jak II's title menu (its words on the HUD, the
+  ring opened in the eyes) ahead, and with the head turned 150 degrees still ahead; it stops before Multiplayer.
+- The Quest's runtime for ARM64 after the last gk change (C:\JakQuest\sim\android_native_check.sh, log
+  android_native6.log): 42 files compiled, libmain.so linked, no error.
+
 ## Without a game
 
 - The party server: `python -I tests/party_server_test.py tools/party_server.py 8139` (24 checks).
@@ -314,3 +394,8 @@ C:\JakQuest\sim\run_b35.sh (OUT=s27), build 89 (LIST-0.1.6 items 27 and 29):
   `tests/java/dev/jakquest/vr/DataFolderTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.DataFolderTest <an empty
   scratch folder> [<an empty scratch folder on another drive>]` (32 checks with the second folder, 29 without: what is
   refused, a rename on one drive, a copy to another drive and back, a stop, the old copy's removal, a missing folder).
+- The launchers' VR options files (launcher/common VrOptions.java, 0.1.7) the same way:
+  `tests/java/dev/jakquest/vr/VrOptionsTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.VrOptionsTest <an empty
+  scratch folder>` (21 checks: a fresh file's starts, the crosshair Off under `crosshair-mark` and the new toggles; each
+  older crosshair key as the game's vr_options.cpp reads it, 0.1.6's Dot Off and any other shape kept; written back
+  with no older key). C:\JakQuest\sim\javac_check.sh compiles the launchers' sources for it.

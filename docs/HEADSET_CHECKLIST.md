@@ -32,6 +32,45 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **Jak 3's white screen after its first scene** (Precursor's README): a new game; after the opening scene the desert
   should draw.
 
+## 0.1.7's changes (players' reports on 0.1.6)
+
+- **Defaults** (a game with no options saved, or one 0.1.6 wrote): `[vr] options: ...` with `crosshair-mark 0` (the
+  crosshair Off, Jak II and 3: 0.1.6's Dot is read as Off, any other shape picked is kept), `pole-third-person on`,
+  `eco-sparks-first-person on` and `gamepad-only off`.
+- **Pole swings** (all three games): swing round a pole and jump off: the view stays the game's camera until his feet
+  are on the ground, then goes back in his eyes. With **Third person after a pole until you land** off: back in his
+  eyes as he lets go, as in 0.1.6.
+- **A long fall** (over 30 m, e.g. off the ledge with blue eco above Snowy Mountain's fort gate): Jak lands hard (a
+  health pip lost) and the view goes to the game's camera while he is down (about 6 seconds), then back in his eyes,
+  and he walks at once. No `ERROR: touching-list::get-shapes-entry() failed!` lines with blue eco by an orb cache.
+- **Eco sparks in first person** off: take eco in first person (blue eco at Sentinel Beach): no sparks bursting at
+  your eyes (`[vr] eco sparks off Jak's body: left out ...`); the game's camera still shows them. Jak II and 3: Dark
+  Jak's and Light Jak's sparks the same.
+- **Gamepad only** on, with a gamepad connected: the gamepad plays and the controllers do nothing in the game
+  (`[vr-pad] Gamepad only: the VR controllers are left out of the game ...`); the headset turns the view, the
+  gamepad's right stick turns you in first person, and the rumble is the gamepad's. The game's pause menu, VR Options:
+  the VR menu, worked by the gamepad (its left stick or d-pad, Cross, Circle back) or the controllers; turn it off
+  there (`Gamepad only off: the VR controllers play again`). A **Vive wand**: the roll is the left trigger with the
+  thumb on the left touchpad away from its middle.
+- **Jak 3's Light Shield**: hold the left grip, press Y, then press **B and keep it held**: the shield stays up while
+  B is held (`[vr] Light Jak's shield asked (...): up while Circle stays held`, then `Light Jak's shield down: Circle
+  let go`); or push the right stick right and keep it there. If the game refuses it, the line says why (not given
+  yet, not enough light eco).
+- **Jak 3's forest** (the mission from the city's port into the forest): it plays on (`[vr] the frame's draw list: N
+  KB of 5120 KB used ...`), no closing.
+- **Jak II's stadium race** (class 3): Jak gets into the racer and the race starts.
+- **Jak 1, Load Game at Snowy Mountain**: the level appears and Jak walks.
+- **Jak II's pause menu**: pause, **Game Options**, **Multiplayer** (`[vr-mp] pause Multiplayer: Host Game, Join
+  Game`); in a game together, Players and Leave the game. With Jak II multiplayer off in the launcher's Mods: no
+  Multiplayer row there; B from it: back to Game Options with Multiplayer still lit. Pause facing ahead, after turning
+  round and after a stick turn: the ring (the round model with the menu's icons) in front of you with the words in its
+  middle, never behind; turn your head while paused and it comes with you. A runtime whose head is far off its eyes
+  says so once (`[openxr] the runtime's head space is N degrees from its eyes ...`).
+- **The crosshair** (Jak II and 3, once you pick one): at the end of the laser only the crosshair, never a picture of
+  the game or the HUD (Jak 3 above all, SteamVR).
+- **Any closing**: the log ends with a `[crash]` record saying what ended it and where (an abort, a C runtime check
+  and a stack overflow too; a hang: `[vr-stall]` lines). Please send that log.
+
 ## 0.1.6's changes (the owner's Quest 3 logs and players' reports on 0.1.5)
 
 - **Light Jak** (Jak 3, once the game has given him to you): hold the **left grip** and press **Y**: Jak stops for his
