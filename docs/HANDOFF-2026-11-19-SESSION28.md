@@ -1,8 +1,8 @@
 # Handoff, 2026-11-19, Session 28
 
-Read this first, then docs/LIST-0.1.7.md (items 1 to 13, each with how it was checked). 0.1.6 is the latest release
-(2026-11-18, v0.1.6). 0.1.7 is built and checked, NOT committed and NOT published: the owner has not asked for it yet
-(ask before publishing). VERSION, PcBuild.java and Jak II's *mod-version-text* still say 0.1.6.
+Read this first, then docs/LIST-0.1.7.md (items 1 to 13, each with how it was checked). 0.1.7 is published (latest,
+2026-11-19, on the owner's "Publish 0.1.7"): https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/tag/v0.1.7,
+commit 67e563e pushed, tag v0.1.7 on it.
 
 ## The asks (0.1.7)
 
@@ -56,10 +56,18 @@ Every item is [x] in LIST-0.1.7.md with its cause, fix and check. In short:
 
 ## Next
 
-- Publishing 0.1.7, only on the owner's word: bump VERSION, PcBuild.java and Jak II's *mod-version-text*
-  ("0.3.1-jakvr.0.1.7"); the release notes' banner and downloads table and README's banner to 0.1.7; then the steps
-  in HANDOFF-2026-11-18-SESSION27.md (make_patch.sh, the private scan, build_apk.sh, build_pc_release.py,
-  SHA256SUMS.txt, commit, push, `gh release create v0.1.7 ... --latest`).
+- 0.1.7 released: VERSION, PcBuild.java and Jak II's *mod-version-text* ("0.3.1-jakvr.0.1.7", Jak II GOAL build
+  99, clean) bumped; the release notes' banner, downloads, updating, install and "What we tested", and README's
+  banner. JakQuestVR-0.1.7.apk (versionCode 10799, versionName 0.1.7, 0.1.0's key, certificate 66390b53...d59d52a by
+  apksigner; its toolchain.zip has build 98/99's GOAL: the version text, the ring, the pause Back row, the rider rule),
+  SHA-256 7b6f9cede4dbb92d4e942a5bc517ef567f2c3015cd0d4630437e53c973917908; JakQuestVR-0.1.7-windows.zip (self-test OK,
+  game code 1bc64b92...c6fe in pc/game-code.txt, Jak II's version text checked), SHA-256
+  bb1cde671e7ce319a061ee445a9ac48b34b6fd34d25cab8b09a57941acb96100; out/release-0.1.7 with SHA256SUMS.txt; GitHub's
+  digests the same. make_patch.sh: 3004 files (8 new, all 0.1.7's sources), 33,870,797 bytes. Private scan: no user
+  path, no owner email, no tester Windows name; the addresses and player-handle comments the same as 0.1.6's patch.
+  Logs: C:\JakQuest\sim\apk_build_017.log, pc_release_017.log, make_patch_017.log.
+- Next: players' reports on 0.1.7, then LIST-0.1.8.md. The next release bumps VERSION, PcBuild.java and Jak II's
+  *mod-version-text* ("0.3.1-jakvr.<ver>"), with the steps above.
 - Seen, not an item: after an enemy's hit at Snowy's fort gate Jak's root moves 10 to 19 m in a frame (the tester's
   log and every eco-fall run, before and after the fixes); the body's guard holds his model there. Not ours to
   explain yet; watch players' logs for `the game's skeleton left his root by` with large numbers.
