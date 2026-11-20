@@ -1,0 +1,77 @@
+# Jak II, 0.1.8 (LIST-0.1.8 item 5, a tester: "i miss being able to hold gun while drivng"). Run with
+# JAKVR_TEST_CONTINUE=ctysluma-start JAKVR_TEST_GUN=1 JAKVR_TEST_WARP=bikea JAKVR_TEST_RIDE=1 QUEST_SIM_ALIGN=10000
+# JAKVR_STATE_TRACE=1
+# JAKVR_BODY_TRACE=1: in Haven City with the guns given, Jak put and kept 2 m from the nearest city bike (frame 10000),
+# which the test aid then puts him on as Triangle does. Seated: the right hand over the right shoulder, the grip
+# squeezed there (Hold the gun while driving: the shoulder holster draws in a vehicle, the hip's does not, where the
+# hand rests), brought ahead and aimed, a shot (R1), the hand at the hip with the grip squeezed (R2, the bike's height,
+# not the holster), the gun put away over the shoulder and drawn again, and the bike ridden a little (A: the throttle)
+# with the gun in the hand; pictures at each step.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot rg-warp
+10060 shot rg-in-1
+10200 shot rg-seated
+10210 rh_x -0.2
+10210 rh_y 0.3
+10210 rh_z 0.4
+10240 right_grip 1
+10300 shot rg-drawn-at-shoulder
+10310 rh_x 0.05
+10310 rh_y 0.15
+10310 rh_z -0.2
+10340 right_grip 0
+10380 shot rg-ahead
+10400 right_trigger 1
+10406 right_trigger 0
+10460 shot rg-fired
+10480 rh_x 0
+10480 rh_y 0
+10480 rh_z 0
+10500 lh_x -0.05
+10500 lh_y -0.25
+10500 lh_z 0.3
+10520 left_grip 1
+10530 left_grip 0
+10560 shot rg-hip-left
+10580 rh_x -0.2
+10580 rh_y 0.3
+10580 rh_z 0.4
+10600 right_grip 1
+10620 right_grip 0
+10680 shot rg-put-away
+10700 right_grip 1
+10760 shot rg-drawn-again
+10770 rh_x 0.05
+10770 rh_y 0.15
+10770 rh_z -0.2
+10800 right_grip 0
+10820 lh_x 0
+10820 lh_y 0
+10820 lh_z 0
+10860 a 1
+11100 shot rg-ride-1
+11300 shot rg-ride-2
+11400 a 0
+11460 y 1
+11470 y 0
+11600 shot rg-off
+11700 quit 0

@@ -1,0 +1,73 @@
+# Jak 1, 0.1.8 (LIST-0.1.8 item 9, a tester: "shadows on all 3 are still rendered differently for each eye"). Run with
+# JAKVR_TEST_CONTINUE=village1-hut and JAKVR_SHADOW_EYES=1: a new game, then Sandover by day; Jak stands still in first
+# person and the player looks ahead, then down at his shadow (pitched 50 and 75 degrees), with the head lowered and
+# raised a little, then turned; both eyes' pictures at each, to compare the shadow in the left and right eye. Then the
+# head never still, as a player's: looking down and turning from side to side (head_yaw_rate), Jak walking a little,
+# the head nodding too; "[vr] shadow in each eye" compares how much of each eye the shadows cover, every frame.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+6000 shot sh-ahead
+6060 head_pitch -50
+6120 shot sh-down50
+6180 head_pitch -75
+6240 shot sh-down75
+6300 head_y -0.06
+6360 shot sh-down75-low
+6420 head_y 0.06
+6480 shot sh-down75-high
+6540 head_y 0
+6540 head_yaw 90
+6540 head_pitch -60
+6600 shot sh-side
+6660 head_yaw 180
+6720 shot sh-back
+6780 head_yaw -30
+6780 head_pitch -55
+6780 head_yaw_rate 72
+6810 shot sh-j1-turning
+6840 head_yaw_rate -72
+6900 head_yaw_rate 72
+6960 head_yaw_rate -72
+7020 head_yaw_rate 72
+7080 head_yaw_rate -72
+7080 left_y 1
+7110 shot sh-j1-walking
+7140 head_yaw_rate 72
+7200 head_yaw_rate -72
+7200 left_y 0
+7260 head_yaw_rate 72
+7320 head_yaw_rate -72
+7380 head_yaw_rate 72
+7380 head_pitch_rate 36
+7410 shot sh-j1-nodding
+7440 head_yaw_rate -72
+7440 head_pitch_rate -36
+7500 head_yaw_rate 72
+7500 head_pitch_rate 36
+7560 head_yaw_rate -72
+7560 head_pitch_rate -36
+7620 head_yaw_rate 72
+7620 head_pitch_rate 36
+7680 head_yaw_rate -72
+7680 head_pitch_rate 0
+7680 head_pitch -55
+7710 shot sh-j1-turning2
+7740 head_yaw_rate 72
+7800 head_yaw_rate -72
+7860 head_yaw_rate 72
+7920 head_yaw_rate -72
+7980 head_yaw_rate 72
+8040 head_yaw_rate -72
+8100 head_yaw_rate 72
+8160 head_yaw_rate -72
+8220 head_yaw_rate 72
+8280 head_yaw_rate -72
+8340 head_yaw_rate 72
+8400 head_yaw_rate 0
+8460 quit 0

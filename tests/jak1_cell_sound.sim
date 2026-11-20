@@ -1,0 +1,32 @@
+# Jak 1, 0.1.8 (LIST-0.1.8 items 2 and 3; a tester: "jak froze collecting a snowing mountain power cell ... game is not
+# frozen just jak daxter and the power cell"). Run with JAKVR_TEST_CONTINUE=training-start JAKVR_TEST_WARP=fuel-cell
+# QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: a new game, the continue to Geyser Rock, then Jak put a metre over its
+# first power cell (frame 10000), which he takes. The cell first waits about 10 s on another camera already running
+# as he lands there (the game's own "WARNING: fuel-cell stall" each frame; the same with the sound going on or
+# stopped, and none in the tester's log), then its
+# victory animation plays (streamed, on its sound stream, about 7 s; target-clone-anim). About a second into it the
+# simulated headset takes the sound device away for 20 s ("audio_loss", the sound player's test aid). As 0.1.8:
+# "[audio] the sound device has not asked for sound for 1 s ...", the device opened again every 3 s, the animation
+# played to its end and Jak back in play, then "[audio] the sound device is playing again". With
+# JAKVR_TEST_AUDIO_LOSS=old (the sound stopping with the device, as before 0.1.8): "[vr] the streamed animation
+# fuel-cell-victory... held at N for 4 s (its sound stream stopped): it ends here", and Jak back in play.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot cs-warp
+10600 shot cs-wait
+10900 audio_loss 20
+10960 shot cs-held
+11200 shot cs-5s
+11500 shot cs-after
+11600 head_yaw 90
+11610 left_y 1
+11730 left_y 0
+11740 shot cs-walk
+12500 shot cs-back
+12600 quit 0

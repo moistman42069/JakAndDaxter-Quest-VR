@@ -1,0 +1,36 @@
+# Jak 1, 0.1.8 (LIST-0.1.8 item 11, a tester: "credits flicker"): the end credits as the game starts them after the
+# last scene. Run with JAKVR_TEST_CONTINUE=finalboss-fight JAKVR_TEST_CREDITS=1: a new game, then the final boss, where
+# the sage starts the credits 5 seconds in (sage-finalboss.gc). Shots every 300 frames, and six in a row at 5400 and
+# at 6600 (a flicker shows as the eyes or the panel changing from one frame to the next).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+4200 shot cr4200
+4500 shot cr4500
+4800 shot cr4800
+5100 shot cr5100
+5400 shot cr5400
+5401 shot cr5401
+5402 shot cr5402
+5403 shot cr5403
+5404 shot cr5404
+5405 shot cr5405
+5700 shot cr5700
+6000 shot cr6000
+6300 shot cr6300
+6600 shot cr6600
+6601 shot cr6601
+6602 shot cr6602
+6603 shot cr6603
+6604 shot cr6604
+6605 shot cr6605
+6900 shot cr6900
+7200 shot cr7200
+7500 shot cr7500
+7800 shot cr7800
+8100 quit 0

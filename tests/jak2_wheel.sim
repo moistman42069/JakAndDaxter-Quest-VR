@@ -1,0 +1,101 @@
+# Jak II, 0.1.8 (LIST-0.1.8 item 6, Steer by grabbing the wheel). Run with JAKVR_TEST_CONTINUE=ctysluma-start
+# JAKVR_TEST_WARP=bikea JAKVR_TEST_RIDE=1 QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: in Haven City Jak put and kept 2 m
+# from the nearest city bike (frame 10000), which the test aid then puts him on as Triangle does. Riding (A: the throttle): both grips squeezed
+# with the hands where they rest ahead (the wheel held: "[vr-pad] the wheel held by ..."), the hands turned as a wheel
+# to the right (the right down, the left up), back, then as handlebars to the left (the right pushed ahead, the left
+# pulled back), let go (the wheel back to the middle), the left hand alone turned down (the left side down: left),
+# then a quick squeeze of the right grip on the wheel (R2: the bike's height), its squeeze again held (R2 held), and a
+# grip squeezed with the hand low at the side (not the wheel's place: R2 at once). Then both hands on it again: the
+# right stick's click ("... the right stick's click with that hand on the wheel: R2"), the left's, the wheel tilted
+# back as a car's (the right down and back, the left up and ahead: steering right, as much as either alone would
+# give), turned far past full lock, and back a little (the steering falls at once: the lock). Expect "[vr-pad] the
+# wheel: turned ... steering ..." lines (the bike: handlebars, "the wheel held by ... handlebars or a bar") and the
+# bike turning in the pictures.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot wh-warp
+10200 shot wh-seated
+10220 a 1
+10300 left_grip 1
+10300 right_grip 1
+10360 shot wh-held
+10380 rh_y -0.1
+10380 lh_y 0.1
+10440 shot wh-wheel-right-1
+10520 shot wh-wheel-right-2
+10540 rh_y 0
+10540 lh_y 0
+10600 shot wh-middle
+10620 rh_z -0.1
+10620 lh_z 0.1
+10680 shot wh-bars-left-1
+10760 shot wh-bars-left-2
+10780 left_grip 0
+10780 right_grip 0
+10800 rh_z 0
+10800 lh_z 0
+10860 shot wh-let-go
+10900 left_grip 1
+10930 lh_y -0.12
+10990 shot wh-left-hand-1
+11060 shot wh-left-hand-2
+11080 left_grip 0
+11080 lh_y 0
+11140 right_grip 1
+11150 right_grip 0
+11200 shot wh-quick-r2
+11210 right_grip 1
+11300 right_grip 0
+11320 shot wh-r2-held
+11340 rh_x 0.1
+11340 rh_y -0.3
+11340 rh_z 0.3
+11360 right_grip 1
+11380 right_grip 0
+11400 rh_x 0
+11400 rh_y 0
+11400 rh_z 0
+11420 shot wh-side-r2
+11460 left_grip 1
+11460 right_grip 1
+11480 right_click 1
+11500 right_click 0
+11520 left_click 1
+11540 left_click 0
+11560 rh_y -0.08
+11560 rh_z 0.08
+11560 lh_y 0.08
+11560 lh_z -0.08
+11620 shot wh-tilted
+11640 rh_y -0.3
+11640 lh_y 0.3
+11660 shot wh-lock
+11680 rh_y -0.08
+11680 lh_y 0.08
+11700 shot wh-lock-back
+11740 rh_y 0
+11740 rh_z 0
+11740 lh_y 0
+11740 lh_z 0
+11740 left_grip 0
+11740 right_grip 0
+11760 a 0
+11820 quit 0

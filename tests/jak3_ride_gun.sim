@@ -1,0 +1,54 @@
+# Jak 3, 0.1.8 (LIST-0.1.8 item 5, Hold the gun while driving; build 103: the drawn gun stays Jak's, not Daxter's as the
+# game's seated poses give it). Run with JAKVR_TEST_CONTINUE=hanga-start JAKVR_TEST_GUN=1 QUEST_SIM_ALIGN=10000
+# JAKVR_STATE_TRACE=1 JAKVR_BODY_TRACE=1: the glider (its flag 32 keeps his gun), the continue seating him in it.
+# The opening skipped and a new game started as jak3_ride_wheel.sim does; once seated, the right hand over the right
+# shoulder and its grip squeezed there (the shoulder's holster draws in a vehicle), brought ahead and let go (the gun
+# stays drawn), a shot (R1), then the gun put away over the shoulder (squeezed and let go there). Expect "[vr-pad] Hold
+# the gun while driving: this vehicle keeps his gun ...", "[vr-holster] Hold the gun while driving: the drawn gun is in
+# his hand (not Daxter's)", "[vr-body] ... gun bones 36 (of its 36) in hand 1" while it is drawn, and the gun in the
+# right hand in the pictures.
+# The lines from 10000 count from the frame the continue seats him (QUEST_SIM_ALIGN=10000; pc-vr.gc
+# vr-test-continue!, "[vr] test: seated by the continue, the set-up done", build 104 on), the gun 60 frames after it.
+# (Sims rg3 and rg3b, builds 103 and 104: the hijacked pickup's continue, ctyport-hijack-decoy, loads the city but
+# leaves Jak on foot at the port, so the pickup is a headset check, HEADSET_CHECKLIST.md.)
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+10060 shot rg3-seated
+10070 rh_x -0.2
+10070 rh_y 0.3
+10070 rh_z 0.4
+10100 right_grip 1
+10160 shot rg3-drawn-at-shoulder
+10170 rh_x 0.05
+10170 rh_y 0.15
+10170 rh_z -0.2
+10200 right_grip 0
+10240 shot rg3-ahead
+10260 right_trigger 1
+10266 right_trigger 0
+10320 shot rg3-fired
+10340 rh_x -0.2
+10340 rh_y 0.3
+10340 rh_z 0.4
+10360 right_grip 1
+10380 right_grip 0
+10440 shot rg3-put-away
+10460 rh_x 0
+10460 rh_y 0
+10460 rh_z 0
+10520 shot rg3-end
+10560 quit 0

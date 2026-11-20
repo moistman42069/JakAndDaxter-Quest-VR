@@ -5,19 +5,19 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.7](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** fixes for the
-> latest reports on 0.1.6: Jak 3 no longer closes entering the forest, Jak II's stadium race no longer closes as Jak
-> gets into the racer, Jak 1 no longer stays black after loading a save at Snowy Mountain, and Jak II's pause menu ring
-> is in front of you, not behind. Every crash and close now ends the game's own log with a record of what and where.
-> New options: **Gamepad only** (the VR controllers left out), **Third person after a pole until you land** and **Eco
-> sparks in first person**. Jak 3's Light Shield stays up while you hold B, Jak II's pause menu has **Multiplayer**,
-> a long fall is seen from the game's camera while Jak gets up, and the crosshair is off to start again. It is still a
-> test release, tested on a PC with a simulated headset, and its main purpose is still to collect logs. Whatever
-> happens, please send yours: the [release notes](docs/release-notes.md) say how.
-> [docs/LIST-0.1.7.md](docs/LIST-0.1.7.md) says what changed and how each part was checked
-> ([LIST-0.1.6.md](docs/LIST-0.1.6.md), [LIST-0.1.5.md](docs/LIST-0.1.5.md), [LIST-0.1.4.md](docs/LIST-0.1.4.md),
-> [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md) for
-> the releases before).
+> **Test release [0.1.8](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** two new options,
+> both on to start: **Steer by grabbing the wheel** (squeeze a grip on a vehicle's wheel or handlebars and turn it;
+> the stick still steers) and **Hold the gun while driving** (Jak II and 3's city bikes and cars). Fixes for the
+> latest reports on 0.1.7: Jak II no longer closes after a long pause, Jak 1 is no longer held still after a power
+> cell, the game's sound goes on when the sound device goes away (PC), a black headset is said plainly in the PC
+> window's title and the log, Jak II and 3's shadows are the same in both eyes, jumps are as high as the game's own at
+> the headset's rate, and Jak 1's end credits no longer flicker. On PC you can choose where your texture packs, saves
+> and logs are kept. It is still a test release, tested on a PC with a simulated headset, and its main purpose is
+> still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
+> [docs/LIST-0.1.8.md](docs/LIST-0.1.8.md) says what changed and how each part was checked
+> ([LIST-0.1.7.md](docs/LIST-0.1.7.md), [LIST-0.1.6.md](docs/LIST-0.1.6.md), [LIST-0.1.5.md](docs/LIST-0.1.5.md),
+> [LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and
+> [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
 
 ## Built on OpenGOAL
 

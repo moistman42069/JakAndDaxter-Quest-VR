@@ -39,6 +39,13 @@ public final class VrOptionsTest {
         check(VrOptions.isOn(fresh.get("pole-third-person")), "no file: Third person after a pole on");
         check(VrOptions.isOn(fresh.get("eco-sparks-first-person")), "no file: Eco sparks in first person on");
         check(!VrOptions.isOn(fresh.get("gamepad-only")), "no file: Gamepad only off");
+        // 0.1.8 (LIST-0.1.8 items 5 and 6): the new toggles on to start, as the game's vr_options.h
+        check(VrOptions.isOn(fresh.get("ride-gun")), "no file: Hold the gun while driving on");
+        check(VrOptions.isOn(fresh.get("wheel-steer")), "no file: Steer by grabbing the wheel on");
+        check("60".equals(fresh.get("wheel-turn")), "no file: Wheel turn 60 degrees");
+        java.util.List<VrOptions.Option> controls = java.util.Arrays.asList(VrOptions.VR_CONTROLS);
+        check(controls.contains(VrOptions.RIDE_GUN) && controls.contains(VrOptions.WHEEL_STEER)
+                && controls.contains(VrOptions.WHEEL_TURN), "the new options are in the launcher's VR controls");
 
         check("0".equals(cross(dir, "s1.txt", "crosshair-shape 1\n")), "0.1.6's Dot (its start): Off");
         check("0".equals(cross(dir, "s0.txt", "crosshair-shape 0\n")), "0.1.6's Off: Off");

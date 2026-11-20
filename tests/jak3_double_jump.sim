@@ -1,0 +1,50 @@
+# Jak 3, 0.1.8 (LIST-0.1.8 item 15, found in Jak 1: at the headset's 72 frames a second the frame that stepped past
+# the 0.1 s A may be held for height was not counted, so jumps fell short). Run with JAKVR_TEST_CONTINUE=wascitya-start
+# JAKVR_STATE_TRACE=1, once with the sim's game rate (the headset's, gkcfg) and once at sixty (gkcfg-60): the opening
+# skipped and a new game started as tests/jak3_lightjak.sim, the continue to Spargus (Jak stands there from about frame
+# 3600), then as tests/jak2_double_jump.sim: his highest jump with A held, three double jumps (the second A 12, 23 and
+# 33 frames after the first), a tapped jump and a tapped double jump; each landing logs "[vr] test: the jump rose N m",
+# the same at either rate.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+6000 shot dj-start
+6100 a 1
+6130 a 0
+6300 a 1
+6310 a 0
+6312 a 1
+6342 a 0
+6500 a 1
+6518 a 0
+6523 a 1
+6535 shot dj-top
+6553 a 0
+6700 a 1
+6725 a 0
+6733 a 1
+6763 a 0
+6950 a 1
+6955 a 0
+7100 a 1
+7104 a 0
+7112 a 1
+7116 a 0
+7300 quit 0

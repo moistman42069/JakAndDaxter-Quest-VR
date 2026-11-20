@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import dev.jakquest.vr.PcPaths.Place;
+
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -195,11 +197,12 @@ public final class PcLauncher {
         }
         if (PcDataFolder.STATE.running) {
             boolean copying = PcDataFolder.STATE.copying;
+            Place place = PcDataFolder.STATE.place;
             int answer = JOptionPane.showConfirmDialog(frame, copying
-                ? "The games are being moved. Stop and close?\nWhat was copied is removed, and the games stay where they "
-                    + "were."
-                : "The old copy of the games is being removed. Close?\nThe launcher finishes it next time.", TITLE,
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                ? place.words + " are being moved. Stop and close?\nWhat was copied is removed, and " + place.inWords
+                    + " stay where they were."
+                : "The old copy of " + place.inWords + " is being removed. Close?\nThe launcher finishes it next time.",
+                TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (answer != JOptionPane.YES_OPTION) {
                 return;
             }
@@ -407,18 +410,25 @@ public final class PcLauncher {
             button.repaint();
         }
         page.removeAll();
-        switch (index) {
-            case 0: showPlay(); break;
-            case 1: showOptions(0); break;
-            case 2: showOptions(1); break;
-            case 3: showOptions(2); break;
-            case 4: showControls(); break;
-            case TAB_PACKS: showTexturePacks(); break;
-            case TAB_MODS: showMods(); break;
-            case 7: showLogs(); break;
-            default: showCredits(); break;
+        // 0.1.8 (LIST-0.1.8 item 8): the tabs that write the saves' folder (the options, the mods' switches and the
+        // party) wait while it is moved or not there, so nothing is written to the old place or a new empty one
+        boolean savesWait = (index >= 1 && index <= 3 || index == TAB_MODS) && PcDataFolder.waiting(paths, Place.SAVES);
+        if (savesWait) {
+            showSavesWait();
+        } else {
+            switch (index) {
+                case 0: showPlay(); break;
+                case 1: showOptions(0); break;
+                case 2: showOptions(1); break;
+                case 3: showOptions(2); break;
+                case 4: showControls(); break;
+                case TAB_PACKS: showTexturePacks(); break;
+                case TAB_MODS: showMods(); break;
+                case 7: showLogs(); break;
+                default: showCredits(); break;
+            }
         }
-        if (index == 0 && (PcSetup.STATE.running || game != null || PcDataFolder.STATE.running)) {
+        if (savesWait || index == 0 && (PcSetup.STATE.running || game != null || PcDataFolder.STATE.running)) {
             watcher.start();
         } else {
             watcher.stop();
@@ -491,33 +501,79 @@ public final class PcLauncher {
         }
         if (PcDataFolder.STATE.running) {
             page.add(dataFolderProgress());
-        } else if (PcDataFolder.missing(paths)) {
-            Card card = card();
-            card.add(text("Your games' folder is not there", 18, PcArtwork.BAD, true));
-            card.add(text(paths.data() + " cannot be found. If it is on a drive that is not plugged in, plug it in and "
-                + "press Look again. Or keep the games in another place (Where the games are kept, below): they are set "
-                + "up there again from your discs.", 15, PcArtwork.INK, false));
-            card.add(gap(6));
-            card.add(new Btn("Look again", false, this::redraw));
-            page.add(card);
+        }
+        if (!PcDataFolder.STATE.copying) {
+            if (PcDataFolder.missing(paths)) {
+                page.add(missingCard("Your games' folder is not there", paths.data() + " cannot be found. If it is on a "
+                    + "drive that is not plugged in, plug it in and press Look again. Or keep the games in another place "
+                    + "(Where your files are kept, below): they are set up there again from your discs."));
+            }
+            if (PcDataFolder.missing(paths, Place.SAVES)) {
+                page.add(missingCard("Your saves folder is not there", paths.config() + " cannot be found. If it is on a "
+                    + "drive that is not plugged in, plug it in and press Look again: playing and the options wait for it, "
+                    + "so no save is started over. Or keep your saves and options in the default place again (Where your "
+                    + "files are kept, below), which starts with new saves and options."));
+            }
+            if (PcDataFolder.missing(paths, Place.PACKS)) {
+                page.add(missingCard("Your texture packs' folder is not there", paths.texturePacks() + " cannot be found. "
+                    + "If it is on a drive that is not plugged in, plug it in and press Look again. The games play as they "
+                    + "were built meanwhile; setting one up and changing the packs wait for it, so no game is built "
+                    + "without them. Or keep your texture packs in the default place again (Where your files are kept, "
+                    + "below) and add them there again."));
+            }
         }
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
             page.add(gameCard(i));
         }
-        page.add(dataFolderCard());
+        page.add(filesCard());
         showUpdates();
     }
 
-    // ---- Where the games are kept (PcDataFolder) ----
+    private Card missingCard(String title, String says) {
+        Card card = card();
+        card.add(text(title, 18, PcArtwork.BAD, true));
+        card.add(text(says, 15, PcArtwork.INK, false));
+        card.add(gap(6));
+        card.add(new Btn("Look again", false, this::redraw));
+        return card;
+    }
+
+    /** In place of a tab that writes the saves' folder while it is moved or not there (showTab). */
+    private void showSavesWait() {
+        Card card = card();
+        if (PcDataFolder.STATE.copying && PcDataFolder.STATE.place == Place.SAVES) {
+            card.add(text("Your saves and options are being moved", 18, PcArtwork.ACCENT, true));
+            card.add(text("This tab comes back once they are in their new place (" + PcDataFolder.STATE.phase + ").", 15,
+                PcArtwork.INK, false));
+        } else {
+            card.add(text("Your saves folder is not there", 18, PcArtwork.BAD, true));
+            card.add(text(paths.config() + " cannot be found, so the options wait for it (nothing is written to a new, "
+                + "empty one). Plug its drive in, or see the Play tab's Where your files are kept.", 15, PcArtwork.INK,
+                false));
+            card.add(gap(6));
+            card.add(new Btn("Look again", false, this::redraw));
+        }
+        page.add(card);
+    }
+
+    // ---- Where your files are kept (PcDataFolder; the games' set-up since 0.1.3, every folder since 0.1.8) ----
 
     private Card dataFolderProgress() {
         boolean copying = PcDataFolder.STATE.copying;
         int percent = PcDataFolder.STATE.percent;
+        Place place = PcDataFolder.STATE.place;
+        String after;
+        switch (place) {
+            case GAMES: after = " The games can be played and set up again once it is done."; break;
+            case PACKS: after = " Setting a game up and changing the texture packs wait until it is done."; break;
+            case SAVES: after = " The games can be played, and the options changed, again once it is done."; break;
+            default: after = " The games can be played and set up again once it is done."; break;
+        }
         Card card = card();
-        card.add(text(copying ? "Moving the games" : "Removing the games' old copy", 20, PcArtwork.ACCENT, true));
+        card.add(text(copying ? "Moving " + place.inWords : "Removing the old copy of " + place.inWords, 20,
+            PcArtwork.ACCENT, true));
         card.add(text(PcDataFolder.STATE.phase + (percent >= 0 ? ": " + percent + "%." : "...")
-            + (copying ? " The games can be played and set up again once it is done." : " You can play meanwhile."),
-            15, PcArtwork.INK, false));
+            + (copying ? after : " You can play meanwhile."), 15, PcArtwork.INK, false));
         if (percent >= 0) {
             card.add(new PcWidgets.Bar(percent));
         }
@@ -531,40 +587,101 @@ public final class PcLauncher {
         return card;
     }
 
-    private Card dataFolderCard() {
+    /** What each place holds, as its row says it. */
+    private static String placeTitle(Place place) {
+        switch (place) {
+            case GAMES: return "The games";
+            case PACKS: return "Texture packs";
+            case SAVES: return "Saves and options";
+            default: return "Logs";
+        }
+    }
+
+    private static String placeHolds(Place place) {
+        switch (place) {
+            case GAMES: return "Each game's set-up: its extracted disc and the game built from it, up to about 10 GB a game.";
+            case PACKS: return "The texture packs you added, and their downloads while they are added. A pack can be a few "
+                + "GB.";
+            case SAVES: return "Your saved games, the games' own settings and your VR options. Small.";
+            default: return "The games' and set-ups' logs, and the Logs tab's zips. Small.";
+        }
+    }
+
+    /**
+     * Why `place` cannot be moved now, in the player's words; null when it can. The packs move while a game is played
+     * (the game reads them only as it is built); the others wait for it.
+     */
+    private String moveBlocked(Place place) {
+        if (PcDataFolder.STATE.running) {
+            return "Another folder is being moved: let it finish first.";
+        }
+        if (PcSetup.STATE.running) {
+            return "A game is being set up: let it finish first.";
+        }
+        if (game != null && place != Place.PACKS) {
+            return "Close the game first.";
+        }
+        if (place == Place.PACKS && packBusy) {
+            return "A texture pack is being added: let it finish first.";
+        }
+        return null;
+    }
+
+    private Card filesCard() {
         Card card = card();
-        card.add(text("Where the games are kept", 18, PcArtwork.ACCENT, true));
-        File data = paths.data();
-        long free = PcDataFolder.free(data);
-        card.add(text("Each game's set-up (its extracted disc and the game built from it, up to about 10 GB a game) is "
-            + "kept in " + data + (paths.dataMoved() ? "" : " (the default place)")
-            + (free >= 0 ? ", with " + PcDataFolder.size(free) + " free on that drive" : "") + ". To keep the games on "
-            + "another drive, move them there: on another drive everything is copied and checked before the old copy "
-            + "is removed. Your saves and options stay in " + paths.home + ".", 15, PcArtwork.INK, false));
+        card.add(text("Where your files are kept", 18, PcArtwork.ACCENT, true));
+        card.add(text("Each of these can be kept on another drive or in another folder: pick one and they are moved "
+            + "there (on the same drive at once; on another drive everything is copied and checked before the old copy "
+            + "is removed). The launcher itself is where you unzipped it, and a downloaded update waits in "
+            + paths.updates() + " until it is installed. An update keeps all of them where they are.", 15,
+            PcArtwork.INK, false));
         if (PcDataFolder.STATE.done != null) {
             card.add(text(PcDataFolder.STATE.done, 14, PcArtwork.GOOD, false));
         }
         if (PcDataFolder.STATE.failure != null) {
             card.add(text(PcDataFolder.STATE.failure, 14, PcArtwork.BAD, false));
         }
-        boolean blocked = game != null || PcSetup.STATE.running || PcDataFolder.STATE.running;
-        JPanel buttons = row(6);
-        buttons.setBorder(new EmptyBorder(8, 0, 0, 0));
-        Btn move = new Btn("Move to another drive or folder...", false, this::pickDataFolder);
-        move.setEnabled(!blocked);
-        buttons.add(weighted(move, 2f));
-        if (paths.dataMoved()) {
-            Btn back = new Btn("Back to the default place", false, () -> moveData(paths.defaultData()));
-            back.setEnabled(!blocked);
-            buttons.add(weighted(back, 1f));
+        for (Place place : Place.values()) {
+            File folder = paths.folder(place);
+            boolean missing = PcDataFolder.missing(paths, place);
+            long free = missing ? -1 : PcDataFolder.free(folder);
+            String where = " Kept in " + folder + (paths.moved(place) ? "" : " (the default place)")
+                + (missing ? ", which is not there now" : free >= 0 ? ", with " + PcDataFolder.size(free)
+                    + " free on that drive" : "") + ".";
+            File chosen = paths.chosenFolder(place);
+            if (place == Place.LOGS && chosen != null && !PcDataFolder.same(chosen, folder)) {
+                where = " The folder chosen for them, " + chosen + ", is not there now: they go to " + folder
+                    + " meanwhile.";
+            }
+            card.add(gap(10));
+            card.add(text(placeTitle(place), 16, PcArtwork.INK, true));
+            card.add(text(placeHolds(place) + where, 14, PcArtwork.MUTED, false));
+            boolean blocked = moveBlocked(place) != null;
+            JPanel buttons = row(6);
+            buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
+            Btn move = new Btn("Move to another drive or folder...", false, () -> pickFolder(place));
+            move.setEnabled(!blocked);
+            buttons.add(weighted(move, 2f));
+            if (paths.moved(place)) {
+                Btn back = new Btn("Back to the default place", false,
+                    () -> moveFolder(place, paths.defaultFolder(place)));
+                back.setEnabled(!blocked);
+                buttons.add(weighted(back, 1f));
+            }
+            Btn open = new Btn("Open the folder", false, () -> {
+                File f = paths.folder(place);
+                f.mkdirs();  // a default place nothing was written to yet
+                openFolder(f);
+            });
+            open.setEnabled(!missing);
+            buttons.add(weighted(open, 1f));
+            card.add(buttons);
         }
-        buttons.add(weighted(new Btn("Open the folder", false, () -> openFolder(paths.data())), 1f));
-        card.add(buttons);
         return card;
     }
 
     /** A folder picker for folders (Windows' look: the launcher's own has no folder picker of its own). */
-    private void pickDataFolder() {
+    private void pickFolder(Place place) {
         javax.swing.LookAndFeel before = UIManager.getLookAndFeel();
         JFileChooser chooser;
         try {
@@ -581,44 +698,60 @@ public final class PcLauncher {
         }
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setDialogTitle("Where to keep the games: a drive or a folder (a folder named " + PcDataFolder.NAME
-            + " is made in it)");
+        chooser.setDialogTitle("Where to keep " + place.inWords + ": a drive or a folder (a folder named "
+            + place.folderName + " is made in it)");
         chooser.setApproveButtonText("Keep them here");
         if (chooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
             return;
         }
         File picked = chooser.getSelectedFile() != null ? chooser.getSelectedFile() : chooser.getCurrentDirectory();
         if (picked != null) {
-            moveData(PcDataFolder.target(picked));
+            moveFolder(place, PcDataFolder.target(place, picked));
         }
     }
 
-    private void moveData(File target) {
-        if (game != null || PcSetup.STATE.running || PcDataFolder.STATE.running) {
-            JOptionPane.showMessageDialog(frame, "Close the game, and let a set-up finish, first.", TITLE,
-                JOptionPane.INFORMATION_MESSAGE);
+    private void moveFolder(Place place, File target) {
+        String blocked = moveBlocked(place);
+        if (blocked != null) {
+            JOptionPane.showMessageDialog(frame, blocked, TITLE, JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        String why = PcDataFolder.refuse(paths, target);
+        String why = PcDataFolder.refuse(paths, place, target);
         if (why != null) {
             JOptionPane.showMessageDialog(frame, why, TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String[] had = paths.data().list();
+        File from = paths.folder(place);
+        String[] had = from.list();
         boolean nothing = had == null || had.length == 0;
-        int answer = JOptionPane.showConfirmDialog(frame, "Keep the games in " + target + " from now on?" + (nothing ? ""
-            : "\n\nEverything in " + paths.data() + " goes there. On another drive it is copied and checked,\nthen "
-                + "removed from here: that can take a while (up to about 10 GB a game), and meanwhile\nthe games cannot "
-                + "be played or set up. Your saves and options stay where they are."), TITLE,
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        String meanwhile;
+        switch (place) {
+            case GAMES:
+                meanwhile = ": that can take a while (up to about 10 GB a game), and meanwhile\nthe games cannot be played "
+                    + "or set up. Your saves and options stay where they are.";
+                break;
+            case PACKS:
+                meanwhile = ". Meanwhile setting a game up and changing the packs wait.";
+                break;
+            case SAVES:
+                meanwhile = ". Meanwhile the games cannot be played, and the options wait.";
+                break;
+            default:
+                meanwhile = ". Meanwhile the games cannot be played or set up.";
+                break;
+        }
+        int answer = JOptionPane.showConfirmDialog(frame, "Keep " + place.inWords + " in " + target + " from now on?"
+            + (nothing ? "" : "\n\nEverything in " + from + " goes there. On another drive it is copied and checked,\nthen "
+                + "removed from here" + meanwhile), TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (answer != JOptionPane.YES_OPTION) {
             return;
         }
-        log("games' folder: from " + paths.data() + " to " + target);
-        PcDataFolder.start(paths, target, () -> SwingUtilities.invokeLater(() -> {
+        String name = place.name().toLowerCase(java.util.Locale.ROOT);
+        log("folder of " + name + ": from " + from + " to " + target);
+        PcDataFolder.start(paths, place, target, () -> SwingUtilities.invokeLater(() -> {
             String done = PcDataFolder.STATE.done, failure = PcDataFolder.STATE.failure;
-            log("games' folder: " + (failure != null ? failure : done));
-            redrawIfPlay();
+            log("folder of " + name + ": " + (failure != null ? failure : done));
+            redraw();
         }));
         redraw();
     }
@@ -629,7 +762,11 @@ public final class PcLauncher {
         card.add(text(VrOptions.GAME_NAMES[index], 20, PcArtwork.INK, true));
         PcSetup.Status status = PcSetup.status(paths, game);
         boolean moving = PcDataFolder.STATE.copying;
-        boolean busy = PcSetup.STATE.running || moving || PcDataFolder.missing(paths);
+        // 0.1.8: a set-up also waits for the texture packs' chosen folder (none is built without them), and playing
+        // for the saves' (none started over in a new, empty one)
+        boolean busy = PcSetup.STATE.running || moving || PcDataFolder.missing(paths)
+            || PcDataFolder.missing(paths, Place.PACKS);
+        boolean savesGone = PcDataFolder.missing(paths, Place.SAVES);
         JPanel buttons = row(6);
         buttons.setBorder(new EmptyBorder(8, 0, 0, 0));
         String disc = status == PcSetup.Status.NONE ? null : DiscVersion.describe(paths.extracted(game));
@@ -642,7 +779,7 @@ public final class PcLauncher {
                     + "or another), then play.", 14, PcArtwork.MUTED, false));
                 Btn playIt = new Btn("PLAY IN VR", true, () -> play(game));
                 Btn removeIt = new Btn("Remove", false, () -> remove(game));
-                playIt.setEnabled(!moving);
+                playIt.setEnabled(!moving && !savesGone);
                 removeIt.setEnabled(!moving);
                 buttons.add(weighted(playIt, 2f));
                 buttons.add(weighted(removeIt, 1f));
@@ -659,8 +796,11 @@ public final class PcLauncher {
                 removeOld.setEnabled(!moving);
                 break;
             default:
+                long free = PcDataFolder.missing(paths) ? -1 : PcDataFolder.free(paths.data());
                 card.add(text("Not set up. It is made from your own disc image (.iso) of the game, once; no game files "
-                    + "come with this release. Every disc version works (US, PAL, Japanese, Korean).", 14,
+                    + "come with this release. Every disc version works (US, PAL, Japanese, Korean). It is set up in "
+                    + paths.data() + (free >= 0 ? ", with " + PcDataFolder.size(free) + " free on that drive" : "")
+                    + " (up to about 10 GB): Where your files are kept, below, picks another drive.", 14,
                     PcArtwork.MUTED, false));
                 Btn pick = new Btn("Set up from your disc image...", true, () -> pickDisc(game));
                 pick.setEnabled(!busy);
@@ -684,8 +824,8 @@ public final class PcLauncher {
     }
 
     private void setUp(String game, File iso) {
-        if (PcDataFolder.STATE.copying) {
-            return;  // the games are being moved (the buttons are off meanwhile)
+        if (PcDataFolder.STATE.copying || PcDataFolder.missing(paths, Place.PACKS)) {
+            return;  // a folder is being moved, or the packs' is not there (the buttons are off meanwhile)
         }
         playFailure = null;
         log("set-up of " + game + (iso == null ? " again" : " from a disc image"));
@@ -706,8 +846,8 @@ public final class PcLauncher {
 
     /** gk for PC VR: the game from the player's data folder, its settings in theirs, JAKVR=1. */
     private void play(String game) {
-        if (PcDataFolder.STATE.copying) {
-            return;
+        if (PcDataFolder.STATE.copying || PcDataFolder.missing(paths, Place.SAVES)) {
+            return;  // a folder is being moved, or the saves' is not there (the button is off meanwhile)
         }
         playFailure = null;
         if (!paths.gk().isFile()) {
@@ -731,8 +871,9 @@ public final class PcLauncher {
         command.add("--");
         command.add("-boot");
         command.add("-fakeiso");
-        paths.logs.mkdirs();
-        File output = new File(paths.logs, "game-" + game + "-output.log");
+        File logs = paths.logs();
+        logs.mkdirs();
+        File output = new File(logs, "game-" + game + "-output.log");
         ProcessBuilder builder = new ProcessBuilder(command).directory(paths.gameFolder()).redirectErrorStream(true)
             .redirectOutput(output);
         builder.environment().clear();
@@ -1072,7 +1213,7 @@ public final class PcLauncher {
     // and Find texture packs (the mod lists' packs) ----
 
     private void showTexturePacks() {
-        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
+        boolean locked = packsLocked();
         Card about = card();
         about.add(text("Texture packs", 18, PcArtwork.ACCENT, true));
         about.add(text("New pictures in place of the game's own, for each of the three games. Each pack can be turned "
@@ -1096,6 +1237,13 @@ public final class PcLauncher {
         about.add(buttons);
         if (!packsNote.isEmpty()) {
             about.add(text(packsNote, 13, PcArtwork.ACCENT, false));
+        }
+        if (PcDataFolder.waiting(paths, Place.PACKS)) {
+            about.add(text(PcDataFolder.missing(paths, Place.PACKS)
+                ? "Your texture packs' folder, " + paths.texturePacks() + ", is not there: plug its drive in, or see the "
+                    + "Play tab's Where your files are kept."
+                : "Your texture packs are being moved: a moment (the Play tab shows how far).", 13, PcArtwork.BAD,
+                false));
         }
         page.add(about);
         for (int i = 0; i < VrOptions.GAMES.length; i++) {
@@ -1136,7 +1284,7 @@ public final class PcLauncher {
 
         @Override
         public boolean importData(javax.swing.TransferHandler.TransferSupport support) {
-            if (!canImport(support) || packBusy) {
+            if (!canImport(support) || packsLocked()) {
                 return false;
             }
             List<File> files = new ArrayList<>();
@@ -1166,7 +1314,7 @@ public final class PcLauncher {
      * and for one that names none the player is asked which.
      */
     private void importPacks(List<File> sources) {
-        if (packBusy) {
+        if (packsLocked()) {
             return;
         }
         packBusy = true;
@@ -1259,10 +1407,19 @@ public final class PcLauncher {
     /** True while a texture pack is being unpacked (one at a time). */
     private volatile boolean packBusy;
 
+    /**
+     * Whether the packs cannot be changed now: one being added, a set-up, a folder being moved, or (0.1.8, LIST-0.1.8
+     * item 8) the packs' chosen folder not there (a drive unplugged).
+     */
+    private boolean packsLocked() {
+        return packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying
+            || PcDataFolder.missing(paths, Place.PACKS);
+    }
+
     private Card packsCard(int index) {
         String game = VrOptions.GAMES[index];
         File root = paths.texturePacks();
-        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
+        boolean locked = packsLocked();
         Card card = card();
         card.add(text("Texture packs: " + VrOptions.GAME_NAMES[index], 16, PcArtwork.INK, true));
         List<TexturePacks.Pack> packs = TexturePacks.list(root, game);
@@ -1423,7 +1580,7 @@ public final class PcLauncher {
         }
         card.add(games);
         String game = VrOptions.GAMES[chosen];
-        boolean locked = packBusy || PcSetup.STATE.running || PcDataFolder.STATE.copying;
+        boolean locked = packsLocked();
         List<ModList.Entry> flat = new ArrayList<>();
         int shown = 0, packsThere = 0;
         for (ModList.Entry e : lists.forGame(game)) {
@@ -1511,7 +1668,7 @@ public final class PcLauncher {
 
     /** A texture pack from a mod list: downloaded, then added (or, with old, put in old's place: Update). */
     private void addFromList(String game, ModList.Entry entry, TexturePacks.Pack old) {
-        if (packBusy) {
+        if (packsLocked()) {
             return;
         }
         packBusy = true;
@@ -1629,33 +1786,51 @@ public final class PcLauncher {
     private void showLogs() {
         Card card = card();
         card.add(text("Logs for a bug report", 18, PcArtwork.ACCENT, true));
-        card.add(text("One button gathers everything a report needs into one zip in your Downloads folder: the games' "
-            + "newest logs, each set-up's, your VR options and the launcher's own. Post it with what you were doing "
-            + "in the project's Discord or GitHub issues. Nothing else of yours is in it.", 15, PcArtwork.INK, false));
+        card.add(text("One button gathers everything a report needs into one zip in the logs folder (your Downloads "
+            + "folder's JakQuestVR, unless you chose another): the games' newest logs, each set-up's, your VR options and "
+            + "the launcher's own. Post it with what you were doing in the project's Discord or GitHub issues. Nothing "
+            + "else of yours is in it.", 15, PcArtwork.INK, false));
         card.add(gap(8));
+        // 0.1.8: not while the logs folder is being moved (the zip would land in the old place)
+        boolean logsMoving = PcDataFolder.waiting(paths, Place.LOGS);
         JPanel buttons = row(6);
-        buttons.add(weighted(new Btn("Gather the logs", true, () -> {
+        Btn gather = new Btn("Gather the logs", true, () -> {
+            if (PcDataFolder.waiting(paths, Place.LOGS)) {
+                return;
+            }
             try {
                 logsZip = PcLogs.gather(paths);
-                logsNote = "Made " + logsZip.getName() + " in " + paths.logs + ".";
+                logsNote = "Made " + logsZip.getName() + " in " + paths.logs() + ".";
                 log("logs gathered: " + logsZip.getName());
-                openFolder(paths.logs);
+                openFolder(paths.logs());
             } catch (IOException e) {
                 logsNote = "Could not make the zip: " + e.getMessage();
             }
             redraw();
-        }), 2f));
-        buttons.add(weighted(new Btn("Open the logs folder", false, () -> openFolder(paths.logs)), 1f));
+        });
+        gather.setEnabled(!logsMoving);
+        buttons.add(weighted(gather, 2f));
+        Btn openLogs = new Btn("Open the logs folder", false, () -> {
+            paths.logs().mkdirs();
+            openFolder(paths.logs());
+        });
+        openLogs.setEnabled(!logsMoving);
+        buttons.add(weighted(openLogs, 1f));
         card.add(buttons);
+        if (logsMoving) {
+            card.add(text("The logs folder is being moved: a moment (the Play tab shows how far).", 14, PcArtwork.ACCENT,
+                false));
+        }
         if (!logsNote.isEmpty()) {
             card.add(text(logsNote, 14, PcArtwork.GOOD, false));
         }
         page.add(card);
         Card where = card();
         where.add(text("Where things are", 16, PcArtwork.INK, true));
-        where.add(text("Your saves and choices: " + paths.home + "\nThe games' set-up: " + paths.data()
-            + (paths.dataMoved() ? "" : " (the Play tab's Where the games are kept moves it to another drive)")
-            + "\nLogs and the zips: " + paths.logs + "\nAn update keeps all of them.", 14, PcArtwork.MUTED, false));
+        where.add(text("Your saves and options: " + paths.config() + "\nThe games' set-up: " + paths.data()
+            + "\nTexture packs: " + paths.texturePacks() + "\nLogs and the zips: " + paths.logs()
+            + "\nThe launcher's own choices: " + paths.home + "\nThe Play tab's Where your files are kept moves the first "
+            + "four to another drive or folder. An update keeps all of them.", 14, PcArtwork.MUTED, false));
         page.add(where);
     }
 

@@ -1,3 +1,51 @@
+0.1.8: steer by grabbing the wheel, hold the gun while driving, choose where your files are kept, and fixes for the
+latest reports (a close after a long pause, a power cell that held Jak still, the sound and the headset going away).
+Still a test release: please keep sending your logs.
+
+0.1.8 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+which builds again only what changed). Your saves and options are kept.
+
+New
+- Steer by grabbing the wheel (on to start; the VR menu and the launchers): in a vehicle steered by a wheel or
+  handlebars (Jak 1's Zoomer; Jak II's and Jak 3's bikes and cars, the race bikes, the desert's vehicles, the glider,
+  the sled, the hellcats), reach for the controls where Jak's hands are and squeeze a grip. Turning it steers, one
+  hand or two, as a wheel or as handlebars; the stick still steers too, and let go, the stick alone. Wheel turn sets
+  how far a full turn is. With a hand on the wheel its stick's click is that grip's button (Jak II's height, Jak 3's
+  turbo or view), and a quick squeeze is still the button.
+- Hold the gun while driving (on to start; the VR menu and the launchers; Jak II and 3): in the city's bikes and cars
+  (Jak 3 also the glider and the hijacked pickup), reach over your right shoulder and squeeze to hold the gun, aimed
+  by your hand; put it back over the shoulder. Vehicles with guns of their own put it away as before.
+- Where your files are kept (the PC launcher's Play tab): the games, the texture packs, the saves and options, and the
+  logs can each be moved to another drive or folder, and back. On another drive everything is copied and checked
+  before the old copy is removed. If a chosen drive is unplugged, the Play tab says so and what needs it waits.
+
+Changed
+- The log says when the sound device comes and goes ([audio]), and while the headset is not showing the game or not
+  giving it the controllers it says so every 10 seconds; the PC's window title says it too.
+- The log says what took Jak's health each time it drops (all three games).
+
+Fixed
+- Jak II: the game closing after a long pause (the pause menu used up a little of the game's memory each frame).
+- Jak 1: Jak, Daxter and a power cell held still after collecting it (the cell's animation waited on its sound when
+  that sound stopped). In all three games such an animation now ends after 4 seconds, and the log says so.
+- PC: the game's sound stopping for good when Windows or SteamVR took the audio device away; it goes on, and the
+  device is opened again until it plays.
+- Jak 1: his body in first person could pop a few metres aside for a frame, or drift off the view for a moment, in
+  the levels far from the world's middle (the citadel, the final boss, the crater, Snowy Mountain). The game sends his
+  skeleton a little toward that middle for a frame now and then; it is put back where it belongs.
+- Jak 1: his arms and body could leave your view for two seconds after a knockback; they stay under you now.
+- Jak 1: the end credits flickered in the headset (the boss's arena showed through them when the game left out the
+  black behind them); they are shown over black, as on a screen.
+- SteamVR with Touch: holding the left stick's click (the menu button there) while running switched the view; the
+  hold switches it only with the stick at rest.
+- Jak II and 3: after a swing pole the view went to first person for the flip and back to the game's camera before
+  landing; it stays the game's camera until your feet are down.
+- All three games: with the game at the headset's rate, jumps came out lower than the game's own (at 72, Jak 1's
+  highest 0.26 m lower and a double jump up to 0.55 m); they are as high as at sixty now. As in the original, the
+  second jump of a double jump counts near the top of the first, and holding A makes each one higher.
+- Jak II and 3: shadows could differ between the eyes (Jak's own shadow in first person, and those close to your
+  head, cut off or missing in one eye); both eyes see the same shadows now.
+
 0.1.7: fixes for the latest reports (Jak 3's forest, Jak II's stadium race, Jak 1 at Snowy Mountain), Gamepad only,
 and every close in the game's own log. Still a test release: please keep sending your logs.
 

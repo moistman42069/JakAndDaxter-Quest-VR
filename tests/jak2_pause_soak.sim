@@ -1,0 +1,36 @@
+# Jak II, 0.1.8 (LIST-0.1.8 item 1): a long pause, the kernel heap watched. As jak2_pause_mp.sim to play at the fortress
+# exit, then Start (the pause menu, which draws the multiplayer mod's version line each frame) and paused for about
+# three minutes. Expect one "[vr-mem] the game's global heap: ..." line at the start and no other (0.1.7 made a
+# 27-byte string each paused frame, about 100 KB a minute: a line each minute), then Start: play again.
+1200 shot pmp-boot
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4600 shot pmp-start
+4620 hand_pitch 70
+4800 menu 1
+4806 menu 0
+4960 shot ps-pause
+11000 shot ps-pause-mid
+17000 shot ps-pause-late
+17100 menu 1
+17106 menu 0
+17300 shot ps-play
+17400 quit 0

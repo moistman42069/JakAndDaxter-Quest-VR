@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import dev.jakquest.vr.PcPaths.Place;
+
 /**
- * A check of the PC launcher's "Where the games are kept" (PcDataFolder, PcPaths.data(); 0.1.3) on made-up folders:
+ * A check of the PC launcher's "Where your files are kept" (PcDataFolder, PcPaths; the games since 0.1.3, the texture
+ * packs, the saves and options, and the logs since 0.1.8) on made-up folders:
  * java -cp classes;. dev.jakquest.vr.DataFolderTest <scratch folder> [<a scratch folder on another drive>]
  * The second folder tries the copy between drives (the first only renames on its own drive).
  */
@@ -57,6 +60,32 @@ public final class DataFolderTest {
     static void move(PcPaths paths, File target) throws InterruptedException {
         PcDataFolder.start(paths, target, () -> { });
         await();
+    }
+
+    static void move(PcPaths paths, Place place, File target) throws InterruptedException {
+        PcDataFolder.start(paths, place, target, () -> { });
+        await();
+    }
+
+    /** A made-up saves and options folder: a game's VR options and one save. */
+    static void fillSaves(File config) throws IOException {
+        write(new File(config, "OpenGOAL/jak1/settings/vr-options.txt"), "first-person on\n");
+        write(new File(config, "OpenGOAL/jak1/saves/bank0.bin"), "a save of the player's");
+    }
+
+    static boolean savesFilled(File config) {
+        return read(new File(config, "OpenGOAL/jak1/settings/vr-options.txt")).equals("first-person on\n")
+            && read(new File(config, "OpenGOAL/jak1/saves/bank0.bin")).equals("a save of the player's");
+    }
+
+    /** A drive letter with no drive behind it on this PC (null if every one is used). */
+    static String absentDrive() {
+        for (char c = 'Z'; c >= 'G'; c--) {
+            if (!new File(c + ":\\").isDirectory()) {
+                return c + ":";
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) throws Exception {
@@ -176,6 +205,98 @@ public final class DataFolderTest {
         check(filled(paths.data()) && !new File(home, PcDataFolder.LEFTOVER).exists(),
             "a leftover note naming where the games are now: ignored, nothing removed");
 
+        // 0.1.8 (LIST-0.1.8 item 8): the texture packs, the saves and options, and the logs.
+        check(paths.defaultFolder(Place.PACKS).equals(new File(home, "texture-packs"))
+                && paths.texturePacks().equals(new File(home, "texture-packs"))
+                && paths.defaultFolder(Place.SAVES).equals(new File(home, "config"))
+                && paths.config().equals(new File(home, "config"))
+                && paths.defaultFolder(Place.LOGS).equals(new File(scratch, "logs"))
+                && paths.logs().equals(new File(scratch, "logs"))
+                && !paths.moved(Place.PACKS) && !paths.moved(Place.SAVES) && !paths.moved(Place.LOGS),
+            "the other places' defaults: home\\texture-packs, home\\config and the logs folder given");
+        check(PcDataFolder.target(Place.PACKS, new File(scratch, "p")).equals(new File(scratch, "p/JakQuestVR-texture-packs"))
+                && PcDataFolder.target(Place.SAVES, new File(scratch, "JakQuestVR-saves"))
+                    .equals(new File(scratch, "JakQuestVR-saves"))
+                && PcDataFolder.target(Place.LOGS, new File(scratch, "l")).equals(new File(scratch, "l/JakQuestVR-logs")),
+            "a picked folder: each place's own folder made in it (or that folder itself)");
+        String intoGames = PcDataFolder.refuse(paths, Place.PACKS, new File(paths.data(), "packs"));
+        check(intoGames != null && intoGames.contains("the games"), "refused: the packs into the games' folder");
+        String intoLogs = PcDataFolder.refuse(paths, Place.SAVES, new File(scratch, "logs/JakQuestVR-saves"));
+        check(intoLogs != null && intoLogs.contains("the logs"), "refused: the saves into the logs' folder");
+
+        // The saves and options on the same drive, read again as the launcher starts, and back.
+        fillSaves(paths.config());
+        File saves = PcDataFolder.target(Place.SAVES, new File(scratch, "mine"));
+        move(paths, Place.SAVES, saves);
+        PcPaths savesAgain = new PcPaths(new File(scratch, "install"), home, new File(scratch, "logs"));
+        check(PcDataFolder.STATE.failure == null && paths.config().equals(saves) && savesFilled(saves)
+                && !new File(home, "config").exists()
+                && read(new File(home, "saves-folder.txt")).trim().equals(saves.getPath())
+                && savesAgain.config().equals(saves)
+                && savesAgain.vrOptions("jak1").equals(new File(saves, "OpenGOAL/jak1/settings/vr-options.txt"))
+                && filled(paths.data()),
+            "the saves moved on the same drive: chosen, read again, the games untouched ("
+                + (PcDataFolder.STATE.failure != null ? PcDataFolder.STATE.failure : PcDataFolder.STATE.done) + ")");
+        move(paths, Place.SAVES, paths.defaultFolder(Place.SAVES));
+        check(PcDataFolder.STATE.failure == null && !paths.moved(Place.SAVES) && savesFilled(new File(home, "config"))
+                && !new File(home, "saves-folder.txt").exists() && !saves.exists(),
+            "... and back to the default place");
+
+        // The packs: their downloads go with them.
+        check(paths.modDownloads().equals(new File(home, "mod-downloads")), "the packs at home: downloads in home");
+        write(new File(paths.texturePacks(), "jak1/pack/texture_replacements/a.png"), "png");
+        File packs = PcDataFolder.target(Place.PACKS, new File(scratch, "packs"));
+        move(paths, Place.PACKS, packs);
+        check(PcDataFolder.STATE.failure == null && paths.texturePacks().equals(packs)
+                && read(new File(packs, "jak1/pack/texture_replacements/a.png")).equals("png")
+                && paths.modDownloads().equals(new File(packs, "downloads")),
+            "the packs moved: their downloads with them");
+        move(paths, Place.PACKS, paths.defaultFolder(Place.PACKS));
+        check(PcDataFolder.STATE.failure == null && !paths.moved(Place.PACKS)
+                && paths.modDownloads().equals(new File(home, "mod-downloads")) && !packs.exists(),
+            "... and back");
+
+        // A chosen folder not there: the packs missing (what uses them waits), the logs never (the default meanwhile).
+        write(new File(home, "packs-folder.txt"), new File(scratch, "gone/JakQuestVR-texture-packs").getPath());
+        PcPaths noPacks = new PcPaths(new File(scratch, "install"), home, new File(scratch, "logs"));
+        check(PcDataFolder.missing(noPacks, Place.PACKS) && PcDataFolder.waiting(noPacks, Place.PACKS)
+                && !PcDataFolder.missing(noPacks, Place.SAVES),
+            "a chosen packs folder not there: missing, and what uses it waits");
+        String summary = PcLogs.summary(noPacks);
+        check(summary.contains("Kept in a folder of the player's choice: your texture packs (not there now)\n")
+                && !summary.contains(scratch.getPath()),
+            "the logs' summary: the packs kept elsewhere and not there, no path");
+        check(PcLogs.summary(paths).contains("Kept in a folder of the player's choice: none\n"),
+            "... and none when nothing is kept elsewhere");
+        new File(home, "packs-folder.txt").delete();
+        String drive = absentDrive();
+        if (drive != null) {
+            write(new File(home, "logs-folder.txt"), drive + "\\JakQuestVR-logs");
+            PcPaths noLogs = new PcPaths(new File(scratch, "install"), home, new File(scratch, "logs"));
+            check(noLogs.moved(Place.LOGS) && noLogs.logs().equals(new File(scratch, "logs"))
+                    && !PcDataFolder.missing(noLogs, Place.LOGS),
+                "the logs' chosen drive (" + drive + ") not there: the default place meanwhile, never missing");
+        }
+        File notYet = new File(scratch, "notyet/JakQuestVR-logs");
+        write(new File(home, "logs-folder.txt"), notYet.getPath());
+        PcPaths logsLater = new PcPaths(new File(scratch, "install"), home, new File(scratch, "logs"));
+        check(logsLater.logs().equals(notYet), "the logs' chosen folder on a drive that is there: kept (made when written)");
+        new File(home, "logs-folder.txt").delete();
+
+        // A saves move's old copy left (the launcher closed meanwhile): finished as it starts; a note naming home: dropped.
+        File oldSaves = new File(scratch, "oldsaves");
+        fillSaves(oldSaves);
+        write(new File(home, Place.SAVES.leftover()), oldSaves.getPath());
+        PcDataFolder.finishLeftover(paths, () -> { });
+        await();
+        check(!oldSaves.exists() && !new File(home, Place.SAVES.leftover()).exists() && savesFilled(paths.config()),
+            "a saves leftover old copy: removed as the launcher starts, the saves kept");
+        write(new File(home, Place.SAVES.leftover()), home.getPath());
+        PcDataFolder.finishLeftover(paths, () -> { });
+        await();
+        check(!new File(home, Place.SAVES.leftover()).exists() && savesFilled(paths.config()) && filled(paths.data()),
+            "a saves leftover note naming the launcher's own folder: dropped, nothing removed");
+
         // Another drive: copied, checked, switched, the old removed.
         if (args.length > 1) {
             File other = new File(args[1]).getAbsoluteFile();
@@ -197,6 +318,18 @@ public final class DataFolderTest {
             move(paths, paths.defaultData());
             check(PcDataFolder.STATE.failure == null && !paths.dataMoved() && filled(paths.data()) && !there.exists(),
                 "and back from it");
+            // 0.1.8 (LIST-0.1.8 item 8): the saves copied the same way
+            File savesThere = PcDataFolder.target(Place.SAVES, other);
+            move(paths, Place.SAVES, savesThere);
+            String savesFailure = PcDataFolder.STATE.failure;
+            check(savesFailure == null && paths.config().equals(savesThere) && savesFilled(savesThere)
+                    && !new File(home, "config").exists() && !new File(home, Place.SAVES.leftover()).exists(),
+                "the saves moved to another drive: copied, chosen, the old copy removed ("
+                    + (savesFailure != null ? savesFailure : PcDataFolder.STATE.done) + ")");
+            move(paths, Place.SAVES, paths.defaultFolder(Place.SAVES));
+            check(PcDataFolder.STATE.failure == null && !paths.moved(Place.SAVES) && savesFilled(paths.config())
+                    && !savesThere.exists(),
+                "... and back from it");
             TexturePacks.deleteTree(other);
         }
 

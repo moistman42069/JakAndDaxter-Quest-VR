@@ -77,6 +77,25 @@ Riding, the buttons are as on foot, except the right grip is the game's R2 again
 right stick click is R3. Fists are not made there. On the JET-Board with Fists on the right grip, the right stick
 click stays R2 as well, so the click that put Jak on the board takes him off again.
 
+**Steer by grabbing the wheel** (on to start, since 0.1.8; VR menu and both launchers): in any vehicle steered by the
+stick (Jak 1's Zoomer; every bike, car, race bike and desert vehicle in Jak II and 3; Jak 3's glider, the catacombs'
+sled and the war factory's hellcat), squeeze a grip with your hand on its controls, where Jak's hand holds them (or
+anywhere just ahead of you, low), and turn your hands to steer: as a wheel (one hand down, the other up), tilted back
+as a car's, or as handlebars (push one hand, pull the other), all alike; one hand alone turns it about the middle. Let
+go and it comes back to the middle. The stick steers as before, and the two add up. **Wheel turn** (60 degrees to
+start) is how far you turn it for full steering; handlebars and the glider's bar need a little over half of that.
+Jak's hands are drawn on the handles while you hold them. While a grip holds the wheel it is not its button: a quick
+squeeze and let go is still the button (R2, L2), squeezed again and held it holds it, and while a hand holds the wheel
+its stick's click is that button (Jak II and 3: the right click R2, the car's height or Jak 3's turbo while held; the
+left click L2, Jak 3's camera view). A grip still squeezed as you get off is nothing until you let it go.
+
+**Hold the gun while driving** (on to start, since 0.1.8; Jak II and 3, once he has a gun): in the vehicles that let
+Jak keep his gun (the city's bikes and cars, Jak 3's hijacked pickup too), reach over your right shoulder and squeeze
+the right grip to draw it, as on foot; it stays in your right hand, aimed by it, and the right trigger fires it. Let
+it go over the shoulder to put it away. The hip holster stays off in vehicles (a hand resting there is the car's
+height button). The guards' bike, the hellcat and the desert vehicles have guns of their own and put his away. Off:
+the gun is put away as he gets in, as in 0.1.7.
+
 First person in vehicles is on to start since 0.1.3: on the Zoomer, the JET-Board, in cars, turrets and slides, the
 Titan suit and the flut flut the view stays in Jak's head, turning with what he rides. The VR menu and the launchers'
 VR Body have **Vehicle view height** and **Vehicle view forward** (centimetres from his eyes there; his body stays in
@@ -148,7 +167,7 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Left grip | (left fist) | The left fist. |
 | Left thumb on its rest, right stick | D-pad, Select | The d-pad (the warp gates' choice of place); the right stick's click is Select (a pause without the menu). |
 | Menu button | Start | Pause; held, first and third person. |
-| A-Grav Zoomer | | The left stick steers and A jumps; the other buttons as the game's own. |
+| A-Grav Zoomer | | The left stick steers, or its handlebars gripped and turned (Steer by grabbing the wheel), and A jumps; the other buttons as the game's own. |
 | Flut Flut | | A jumps (twice), X its attack, as on foot. |
 
 ### Jak II
@@ -169,7 +188,7 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Left thumb on its rest, right stick | D-pad | The guns: up, down, left, right pick each of his four. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (Jak II multiplayer: the player list; alone the game does nothing with it), the right L3 (multiplayer: the HUD and names while held). |
 | Menu button | Start | Pause; held, first and third person. |
-| Riding a car or bike | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. |
+| Riding a car or bike | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the controls steer (the right stick click is then the height). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
 | On the JET-Board | | A jumps, X, B and the left trigger as the game's board moves; the right grip or the right stick click takes him off. |
 | In the Titan suit | | The game's own buttons on the same controller buttons (X punches). |
 
@@ -191,8 +210,8 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Left thumb on its rest, right stick | D-pad | The guns: each direction picks a color, and the same direction again the next gun of that color. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (a pause without the menu), the right L3. |
 | Menu button | Start | Pause; held, first and third person. |
-| Riding a city car | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. |
-| Riding a desert vehicle | | A speeds up, X brakes and backs up, the left trigger jumps, the right trigger fires its guns, the right grip the turbo, the left grip held with the right stick looks around, the right stick click its other switch, Y gets out. |
+| Riding a city car | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the wheel steer (the right stick click is then the height). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
+| Riding a desert vehicle | | A speeds up, X brakes and backs up, the left trigger jumps, the right trigger fires its guns, the right grip the turbo, the left grip held with the right stick looks around, the right stick click its other switch, Y gets out. Gripped, the wheel steers; the right stick click is then the turbo and the left the camera view. The glider, the catacombs' sled and the war factory's hellcat steer by their bar or wheel the same. |
 | On a leaper lizard | | A jumps; the other buttons as the game's own. |
 | On the JET-Board | | A jumps. B held grinds a rail (the game's Square) and X zaps (its Circle): swapped from Jak II's board since 0.1.6, so the left thumb stays on the stick. The triggers as the game's board moves; the right grip or the right stick click takes him off. |
 
@@ -204,7 +223,7 @@ controller binding page can change any of them. Where a controller lacks a butto
 | Controller | Differences from the tables above |
 |---|---|
 | Quest Touch, Touch Plus, Touch Pro (Link, Air Link, Virtual Desktop's own VDXR), Vive Focus 3 | None. |
-| Quest Touch through SteamVR | SteamVR keeps the left menu button for its dashboard, so the left stick's click is the menu button: a click is Start, held one second it switches first and third person, in play and in a scene (over a menu, the VR menu). So the left stick's click is not L3 there: L3 is the right stick's click with the left hand held by your head (Jak II multiplayer's HUD and names). On foot in Jak II and 3 the click with the left grip squeezed is L2 (Dark Jak), not the menu button, and the left grip's quick squeeze is L2 as everywhere. SteamVR has no thumb rest for them either: the d-pad is the left hand held by your head, and the left stick's click there is Select. |
+| Quest Touch through SteamVR | SteamVR keeps the left menu button for its dashboard, so the left stick's click is the menu button: a click is Start, held one second it switches first and third person, in play and in a scene (over a menu, the VR menu). In play the hold switches only with the stick at rest (since 0.1.8): held while the stick moves Jak, as when running in a fight, it switches nothing and is no Start. So the left stick's click is not L3 there: L3 is the right stick's click with the left hand held by your head (Jak II multiplayer's HUD and names). On foot in Jak II and 3 the click with the left grip squeezed is L2 (Dark Jak), not the menu button, and the left grip's quick squeeze is L2 as everywhere. SteamVR has no thumb rest for them either: the d-pad is the left hand held by your head, and the left stick's click there is Select. |
 | Pico 4 and Neo 3, Vive Cosmos, HP Reverb G2 | No thumb rest: the d-pad is the left hand held by your head (below). |
 | Valve Index | Its A and B are A and B on the right hand, X and Y on the left. A firm squeeze of the left touchpad is the menu button (Start). No thumb rest: the d-pad is the left hand held by your head. |
 | Windows Mixed Reality (and the Samsung Odyssey) | Sticks as above. Right touchpad click: A; right menu button: B. Left touchpad click: X, or Y on its upper half; left menu button: Start. The d-pad is the left hand held by your head. |

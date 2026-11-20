@@ -32,6 +32,90 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **Jak 3's white screen after its first scene** (Precursor's README): a new game; after the opening scene the desert
   should draw.
 
+## 0.1.8's changes (a tester's reports on 0.1.7)
+
+- **Defaults**: `[vr] options: ...` with `ride-gun on`, `wheel-steer on` and `wheel-turn 60`.
+- **A long pause** (Jak II): pause and leave it for an hour or more, then play on: no close. The log has one
+  `[vr-mem] the game's global heap: ...` line at the start and none after while paused (0.1.7 grew about 100 KB a
+  minute and closed after about four hours).
+- **The sound device going away** (PC): with a game running, take the headset off long enough for SteamVR to switch
+  its audio away (or turn the headset's audio device off and on in Windows' sound settings): `[audio] the sound device
+  ...: the game's sound goes on by itself, silently ...`, then `[audio] the sound device is playing again after N s`
+  once it is back, the sound playing again. A power cell's or a scene's animation never holds Jak, Daxter and the cell
+  meanwhile; if a streamed animation's sound does stop, `[vr] the streamed animation ... held at ... for 4 s` and Jak
+  goes on.
+- **A black headset** (PC): if SteamVR does not show the game or give it the controllers, the PC's window title says
+  so (`... - the headset is not showing the game (no controllers)` or the like) and the log says it every 10 s (`[openxr] the headset has
+  not shown the game, or not given it the controllers, for N s: session state ...`), then `... shows the game ...
+  again` when it does. `[openxr] session state: ...` lines as SteamVR moves the session along (READY, SYNCHRONIZED,
+  VISIBLE, FOCUSED).
+- **Hold the gun while driving** (Jak II and 3, with the gun): in a city bike or car (Jak 3: the glider and the
+  hijacked pickup; the pickup has no test continue that seats Jak, so this is its only check), reach over your right
+  shoulder and squeeze: the gun comes out in your right hand (`[vr-pad] Hold the gun while
+  driving: this vehicle keeps his gun ...`, `[vr-holster] Hold the gun while driving: "the drawn gun is in his hand
+  (not Daxter's)"`, `[vr-pad] holster: the right grip squeezed at a holster`), seen in your hand and aimed by it, not
+  in Daxter's (the game's own seated poses give it to him); the right trigger fires where your hand points; let go
+  over the shoulder to put it away. A hand resting at the hip in the seat draws nothing (the car's height is still the
+  right grip there). In the guards' bike, the hellcat or a desert vehicle (their own guns) nothing changes. Off, or
+  with Gamepad only: as 0.1.7 (Daxter holds the drawn gun in the seat).
+- **Steer by grabbing the wheel**, in each vehicle: Jak 1's Zoomer; Jak II's city bike, city car, the guards' bike,
+  the hellcat, a race bike (the stadium's and the port's); Jak 3's city bike and car, a desert vehicle, the glider,
+  the catacombs' sled and the war factory's hellcat. Reach for the controls where Jak's hands are and squeeze both
+  grips (a small buzz each; `[vr-pad] the wheel held by the left hand (grab 1; a wheel, the game's handles seen)` or
+  `handlebars or a bar`), then turn your hands as a wheel, as a wheel tilted back like a car's, and as handlebars
+  (push one, pull the other): it steers smoothly from the least turn, the same for each way of holding it, Jak's
+  hands drawn on the handles. Turned past full lock and back a little, it steers back at once. One hand alone steers
+  too. Let go: it straightens, and the stick steers as ever (both together add up). **Wheel turn**: smaller turns
+  sharper. Buttons with both hands on: the right stick's click is R2 (Jak II's height, Jak 3's turbo while held;
+  `[vr-pad] the right stick's click with that hand on the wheel: R2`), the left's L2 (Jak 3's camera view); a quick
+  squeeze of a grip on the wheel is its button too (`[vr-pad] a quick squeeze on the wheel: R2`). Get off with the
+  grips still squeezed: nothing happens on foot until you let go. Off: the grips are R2 and L2 as in 0.1.7.
+- **Shadows in each eye** (all three games, by day): stand in first person and look down at Jak's shadow, then
+  around at others' (Sandover's villagers, Haven's citizens, the desert), moving your head all the time and walking a
+  little: each eye shows the same shadow (closing one eye, then the other, it only shifts as the ground does; his
+  shoulders and arms, a hand's width from your eyes, shift far more and hide a different part of it from each eye),
+  with no shadow in one eye alone, no dark streak at an eye's outer edge and no flicker as the head turns. Look down
+  at your feet while walking and turning (where 0.1.7 could darken one eye more than the other, Jak's own shadow round
+  the eyes); each game's log says `[vr] the shadows in each eye: counted behind what they fall on` once. If one
+  differs, send the log with where (the level, looking which way).
+- **Jak 1's body far from the world's middle** (the citadel, the final boss, the crater, Snowy Mountain): walk, roll
+  and jump in first person: his body never pops a few metres aside for a frame and never drifts off the view. The log
+  may have up to four `[vr-body] the game's skeleton sent at 0.99... of its place from the world's origin (... m toward
+  it ...): taken back out along that line`, then a count a minute; no `the game's skeleton left his root by` bursts.
+- **Jak 1 knocked back** (any enemy, Snowy Mountain's lurkers by the start among them): let one hit you, then stand
+  and look down: his arms and body are under you from the moment he lands, not gone for two seconds. The log may
+  say `[vr-body] the game's skeleton 1.9 m from his root on the ground (frame ...): kept by it` (up to four, then a
+  count a minute).
+- **Each hit in the log** (all three games): take a hit or two and fall once; the log says
+  `[vr] Jak's health 3.0 to 2.0; the last hit by ... (...)` each time (in Jak II and 3 with `, as Dark Jak` when he
+  was), nothing when it fills again.
+- **The end credits** (Jak 1 after the final boss; Jak II after the last scene; Jak 3 from the title's Secrets or
+  after the end): watch them for a minute, looking ahead and around: no flicker of the text, the picture or the
+  black. Jak 1's are over black all round, the purple mist behind the text, never the boss's arena or Jak's hands
+  showing through (`[vr-view] the end credits begin: the eyes kept black behind them, as on a screen`, then `... are
+  over` when play comes back).
+- **The view held in a fight** (SteamVR with Touch, where the left stick's click is the menu button): in first
+  person, run with the left stick pushed and its click held two seconds: the view stays first person, no pause
+  (`[vr-pad] the left stick's click held a second while the stick moved Jak: no view switch`). Let the stick rest and
+  hold the click a second: third person; again: first person (`[vr] view in play: ...`). A short click is Start.
+- **Off a swing pole** (Jak II's ruins and Haven, Jak 3's temple and the like; Jak 1 as before), in first person:
+  swing, flip and jump off: the view stays third person from the swing through the flip and the jump and goes to first
+  person once, as his feet touch the ground, never first then third then first. The log has one `[vr] view in play:
+  first person` after the landing.
+- **Jumps at the headset's rate** (Game frame rate Automatic, the log's `[vr-view] the game at 72 frames a second`, or
+  80, 90, 120): on Jak 1's Geyser Rock, hold A for a jump, then a double jump with the second A held near the top of
+  the first, pushing toward the ledge the training sign points to: he gets up onto it. The jumps feel as high as with
+  Game frame rate at 60. In Jak II and 3, a double jump onto a ledge you know reaches it as before.
+- **Where your files are kept** (the PC launcher's Play tab, no headset needed): one row each for the games, your
+  texture packs, your saves and options, and the logs. For each, **Move to another drive or folder...** onto another
+  drive: it is copied with a percentage, then the row says where it is kept now (the old copy removed). Then play a
+  game: your saves load (saves), a texture pack is used (packs; set one up again), **Gather the logs** puts the zip in
+  the new folder (logs), and the Logs tab's Where things are lists every folder. **Back to the default place** brings
+  each back. With a moved folder's drive unplugged (or the folder renamed): the Play tab says it is not there; the
+  packs: set-ups and the Texture packs tab's imports wait, with a note; the saves: PLAY and the option tabs wait (so
+  no save is started over); the logs: they go to Downloads\JakQuestVR meanwhile. Close the launcher while an old copy
+  is being removed: the next start finishes it.
+
 ## 0.1.7's changes (players' reports on 0.1.6)
 
 - **Defaults** (a game with no options saved, or one 0.1.6 wrote): `[vr] options: ...` with `crosshair-mark 0` (the

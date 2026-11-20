@@ -1,0 +1,32 @@
+# Jak II, 0.1.8 (LIST-0.1.8 items 2 and 3). Run with JAKVR_STATE_TRACE=1: the title's opening scene (streamed, on its
+# sound stream) playing, the simulated headset takes the sound device away for 15 s at frame 1200 ("audio_loss", the
+# sound player's test aid), then Start at 2400 and a new game as tests/jak2_pause_soak.sim. As 0.1.8: "[audio] the
+# sound device has not asked for sound for 1 s ...", the device opened again every 3 s, then "[audio] the sound device
+# is playing again", and no "streamed animation" line (Start pins the scene at the logo behind the menu: the game's
+# own skip frame, which the guard leaves alone). With JAKVR_TEST_AUDIO_LOSS=old (the sound stopping with the device,
+# as before 0.1.8): "[vr] the streamed animation title-disk-intro held at N for 4 s (its sound stream stopped): it ends
+# here" about frame 1440, N short of 37717 (the logo's frame, 1105).
+1200 audio_loss 15
+1260 shot ts-held
+1500 shot ts-4s
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4600 quit 0

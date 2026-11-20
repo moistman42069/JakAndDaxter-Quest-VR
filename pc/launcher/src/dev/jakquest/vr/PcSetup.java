@@ -57,8 +57,11 @@ final class PcSetup {
         if (!mark.isFile() || !new File(paths.compiled(game), "iso").isDirectory()) {
             return Status.NONE;
         }
-        return !newSources(paths, game) && !TexturePacks.changed(paths.texturePacks(), game, paths.data())
-            ? Status.READY : Status.OUTDATED;
+        // 0.1.8 (LIST-0.1.8 item 8): with the packs' chosen folder not there (a drive unplugged) the packs are not
+        // compared, so a game built with them is not shown as needing a build again (the set-up waits for them)
+        boolean packsChanged = !PcDataFolder.missing(paths, PcPaths.Place.PACKS)
+            && TexturePacks.changed(paths.texturePacks(), game, paths.data());
+        return !newSources(paths, game) && !packsChanged ? Status.READY : Status.OUTDATED;
     }
 
     /**
@@ -185,6 +188,11 @@ final class PcSetup {
         // the texture packs on, into custom_assets for the decompiler (the game built again picks them up)
         STATE.phase = "Putting your texture packs in";
         changed.run();
+        if (PcDataFolder.missing(paths, PcPaths.Place.PACKS)) {  // 0.1.8 (LIST-0.1.8 item 8): never built without them
+            // (no path: the set-up's log is gathered for bug reports, and a path can carry the player's name)
+            throw new IOException("Your texture packs' chosen folder is not there: plug its drive in, or move them back "
+                + "to the default place (the Play tab's Where your files are kept).");
+        }
         TexturePacks.apply(paths.texturePacks(), game, paths.data());
         // 0.1.3, faster building again (LIST-0.1.3 item 10): built again with the same compiler and game data version,
         // the compiler's own make (its "(mi)") compiles only the sources that changed (refreshSources copies only
@@ -205,9 +213,9 @@ final class PcSetup {
             STATE.phase = decompile ? "Building the game again with this version"
                 : "Building again what changed in this version";
         }
-        paths.logs.mkdirs();
+        paths.logs().mkdirs();
         String stamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-        File log = new File(paths.logs, "setup-" + game + "-" + stamp + ".log");
+        File log = new File(paths.logs(), "setup-" + game + "-" + stamp + ".log");
         List<String> command = new ArrayList<>();
         command.add(paths.extractor().getPath());
         command.add("-g");

@@ -1,0 +1,29 @@
+# Jak 1, 0.1.8 (LIST-0.1.8 item 13, a tester at the final boss: "at 1 point in boss fight game became 3rd person even
+# though was set to 1st"; their log: "the view is third person now: the left menu button held"). Run with
+# JAKVR_TEST_CONTINUE=village1-hut: a new game, then the hut, a controller with no left menu button (as SteamVR with
+# Touch: the left stick's click is the menu button). Jak runs with the stick's click held 2 s (no switch: "held a
+# second while the stick moved Jak: no view switch", no Start), then the click held 1.5 s with the stick at rest (third
+# person), and again (first person). Expect "view in play" lines only for the last two.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+5900 menu_unbound 1
+6000 shot vh-start
+6040 left_y 1
+6060 left_click 1
+6200 shot vh-running-held
+6210 left_click 0
+6230 left_y 0
+6300 shot vh-after-run
+6400 left_click 1
+6510 left_click 0
+6560 shot vh-third
+6700 left_click 1
+6810 left_click 0
+6860 shot vh-first
+6960 quit 0

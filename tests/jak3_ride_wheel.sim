@@ -1,0 +1,55 @@
+# Jak 3, 0.1.8 (LIST-0.1.8 item 6, Steer by grabbing the wheel; the owner: "look over all the vehicles to be sure
+# gripping whatever wheel/control type they have works"): the vehicles Jak 3's ride kinds leave out, each by its own
+# continue with JAKVR_STATE_TRACE=1: JAKVR_TEST_CONTINUE=hanga-start (the glider: its bar), comba-sled (the
+# catacombs' sled), factoryb-start (the war factory's hellcat: a race continue seating him in it; factoryd-start,
+# tried first, is the Titan suit). The opening skipped and a new game started as jak3_buggy.sim does, the continue
+# taken once Jak is first in play; once he sits (counted from that frame, below) A held (Cross: the throttle where
+# there is one), both grips squeezed where the hands rest, turned to the right as a wheel (the right down, the left up),
+# back, to the left as handlebars (the right pushed ahead, the left pulled back), back, let go. Expect "[vr-pad] the
+# wheel held by ..." (the glider: "handlebars or a bar"; the sled and the hellcat: "a wheel"), "[vr-pad] the
+# wheel: turned ... steering ..." lines and the vehicle turning in the pictures; none where he pilots nothing yet.
+# 0.1.8 (sims rw3g and rw3s, builds 101 to 103): the continues seat Jak at a frame that varies from run to run (about
+# 4750 on the glider, later on the sled), so fixed frames missed him (the grips squeezed before he sat held nothing, as
+# they should). Build 104 on: run with QUEST_SIM_ALIGN=10000. The lines from 10000 count from the frame the continue
+# seats him (pc-vr.gc vr-test-continue!, "[vr] test: seated by the continue, the set-up done"), the driving 60 frames
+# after it.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+10060 shot rw-start
+10080 a 1
+10160 left_grip 1
+10160 right_grip 1
+10200 shot rw-held
+10220 rh_y -0.1
+10220 lh_y 0.1
+10280 shot rw-right-1
+10360 shot rw-right-2
+10380 rh_y 0
+10380 lh_y 0
+10440 shot rw-middle
+10460 rh_z -0.1
+10460 lh_z 0.1
+10520 shot rw-left-1
+10600 shot rw-left-2
+10620 rh_z 0
+10620 lh_z 0
+10660 left_grip 0
+10660 right_grip 0
+10720 shot rw-let-go
+10760 a 0
+10820 shot rw-end
+10860 quit 0

@@ -26,15 +26,15 @@ final class PcLogs {
     private PcLogs() {}
 
     static File gather(PcPaths paths) throws IOException {
-        paths.logs.mkdirs();
+        paths.logs().mkdirs();
         String stamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-        File zip = new File(paths.logs, "JakQuestVR-logs-" + stamp + ".zip");
+        File zip = new File(paths.logs(), "JakQuestVR-logs-" + stamp + ".zip");
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
             add(out, "summary.txt", summary(paths).getBytes(StandardCharsets.UTF_8));
             for (File f : newest(paths.gameLogs(), ".log", 6)) {
                 addFile(out, "game-logs/" + f.getName(), f);
             }
-            for (File f : newest(paths.logs, ".log", 6)) {
+            for (File f : newest(paths.logs(), ".log", 6)) {
                 addFile(out, "launcher-logs/" + f.getName(), f);
             }
             for (String game : VrOptions.GAMES) {
@@ -93,6 +93,17 @@ final class PcLogs {
             }
             s.append('\n');
         }
+        // 0.1.8 (LIST-0.1.8 item 8): which folders the player keeps elsewhere, and whether each is there now (no paths:
+        // they can carry the player's name)
+        StringBuilder moved = new StringBuilder();
+        for (PcPaths.Place p : PcPaths.Place.values()) {
+            if (paths.moved(p)) {
+                File chosen = paths.chosenFolder(p);
+                moved.append(moved.length() == 0 ? "" : ", ").append(p.inWords)
+                    .append(chosen != null && chosen.isDirectory() ? "" : " (not there now)");
+            }
+        }
+        s.append("Kept in a folder of the player's choice: ").append(moved.length() == 0 ? "none" : moved).append('\n');
         return s.toString();
     }
 

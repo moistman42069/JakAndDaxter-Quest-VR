@@ -395,6 +395,18 @@ public final class VrOptions {
     public static final Option MOVE = choice("move-direction", "Move direction",
             "The left stick moves Jak where you look, or where your left hand points.",
             new String[] {"Where you look", "Where your left hand points"}, new String[] {"0", "1"}, "0");
+    // 0.1.8 (LIST-0.1.8 item 6; the owner: physical driving, "a toggle that is on by default. people can still use
+    // normal inputs to drive, but once they grab the wheel on whichever vehicle, that will allow them to use it to
+    // steer"; game/vr/jak_vr.cpp steer_wheel)
+    public static final Option WHEEL_STEER = toggle("wheel-steer", "Steer by grabbing the wheel",
+            "In any vehicle (the Zoomer, every bike, car and desert vehicle, the glider, the sled), grip its wheel, "
+                    + "handlebars or bar where Jak's hands are (or just ahead of you) and turn your hands to steer: "
+                    + "as a wheel, tilted any way, or as handlebars (push one hand, pull the other). The stick still "
+                    + "steers too. A quick squeeze is still the grip's own button, squeezed again and held it holds "
+                    + "it, and while a hand holds on, its stick's click is that button (Jak 3's turbo).", true);
+    public static final Option WHEEL_TURN = number("wheel-turn", "Wheel turn",
+            "How far you turn the wheel for full steering. Handlebars and bars need a little over half of it.", 20,
+            180, 10, " degrees", 60);
     public static final Option DPAD = choice("dpad", "D-pad",
             "What makes a stick the d-pad (gun choice, warp gates): the left thumb resting on its rest makes the right "
                     + "stick the d-pad, or the left hand held by your head makes the left stick the d-pad. A controller "
@@ -438,6 +450,11 @@ public final class VrOptions {
             "%", 130));
     public static final Option HOLSTER_ON_FOOT = guns(toggle("holster-on-foot", "Holsters only on foot",
             "In a car, on the board or a turret, a grip at your hip or shoulder stays the game's own button.", true));
+    // 0.1.8 (LIST-0.1.8 item 5; a tester: "i miss being able to hold gun while drivng"; the owner: on to start)
+    public static final Option RIDE_GUN = guns(toggle("ride-gun", "Hold the gun while driving",
+            "In Jak II and 3's city bikes and cars (where the game lets Jak keep his gun), grip over your shoulder to "
+                    + "draw the gun and hold it in your hand while you drive; the trigger shoots. The grip at your "
+                    + "hip stays the vehicle's own button there.", true));
     public static final Option GUN_ANGLE = guns(number("gun-angle", "Gun angle",
             "The gun tilted up or down from the controller.", -45, 45, 5, " degrees", 0));
     // 0.1.3 the gun's crosshair (LIST-0.1.3 item 27; game/vr/crosshair.h, the in-game VR menu's same rows). 0.1.5
@@ -477,9 +494,9 @@ public final class VrOptions {
             "Pickups: a buzz for each orb, eco, cell and the like you collect. The whole world: also each step, jump,"
             + " landing, roll, punch and kick, each hit, and the world's shakes.",
             new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "2");
-    public static final Option[] VR_CONTROLS = {GAMEPAD_ONLY, TURN, SNAP, SMOOTH, MOVE, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
+    public static final Option[] VR_CONTROLS = {GAMEPAD_ONLY, TURN, SNAP, SMOOTH, MOVE, WHEEL_STEER, WHEEL_TURN, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
-            HOLSTER_ON_FOOT, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
+            HOLSTER_ON_FOOT, RIDE_GUN, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
             VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, EXTRA_VIBRATION, GUN_SWITCH_BUZZ};
 
     /** The launcher's tabs of options, in order. */

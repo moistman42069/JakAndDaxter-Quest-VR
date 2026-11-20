@@ -1,0 +1,66 @@
+# Jak 3, 0.1.8 (LIST-0.1.8 item 6, Steer by grabbing the wheel), run with JAKVR_TEST_CONTINUE=wasdoors-desert-turtle
+# JAKVR_STATE_TRACE=1: the desert buggy as jak3_buggy.sim starts in it. Driving (A: Cross, the throttle), both grips
+# squeezed with the hands where they rest (the wheel held), turned to the right as a wheel (the right down, the left
+# up), back, let go; then the right grip's quick squeeze on the wheel (R2), squeezed again and held (R2 held: the
+# turbo), and let go; both hands on it again, the right stick's click held (R2 held: the turbo with both hands on the
+# wheel, "... the right stick's click with that hand on the wheel: R2"), and the wheel tilted back as a car's turned
+# right (the right down and back, the left up and ahead). Expect "[vr-pad] the wheel ..." lines ("a wheel") and the
+# buggy turning in the pictures.
+# 0.1.8 (sim wh3, build 101): the continue seats Jak at about frame 4700, so the driving starts at 4900 (it began at
+# 4500, and the first grab and turn came before he sat).
+# Build 104 on: run with QUEST_SIM_ALIGN=10000 as well. The driving counts from the frame the continue seats him
+# (pc-vr.gc vr-test-continue!, "[vr] test: seated by the continue, the set-up done"), 60 frames after it.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+10060 shot w3-start
+10080 a 1
+10160 left_grip 1
+10160 right_grip 1
+10200 shot w3-held
+10220 rh_y -0.1
+10220 lh_y 0.1
+10280 shot w3-right-1
+10360 shot w3-right-2
+10380 rh_y 0
+10380 lh_y 0
+10440 shot w3-middle
+10460 left_grip 0
+10460 right_grip 0
+10520 right_grip 1
+10530 right_grip 0
+10540 right_grip 1
+10660 shot w3-turbo
+10720 right_grip 0
+10740 left_grip 1
+10740 right_grip 1
+10760 right_click 1
+10860 shot w3-click-turbo
+10880 right_click 0
+10900 rh_y -0.08
+10900 rh_z 0.08
+10900 lh_y 0.08
+10900 lh_z -0.08
+10960 shot w3-tilted
+10980 rh_y 0
+10980 rh_z 0
+10980 lh_y 0
+10980 lh_z 0
+10980 left_grip 0
+10980 right_grip 0
+11000 a 0
+11060 shot w3-end
+11100 quit 0

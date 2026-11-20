@@ -32,14 +32,15 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | --- | --- |
 | `JAKVR_TEST_CONTINUE=<continue point>` | Once Jak has been in play on foot for 2 seconds, the game starts again at that continue point (each game's level-info.gc, e.g. Jak 1 `firecanyon-start`, Jak II `ctysluma-start`, Jak 3 `wasdoors-desert-turtle`). |
 | `JAKVR_TEST_WARP=<actor>` | Jak 1: once Jak has been in play on foot for 3 seconds after any test continue, he is put a metre over that actor (its entity name, e.g. `sunken-elevator-2`, or its type's name for the first of that type), and the sim's `QUEST_SIM_ALIGN` frames count from then. `=list` logs each actor of the levels loaded (`[vr-test] actor <level> <name> <type> at x y z`, metres). |
-| `JAKVR_TEST_WARP=<type>` (Jak II) | 0.1.7: once Jak has been in play on foot, the blackout over and any test continue or task started, and 3 seconds more, he is put 2 m from the nearest process of that type (one waiting for its race first: `vehicle-racer` for the stadium's racer), and the sim's `QUEST_SIM_ALIGN` frames count from then (`[vr-test] warp: Jak put 2 m from ...`, or `no ... in play`). |
+| `JAKVR_TEST_WARP=<type>` (Jak II) | 0.1.7: once Jak has been in play on foot, the blackout over and any test continue or task started, and 3 seconds more, he is put 2 m from the nearest process of that type (one waiting for its race first: `vehicle-racer` for the stadium's racer), and the sim's `QUEST_SIM_ALIGN` frames count from then (`[vr-test] warp: Jak put 2 m from ...`, or `no ... in play`). 0.1.8 (LIST-0.1.8 item 14): `swingpole` puts him a metre over the nearest swing pole instead, so he takes it as he falls past (tests/jak2_pole.sim). |
+| `JAKVR_TEST_RIDE=1` | 0.1.8 (LIST-0.1.8 items 5 and 6), Jak II, with `JAKVR_TEST_WARP=<vehicle type>` (`bikea`, `cara`): for 3 seconds after the warp Jak is kept 2 m beside that vehicle each frame (a city vehicle drives off or sinks before Triangle reaches it), until he is on it (`[vr-test] ride: Jak is on it`, or `... did not get on in 3 s`). Once he stands there he is put on it as Triangle does (`[vr-test] ride: Jak beside it, standing: on it as Triangle puts him`; a script's Triangle came while he still fell from the warp). |
 | `JAKVR_TEST_WARP_OFFSET=dx,dy,dz` | Jak 1, with `JAKVR_TEST_WARP`: that many metres from the actor instead of a metre over it (the pipe game's buttons, which are not entities: `sunken-pipegame-1` with `7.5,1.3,1.25` for the right one). |
 | `JAKVR_TEST_WARP_APPROACH=1` | Jak 1, with `JAKVR_TEST_WARP_OFFSET`: first to the offset, then onto the actor once the levels there have loaded, as a player walking up to it (the elevator down to the underwater city asks for the city as it starts). |
 | `JAKVR_TEST_KILL_SCENE=1` | Jak 1: a scene's camera (pov-camera) dies a second into its scene, to see Jak let go (`[vr] the scene ... ended before it let Jak go`). |
 | `JAKVR_TEST_GUN=1` | Jak II and 3: Jak has the gun from the start (0.1.5: Jak II also Dark Jak, his meter full and his bombs). `JAKVR_TEST_GUN=all` (0.1.5, Jak 3): every gun, Light Jak's powers, and Dark Jak's and Light Jak's meters kept full while he is neither (build 76: a new game has Dark Jak already, and the first aid left his meter empty). |
 | `JAKVR_SKY_TRACE=1` | 0.1.5, PC: every 4 seconds each draw of the sky bucket (Jak 3's `sky`, Jak II's `sky-draw` since build 76): its points' depth (after the scaling to the eyes' near plane), depth test and writes, alpha test, and the near plane (`[vr-sky] frame N draw: ...`). |
 | `JAKVR_TEST_BOARD=1` | Jak II and 3: Jak has the JET-Board from the start. |
-| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`; Jak 1 since 0.1.7 with the game's clock, `(at 1055.57 s)`, to time a state). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). Jak 1 (0.1.6): while he may grab a ledge (falling, high enough), what the ledge search found each time it changes (`[vr] ledge search: N tris, N edges, N in reach; Jak at x y z`; 0.1.5's found no tri of a level, LIST-0.1.6 item 29). |
+| `JAKVR_STATE_TRACE=1` | Jak's state in the log as it changes (`[vr] state target-hit`; Jak 1 since 0.1.7 with the game's clock, `(at 1055.57 s)`, to time a state). Jak II and 3 with the crosshair on: what the gun's line hits as it changes (`[vr] crosshair: on "gun-dummy-a" (mask ...), enemy 1`; a type such as `instance-tie` for the level's pieces; `#f` for nothing within 40 m or the level's own ground). Jak 1 (0.1.6): while he may grab a ledge (falling, high enough), what the ledge search found each time it changes (`[vr] ledge search: N tris, N edges, N in reach; Jak at x y z`; 0.1.5's found no tri of a level, LIST-0.1.6 item 29). Jak 1 (0.1.8, LIST-0.1.8 item 15): each jump's rise as he lands, from his height on the ground to his highest (`[vr] test: the jump rose 2.95 m (to ..., landing at ...)`; Jak II and 3 too since build 116). |
 | `JAKVR_TEST_TURRETS=1` | Jak II: the sewer's first gun turret destroyed through the game's own instant death once it is made (its die state, LIST-0.1.1 item 22). Jak 3: 2 seconds into play, Spargus' wall turret (`wascity-turret-1`, with `JAKVR_TEST_CONTINUE=wascityb-gungame`) is sent the `'pickup` its Triangle prompt sends, so Jak gets in (`[vr] test: turret: Jak put in ...`). |
 | `JAKVR_TEST_COMBO=1` | Jak II, with `JAKVR_TEST_CONTINUE=gungame-start`: the gun course's yellow gun lesson opened and its manager told to start (`[vr] test: combo: ...`), for the punch-then-shoot combo. |
 | `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
@@ -52,7 +53,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_TEST_TETHER=1` | 0.1.6, Jak 1, with `JAKVR_TEST_WARP` onto one of Boggy Swamp's tether rocks: 3 seconds after the warp the rock takes a hit of Jak's yellow eco (`[vr] test: yellow eco to swamp-tetherrock-...`), so its scene plays and Jak is seen let go after it (pc-vr.gc vr-test-tether!). |
 | `JAKVR_PARTY_TEST=host` or `=join` | Multiplayer: host a game as soon as the game is up, or look for games and join the first of this build found. |
 | `JAKVR_PARTY_TEST_SAVE=copy` | With `=join`: once the host's Jak is in the game, play the host's progress (Play which save?). |
-| `JAKVR_BODY_TRACE=1` | How the posed body sits, twice a second; the merc models the eyes draw, once each; each frame Jak's bones came from the game, or were posed, with their last column off 0 0 0 1 (made affine). |
+| `JAKVR_BODY_TRACE=1` | How the posed body sits, twice a second; the merc models the eyes draw, once each; each frame Jak's bones came from the game, or were posed, with their last column off 0 0 0 1 (made affine). 0.1.8: a jump of his skeleton from his root that is not one toward the world's origin (those are set right and logged anyway) says how it lay to that line, what moved and how far his bones spread (`[vr-body] a jump of N m: ...`). |
 | `JAKVR_BODY_TRACE=2` | As 1, and each frame by its number: his body's big parts from the eyes (`frame N parts:`), his spine as the game sent it (each joint's size and how far from the one under it: a stretch of his body shows), the eyes, root, view's ease and lean, the neck and its base posed and as the game had them; as drawn, the head's shrink point in the left eye's camera; and as the frame is sent to be drawn, how far the neck base's bone and the camera moved after they were posed and placed. Jak 1 also: the head point as his skinning matrices are made (bones.gc), with the camera and neck base then. |
 | `JAKVR_BODY_TRACE=3` | As 1, and each frame each hand's fingers (`[vr-body] the right fingers`: each finger's curl, how far the world moved it, how many surfaces the hand is at), to see them steady. |
 | `JAKVR_CLOCK_TRACE=1` | Jak II and 3: the game's clocks every 60 of its frames (`clock:` lines), to see it keep time at half rate. |
@@ -65,11 +66,18 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_HIDE_TEST=<name>` | Every model whose name starts so left out of the eyes (which model is that?). |
 | `JAKVR_HIDE_JOINTS=14,64,...` | Those nodes shrunk out of the eyes (which joint is in the way?). |
 | `JAKVR_BUCKET_LOG=1` | In the left eye: each draw bucket starting and stopping, and the share of the picture the shadow pass darkens. |
+| `JAKVR_SHADOW_EYES=1` | 0.1.8 (LIST-0.1.8 item 9), PC: how much of each eye's picture the shadows darken, frame by frame (Jak 1's ShadowRenderer, Jak II and 3's Shadow2), compared between the eyes: a frame where they differ by more than 0.3% of the picture and a quarter of the larger, the first ten (`[vr] shadow in each eye: left 2.31%, right 0.40% of the picture (frame N)`), and every 600 frames with a shadow, the averages, how many frames differed and the most (`[vr] shadow in each eye, the last 600 frames with one: ...`). Build 118: the first six frames the eyes part by over 2% of the picture on the eyes' own count are pictured by the simulated headset, each with its line (`[vr] shadow in each eye apart: ... (frame N; the simulated headset's pictures apart-N, of the frame after)`, `apart-N-left.png` and `-right.png` in the run's folder; a real headset takes none). |
+| `JAKVR_SHADOW_ZPASS=1` | 0.1.8 (LIST-0.1.8 item 9): Jak II and 3's shadow volumes counted in the eyes as the flat game counts them (in front of what they fall on), not behind it, to compare (sim `sh2p`). |
+| `JAKVR_TEST_CREDITS=1` | 0.1.8 (LIST-0.1.8 item 11), Jak 1, with `JAKVR_TEST_CONTINUE=finalboss-fight`: once the sage at the final boss has waited 5 seconds with Jak in play, the end credits start as after the last scene (`[vr] test: credits`; sage-finalboss.gc, pc-vr-test-flags bit 65536), for tests/jak1_credits.sim. |
+| `JAKVR_TEST_AUDIO_LOSS=<from>,<for>` | 0.1.8 (LIST-0.1.8 items 2 and 3), PC: the sound device taken away that many seconds after the sound starts, for that many seconds (the simulated headset's `audio_loss` script line asks it at a frame instead): its asks for sound give silence and do not count, so the sound watch takes over (`[audio] the sound device has not asked for sound for 1 s ...`, the device opened again every 3 s, then `[audio] the sound device is playing again`); `[audio] test: the sound device taken away now`, `given back now`. With `old` in it (`=old` alone for the script line's, or `<from>,<for>,old`) the watch leaves the game's sound stopped too, as before 0.1.8, so every sound stream stops and a streamed animation waits on it until the stuck-stream guard ends it (989snd player.cpp and audio_loss_test.h, xr_sim.cpp). |
+| `JAKVR_TEST_UNSHOWN=<from>,<for>` | 0.1.8 (LIST-0.1.8 item 4), PC VR (the real OpenXR backend: SteamVR's null driver, as C:\JakQuest\sim\pcvr_null_jak.ps1 runs it): that many seconds after the headset first shows the game, it counts as not showing it for that many seconds (`[openxr] test: ...`), so the lines every 10 s (`[openxr] the headset has not shown the game, or not given it the controllers, for N s: ...`), the window's title (`[vr-view] the window's title says: ...`, then `is the game's again`) and the line when it shows the game again are seen. |
 | `JAKVR_REPROJECT=0` | What the game had already put on the screen for its own camera is drawn as it was, not taken to each eye's view (to compare). |
 | `JAKVR_TEST_CRASH=av`, `abort`, `stack`, `terminate` or `invalid` | 0.1.7 (LIST-0.1.7 item 13), PC: the game made to end that way at its 1500th frame (`stack`: a stack overflow on the display's thread, since the game's own code runs on stacks in its memory), so the `[crash]` record and the launcher's exit line can be seen. |
 | `JAKVR_CRASH_DUMP=<folder>` | The first access violation writes a dump there: crash.txt (the registers, the stack's words, rip and the game memory's base) and ee.bin (the game's memory from 512 KB on). A rip or stack word minus the base, inside the game's memory, is GOAL code: its function is found from the symbol table in ee.bin (Jak II and 3: s7 is r14, a symbol's name pointer at it + 0xff37). |
-| `QUEST_SIM_ALIGN=F` | Script frames from F on count from the frame the test's set-up was done. |
+| `QUEST_SIM_ALIGN=F` | Script frames from F on count from the frame the test's set-up was done. 0.1.8, Jak 3: also the frame a `JAKVR_TEST_CONTINUE` seats Jak in a vehicle (`[vr] test: seated by the continue, the set-up done`; the glider's, the sled's and the desert's continues seat him at a frame that varies). With no such mark the lines from F never come, and the run goes on until it is stopped (the batch scripts' watchdog). |
 | `QUEST_SIM_GRIP_TILT=D` | The grip pose turned D degrees up from the aim pose, as on the Quest's controllers. |
+| `head_yaw_rate`, `head_pitch_rate` (script lines) | 0.1.8: degrees a second the simulated head keeps turning or nodding, a frame's share each frame (`head_yaw` or `head_pitch` lines set where it is; a rate of 0 stops it), for a head never still, as a player's (tests/jak1_shadow_eyes.sim). |
+| `audio_loss <seconds>` (script line) | 0.1.8 (LIST-0.1.8 items 2 and 3): from that frame the sound device taken away for that many seconds (`[sim] the sound device taken away for N s`), as `JAKVR_TEST_AUDIO_LOSS` does (tests/jak1_cell_sound.sim, jak2_title_sound.sim). |
 | `QUEST_SIM_SPACE_WARP=0` | No motion pictures (Smoother frames off). |
 | `JAKVR_TEST_LATE=<from>-<to>` | Those display frames count as late for Dynamic resolution (the eyes step down, then back up when the frames are in time again). |
 | `JAKVR_FRAME_TRACE=<ms>` | 0.1.6, Jak 1: each game frame whose own work (vsync to vsync, less its waits for the renderer) took longer than that (`[vr-frame] game frame N: its work X ms (Y ms with its waits)`). |
@@ -379,6 +387,125 @@ C:\JakQuest\sim\batch30.sh (build 98: Jak II's GOAL, the pause menu's ring in fr
 - The Quest's runtime for ARM64 after the last gk change (C:\JakQuest\sim\android_native_check.sh, log
   android_native6.log): 42 files compiled, libmain.so linked, no error.
 
+## The checks added in 0.1.8
+
+Runs in C:\JakQuest\sim\s08 (scratch), builds 100 to 120 (LIST-0.1.8), from C:\JakQuest\sim\batch31a.sh to
+batch55.sh. The new sims: `jak1_wheel`, `jak2_wheel`, `jak3_wheel`, `jak3_ride_wheel`, `jak2_ride_gun`,
+`jak3_ride_gun`, `jak2_pause_soak`, `jak1_shadow_eyes`, `jak2_shadow_eyes`, `jak3_shadow_eyes`, `jak1_root_jumps`,
+`jak1_shadow_walk`, `jak2_shadow_walk`, `jak3_shadow_walk`, `jak1_credits`, `jak1_view_hold`, `jak2_pole`,
+`jak1_double_jump`, `jak2_double_jump`, `jak3_double_jump`, `jak1_cell_sound`, `jak2_title_sound` (each header says
+how it is run).
+
+- Steer by grabbing the wheel (item 6): `wh2b` (`jak2_wheel`, `JAKVR_TEST_CONTINUE=ctysluma-start
+  JAKVR_TEST_WARP=bikea JAKVR_TEST_RIDE=1 QUEST_SIM_ALIGN=10000`), the city bike's handlebars: 27 degrees gives 0.73,
+  full lock about 0.98, back to 0 at once; `wh2c` (`JAKVR_TEST_WARP=cara`), the city car's wheel: 27 degrees gives
+  0.43; `wh1` (`jak1_wheel`, `firecanyon-start`), the Zoomer: 27 degrees gives 0.65; `wh3b` (`jak3_wheel`,
+  `wasdoors-desert-turtle`), Jak 3's buggy: a quick squeeze gives R2, squeezed again and held R2 held, the right
+  stick's click with that hand on the wheel R2, 29 degrees 0.43, grips before he is seated ignored.
+- Hold the gun while driving (item 5): `rg2` to `rg2d` (`jak2_ride_gun`, as `wh2b` with `JAKVR_TEST_GUN=1`): the gun
+  drawn at the shoulder, fired and put away seated, Jak's (not Daxter's, build 103), carried by the right hand with
+  his on-foot hold (build 105); `gun2m` (`jak2_gun`) and `gun3m` (`jak3_gun`) on build 106 logged that hold, the same
+  in both games to 1 mm (`[vr-body] the gun's hold on foot kept (0.29 m from his hand, steady) ...`), which
+  `ride_gun_hold` has from build 107. `rg3b` (`jak3_ride_gun`, `ctyport-hijack-decoy`): the hijacked pickup's continue
+  left Jak standing at the port (a headset check, HEADSET_CHECKLIST), so Jak 3's runs use the glider (`hanga-start`).
+- Jak 3's test continue (builds 104 and 106): `[vr] test: seated by the continue, the set-up done` once a continue
+  seats him (QUEST_SIM_ALIGN's mark), and a pause menu a prelude left open in play is closed first (`[vr] test: the
+  pause menu closed, the continue waits for play`; `wh3c` and `rg3c` had stayed paused behind it).
+- The shadows in each eye (item 9): `sh1` (`jak1_shadow_eyes`, `village1-hut`, build 106): his shadow the same in both
+  eyes ahead, looking down, the head lowered and raised, turned aside and behind. `sh1b` (the same with
+  `JAKVR_SHADOW_EYES=1`, build 107, the head then turning, nodding and Jak walking): every 600 frames left 3.80% and
+  right 3.79% of the picture, then 5.22 and 5.22, 5.60 and 5.67, 4.98 and 5.04; no frame where the eyes differ.
+- A tester's Jak 1 log (item 10): `rjc` (`jak1_root_jumps`, `JAKVR_TEST_CONTINUE=citadel-start JAKVR_BODY_TRACE=1`,
+  build 106): five `the game's skeleton left his root` jumps of 3.6 to 8.7 m, each along the line to the world's
+  origin within a degree. `rjc2` (build 107, the same): each jump 0.9983 to 0.9998 of the way from the origin, under
+  0.01 m aside of the line, his root moving 0.00 to 0.24 m and his main joint the whole jump; some of the bones the
+  game sends stay at the origin itself, so build 107's test (all his bones within 3 m of his main joint) never held.
+  `rjc3` (`JAKVR_BODY_TRACE=2`, build 107): at each jump the spine as the game sent it (each joint's distance from the
+  one before: 0.86, 0.17, 0.26, 0.09, 0.08 m at frame 6535) the same as the frames round it, so his whole body moved
+  with his main joint; build 108 asks instead that his neck still sit where it sat on it. `rj3` (`village3-start`)
+  stayed at the title (the prelude's Start came early). `rjc4` (citadel) and `rj3b` (`village3-start`), build 109:
+  four jumps of 0.84 to 9.42 m and one of 3.07 m, each
+  `taken back out along that line`, his rise at about the same share of his height; no `left his root` hold after
+  them (the one at frame 3405 is the continue's own move across the world).
+- Hold the gun while driving, seated pictures (item 5, build 109): `rg2e` (Jak II's city bike) and `rg3c` (Jak 3's
+  glider, `hanga-start`): the gun in the right hand ("in hand 1"), the other hand on the handlebars or the bar,
+  fired and put away at the shoulder. Steering (item 6): `wh3c`, `rw3g3` (glider 0.64 at 27 degrees), `rw3s3` (sled
+  0.39), `rw3f3` (war factory's hellcat 0.38), each grab on "the game's handles seen".
+- The shadows in each eye, Jak II and 3 (item 9, build 109, `JAKVR_SHADOW_EYES=1`): `sh2` apart in 38 of 600 frames
+  (up to 20.6% against 8.1% of the picture), `sh3` in 32 and 10 of 600; the near plane cutting a shadow's volume in
+  one eye. Build 110 counts the eye passes from behind (depth fail); `batch40` (sh2z, sh3z with
+  `JAKVR_SHADOW_ZPASS=1` for the old count, and the walks `jak1_shadow_walk`, `jak2_shadow_walk`, `jak3_shadow_walk`
+  in several levels each on the new) checks it: the eyes apart in 9 frames of about 58,000 with a shadow on the new
+  count against 2,393 on the old (sh2z 0 against 39, sh3z 0 against 32 and 8; s1w-hut 1, his hands near one eye, the
+  other Jak 1 walks 0; s2w-city 0 against 642, s2w-ruins 0 against 782, s2w-fort 8 against 885); `batch40b` (the Jak 3
+  walks again, the first cut off) s3w-desert 2 against 234, s3w-spargus 0 against 360, s3w-haven 2 against 462.
+  `s2wn` (build 117, s2w-fort with pictures at frames 7380 to 7410): apart in 6 elsewhere (frame 6384), none there;
+  the display frame `[vr] shadow in each eye` names is not the script's (about 295 behind it, the frames before play
+  not counted), so build 118 has the test aid picture the frames itself. `batch51` (build 118, into s08/b51):
+  s2w-fort 18 frames apart in one block, pictured at 6888 and 7387 to 7391 (up to 38.7% against 25.6%), each Jak's
+  shoulder pads a few centimetres from the eyes hiding a different part of his shadow from each eye, the shadow the
+  same in both; s3w-haven 0 against 351; s3w-desert 1 frame after its last full block (16243, 4.9% against 7.0%; the
+  old count 123 in the blocks before), pictured: his arms a hand's length from the eyes, the shadow by his hand alike.
+- Jak 1 knocked back (item 12): `rjs` and `rjs2` (`snow_drift`, `snow-start`, build 109): after each knockback by the
+  lurkers his skeleton 1.7 to 2.3 m from his root for about two seconds, his arms out of the view in rjs2's pictures;
+  `rjs3` (build 111): `[vr-body] the game's skeleton N m from his root on the ground (frame F): kept by it`, and each
+  drop of his health logged (`[vr] Jak's health 3.0 to 2.0; the last hit by ...`, item 11).
+- Jak 1's end credits (item 11): `fbc` (`jak1_credits`, `JAKVR_TEST_CONTINUE=finalboss-fight JAKVR_TEST_CREDITS=1`,
+  build 110): the panel's alpha shows the game's black behind the credits in only 4 of 23 pictures (70 to 85% of the
+  panel opaque), the rest the mist alone or the text alone (80 to 89% see-through), the eyes drawing the boss's arena
+  and Jak's hands behind. `fbc2` (build 113): `[vr-view] the end credits begin: the eyes kept black behind them`, both
+  eyes black (mean 0.0) in every picture, the panel's text and mist as before.
+- The view held in a fight (item 13): `vh` (`jak1_view_hold`, `village1-hut`, `menu_unbound 1`, build 112): the
+  left stick's click held 2 s while running, `no view switch`, no Start; held at rest, third person, then first.
+- Off a swing pole (item 14): `p2` (`jak2_pole`, `ruins-start JAKVR_TEST_WARP=swingpole QUEST_SIM_ALIGN=10000`, builds
+  112 and 113): the pole, its flip up, his double jump and the pole again in third person, no first person between;
+  A late in the swing drops him off it, the view third person through the fall until he stands, then first person
+  once.
+- The jump at the headset's rate (item 15): `dj72`/`dj60` (`jak1_double_jump`, `training-start`, gkcfg and gkcfg-60,
+  build 113): his highest jump 3.20 m at 72 against 3.47 at sixty, a double jump at the top 5.37 against 5.92;
+  `dj72b`/`dj60b` (build 114, a frame-by-frame trace since taken out): the A-hold window's last frame at 28 ticks of
+  30 at 72, and the rest from the jump animation's offset (collide-shape.gc's fixed 60); `dj72c` (build 115, the
+  first fix) 3.38; `dj72f`/`dj60f` (build 116, both) 3.48/3.50 and 5.87 against 3.47/3.47 and 5.91; `jdj72`/`jdj60`
+  (`jak2_double_jump`, `ruins-start`) 3.50 and 5.82 against 3.48 and 5.84; `dj72g` (build 117, the trace gone, the
+  build to ship): 3.48 m, 3.48, a double jump at the top 5.87, as dj72f. `j3dj72`/`j3dj60` (`jak3_double_jump`,
+  `wascitya-start`, Jak 3 GOAL 119): 3.50, 3.50, 5.82 and 5.43 against 3.48, 3.48, 5.84 and 5.33.
+- The regressions items 1 to 6 reach (`batch31b`, builds 113 to 118): `ps2` (`jak2_pause_soak`, three minutes paused
+  in the pause menu: one `[vr-mem]` line, item 1), `pmp3` (`jak2_pause_mp`: the Multiplayer page's lines), `boat2`
+  (`jak1_intro_boat`: no "streamed animation" line; this copy's Jak 1 has no stream for the opening scene, `[FAKEISO]
+  failed to find SAISB STR`, so the game's own guard ends it after 4 s as ever), `hol3` (`jak2_holster`), `race3`
+  (`jak2_race_ride`), `board3` (`jak2_board`), `zoom3` (`jak1_zoomer_misty`), `buggy4` (`jak3_buggy`): all exit 0,
+  no errors, stalls or crashes. Every Jak II run's log had `[vr] the streamed animation title-disk-intro held at
+  37717 for 4 s`: item 2's guard ending the title's scene 4 s after Start, which the game holds there on purpose (its
+  skip frame pins the stream position); build 119 leaves a skip frame alone, and `pmp4` (`jak2_pause_mp`, build 119)
+  has no such line, one `[vr-mem]` line and the Multiplayer page.
+- Multiplayer (`mp2`: two Jak II games, host and guest, port mapping off): both exit 0, no errors, the guest found
+  and joined on this PC (`UDP works both ways`), the pause menu's Multiplayer page in a session; no line about the
+  router.
+- SteamVR's null driver (`null18`, C:\JakQuest\sim\pcvr_null_jak.ps1, Jak II, item 4): each session state named as it
+  came (`idle`, `ready`, `session begun`, `synchronized`, `visible`, `focused`, within a second); the game still
+  running at the end, steamvr.vrsettings put back as it was. `null19` (build 120, the same with
+  `JAKVR_TEST_UNSHOWN=20,25`): `[openxr] the headset has not shown the game, or not given it the controllers, for 10
+  s: session state focused ...; frames paced by the runtime: yes (waited 3.02 ms a frame over 582 frames); ... the
+  head tracked: yes; the controllers: ...`, again at 20 s, `[vr-view] the window's title says: the headset is not
+  showing the game (not drawn for 10 s): restart SteamVR if it stays so`, then `the headset shows the game and gives
+  it the controllers again, after 25 s` and `the window's title is the game's again`.
+- The Quest's runtime compiled for ARM64 (C:\JakQuest\sim\android_native_check.sh, the NDK 27.2): libmain.so
+  linked, 188 of 188 steps (`arm64`, with build 119's sound player); `arm64b` after build 120's two files
+  (xr_openxr.cpp, opengl.cpp): 5 of 5, linked.
+- The sound device taken away (items 2 and 3, build 119, `batch54`): `al2` (`jak2_title_sound`: the title's scene
+  playing, the device away 15 s from frame 1200): `[audio] the sound device has not asked for sound for 1 s ...` a
+  second in, the device opened again every 3 s (a new audio context the third time), `playing again after 14.0 s (4
+  time(s) opened again)`, no "streamed animation" line, and the scene went on meanwhile (the "presents" sign at frame
+  1260, the city at 1500). `al2o` (the same with `JAKVR_TEST_AUDIO_LOSS=old`, the sound stopping with the device as
+  before 0.1.8): `[vr] the streamed animation title-disk-intro held at 10076 for 4 s (its sound stream stopped): it
+  ends here`. Jak 1's power cell (`jak1_cell_sound`, `training-start JAKVR_TEST_WARP=fuel-cell QUEST_SIM_ALIGN=10000`;
+  the cell first waits about 10 s on another camera, the game's own `fuel-cell stall` lines, the same in every run):
+  `al1`/`al1o` (build 119, the device away from frame 10120, before the victory animation): al1's animation played
+  through without the device (6.9 s), al1o's never started its stream and the game's own guard ended it after 4 s,
+  no `[vr]` line; `al1b`/`al1ob` (build 120, from frame 10900, 4 and 5 s into the animation): al1b's played to its
+  end (7.8 s), Jak in play again; al1ob `[vr] the streamed animation fuel-cell-victory-7 held at 4544 for 4 s (its
+  sound stream stopped): it ends here`, Jak in play again (the tester's case: before 0.1.8 he stayed held).
+
 ## Without a game
 
 - The party server: `python -I tests/party_server_test.py tools/party_server.py 8139` (24 checks).
@@ -390,10 +517,20 @@ C:\JakQuest\sim\batch30.sh (build 98: Jak II's GOAL, the pause menu's ring in fr
 - The PC launcher's "build it again" after an update (pc/launcher PcSetup.newSources, 0.1.2) the same way:
   `tests/java/dev/jakquest/vr/GameCodeTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.GameCodeTest <an empty scratch
   folder>` (19 checks: the game code of 0.1.0, 0.1.1 and later marks against a release's game\data\game-code.txt).
-- The PC launcher's "Where the games are kept" (pc/launcher PcDataFolder, 0.1.3) the same way:
-  `tests/java/dev/jakquest/vr/DataFolderTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.DataFolderTest <an empty
-  scratch folder> [<an empty scratch folder on another drive>]` (32 checks with the second folder, 29 without: what is
-  refused, a rename on one drive, a copy to another drive and back, a stop, the old copy's removal, a missing folder).
+- The PC launcher's "Where your files are kept" (pc/launcher PcDataFolder; the games since 0.1.3, the texture packs,
+  the saves and options, and the logs since 0.1.8) the same way: `tests/java/dev/jakquest/vr/DataFolderTest.java`,
+  `java -cp <classes>;<out> dev.jakquest.vr.DataFolderTest <an empty scratch folder> [<an empty scratch folder on
+  another drive>]` (50 checks with the second folder, 45 without: what is refused, a rename on one drive, a copy to
+  another drive and back, a stop, the old copy's removal, a missing folder; since 0.1.8 each place's default and
+  folder, the packs refused in the games' folder and the saves in the logs', the saves moved and read again and back,
+  the downloads following the packs, a missing packs folder waited on, the logs' missing drive falling back to the
+  default place, a saves leftover finished and one naming home dropped, the Logs zip's summary line (the places kept
+  elsewhere, no path), the saves copied to another drive and back).
+  Run on 2026-11-19 with C:\JakQuest\sim\dft1 and a scratch folder on D:: all 50 ok; VrOptionsTest 25 ok. The launcher's own
+  pictures (`PcLauncher --render <tab> <png> 1180 2600`, JAKQUESTVR_HOME, _INSTALL and _LOGS in a scratch folder, the
+  packs' and then the saves' chosen folder missing): the Play tab's missing-packs card, set-ups waiting and Where your
+  files are kept with a row each; Texture packs' imports off with the note; VR Body waiting on the saves; the Logs
+  tab's Where things are listing every folder.
 - The launchers' VR options files (launcher/common VrOptions.java, 0.1.7) the same way:
   `tests/java/dev/jakquest/vr/VrOptionsTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.VrOptionsTest <an empty
   scratch folder>` (21 checks: a fresh file's starts, the crosshair Off under `crosshair-mark` and the new toggles; each
