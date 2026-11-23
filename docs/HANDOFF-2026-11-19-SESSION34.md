@@ -1,7 +1,44 @@
 # Handoff, 2026-11-19, Session 34
 
+**Out of date since 2026-11-22: 0.1.9's list was started and done (28 items). Read
+docs/HANDOFF-2026-11-23-SESSION35.md instead; what follows is kept as it was.**
+
 Read this first. This session picked up from docs/HANDOFF-2026-11-19-SESSION33.md (the 0.1.8 list done) and
 published 0.1.8 on the owner's word: "Yes, publish 0.1.8". **0.1.8 is the latest release.**
+
+**Next release: start from docs/LIST-0.1.9.md** (written 2026-11-20, not committed). It has a tester's first reports
+on 0.1.8, which the owner passed on: "we really shouldnt be having any rendering or gun issues at this point. please
+rectify everything and make this next release as good as possible." The owner said not to start yet ("not yet").
+Sixteen items, none started; five of the tester's 0.1.8 logs are read-only in C:\JakQuest\downloads\tester-logs-20261120:
+1. Jak II's tomb boss scene not starting; the tester is stuck in Mar's Tomb. The log has no line from 0.1.8's guard.
+   The lead is the multiplayer mod's rewrite of the scene's trigger in widow.gc: it asks for the nearest player
+   record that is Jak, not Jak himself. That came after Daxter's spider chase ended by a death near its end.
+2. A section of Jak II's city not loading. It failed on two launches and loaded on a later one, so it comes and goes.
+3. Jak 3's Peace Maker shot not starting at the gun.
+4. Every gun and mod aimed by the hand.
+5. Jak 3's vehicle turret seen as nothing in first person.
+6. Jak's hands off the bikes' handlebars.
+7. The city cars' hand holds a little off.
+8. Jak 3's Light Shield still not working for the tester. The owner thinks it may be the input, so fix it only if
+   there is a real fault. Their log shows the shield was never asked for: each time, Y was let go, which heals.
+   The tester later found it: Y and the grip are held while pressing the other power.
+9. See-through squares in the HUD.
+10. A rendering sweep in all three games.
+11. Jak II and 3's map showing a double image.
+12. Jak 3's Daxter maze minigame in Vin's room (power-game.gc): unseen in first person, and in third person the
+    player has to look down. Use the game's camera with the board turned to sit ahead.
+13. Jak 3: an effect missing in Daxter's second section in the robot factory (likely the continue
+    `factory-indax-2`).
+14. B for the hover height while gripping the wheel. B is the turbo there, so the conflict must be resolved.
+15. Push and pull the wheel to lean, like the stick forward and back. Kept apart from handlebar turning; its own
+    toggle, on to start. "Important" in Jak 3.
+16. Jak 3: Errol's boss floor 90% not drawn, its collision there. game-jak3-output-7 has 221
+    `kmalloc: !alloc mem in heap for #<process ...> (336 bytes)` lines at the boss level's birth and at each
+    restart, and nowhere else. These are likely the floor's drawn panels never made: find the type and why its heap
+    is short. Second lead: the panels' renderer switch by the camera's distance (`fac-drop-plat-nocollide`).
+
+The list also records the confirmations: Jak II's pole landing, the gun in the hover car, Jak 1's power cell, the
+shadows in all three games and the Zoomer's steering.
 
 Check first that nothing is still running: `tasklist | grep -iE "gk.exe|goalc|extractor"` and `ps -ef | grep -E
 "chain|batch|run_sim"`. Nothing was left running at the end of this session.
