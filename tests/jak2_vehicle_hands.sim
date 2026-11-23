@@ -1,0 +1,77 @@
+# Jak II: Jak's hands on a city vehicle's handlebars or wheel (LIST-0.1.9 items 6 and 7, as jak3_vehicle_hands.sim).
+# Run with JAKVR_TEST_CONTINUE=ctysluma-start JAKVR_TEST_WARP=bikea (or bikeb, bikec; cara, carb, carc) JAKVR_TEST_RIDE=1
+# QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: the boot of jak2_wheel.sim, Jak put on the nearest of that type (frame
+# 10000), then the same pictures: seated, held, from both sides, turned, let go.
+# 0.1.9 (sim s11 vh3b on build 129): the free view moves the eyes but does not turn them, so "held-above" showed only the
+# road; now the head looks 70 degrees down while the grips are held ("vh-held-down"): his hands on the bars, under the
+# eyes on Jak 3's bikes (the game's handles 37 cm under them, 3 cm ahead).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot vh-warp
+10200 shot vh-seated
+10210 view_free 1
+10210 view_x 0.9
+10210 view_y 0.1
+10210 view_yaw 90
+10240 shot vh-seated-side-a
+10250 view_x -0.9
+10250 view_yaw -90
+10280 shot vh-seated-side-b
+10290 view_free 0
+10290 view_x 0
+10290 view_y 0
+10290 view_yaw 0
+10300 left_grip 1
+10300 right_grip 1
+10360 shot vh-held
+10370 view_free 1
+10370 view_x 0.9
+10370 view_y 0.1
+10370 view_yaw 90
+10400 shot vh-held-side-a
+10410 view_x -0.9
+10410 view_yaw -90
+10440 shot vh-held-side-b
+10450 view_free 0
+10450 view_x 0
+10450 view_y 0
+10450 view_z 0
+10450 view_yaw 0
+10450 view_pitch 0
+10450 head_pitch -70
+10480 shot vh-held-down
+10490 head_pitch 0
+10500 a 1
+10520 rh_z -0.1
+10520 lh_z 0.1
+10580 shot vh-turn-bars
+10600 rh_z 0
+10600 lh_z 0
+10620 rh_y -0.1
+10620 lh_y 0.1
+10680 shot vh-turn-wheel
+10700 rh_y 0
+10700 lh_y 0
+10720 a 0
+10740 left_grip 0
+10740 right_grip 0
+10800 shot vh-let-go
+10900 quit 0

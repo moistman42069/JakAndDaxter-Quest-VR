@@ -851,7 +851,7 @@ public final class PcLauncher {
         }
         playFailure = null;
         if (!paths.gk().isFile()) {
-            playFailure = "The release's game\\gk.exe is missing: unzip the release again.";
+            playFailure = PcSetup.missingProgram("gk.exe");  // 0.1.9 (LIST-0.1.9 item 17)
             redraw();
             return;
         }
@@ -895,7 +895,13 @@ public final class PcLauncher {
                 appendExit(output, exit);
                 SwingUtilities.invokeLater(() -> {
                     this.game = null;
-                    if (exit != 0) {
+                    if (exit == 0xC0000135) {
+                        // 0.1.9 (LIST-0.1.9 item 17): STATUS_DLL_NOT_FOUND, one of the game folder's DLLs gone (quarantined too)
+                        playFailure = "The game could not start: one of the release's files in its game folder is "
+                            + "missing. Windows Security may have removed it by mistake: open Windows Security, Virus & "
+                            + "threat protection, Protection history, and restore what it took from this folder. If "
+                            + "nothing is there, unzip the release again.";
+                    } else if (exit != 0) {
                         playFailure = "The game closed with an error (" + exit + "). Gather the logs on the Logs tab and "
                             + "send them with what you were doing.";
                     }

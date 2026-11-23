@@ -284,6 +284,13 @@ public final class VrOptions {
     public static final Option ECO_SPARKS = toggle("eco-sparks-first-person", "Eco sparks in first person",
             "The sparks eco throws off Jak's body, seen from his eyes too. Off: left out while you see through his eyes "
                     + "(they burst right at your eyes); the eco still works and sounds the same.", true);
+    // 0.1.9 (LIST-0.1.9 item 20; the owner: "making the fishing minigame work in first person vr ... motion controls,
+    // proper implementation"): Jak 1's fishing game from his eyes, the net in your hand (game/vr/vr_options.h
+    // fishing_first_person, goal_src/jak1/levels/jungle/fisher.gc vr-fish-net!); on to start
+    public static final Option FISHING = toggle("fishing-first-person", "Fishing game in first person",
+            "Jak 1's fishing game on the river seen from Jak's eyes, the net in your hand: it goes where your hand "
+                    + "points, the other hand's grip takes it in that hand, and a fish in the net buzzes. Off: the "
+                    + "game's camera, the net following your raised hand side to side.", true);
     // 0.1.3 (the owner: "make that the new default"): on to start, under a new key, so a file an older release wrote
     // (where it was off to start) starts on too
     public static final Option VEHICLES = toggle("first-person-vehicles-on", "First person in vehicles",
@@ -378,7 +385,7 @@ public final class VrOptions {
     public static final Option HUD_FOLLOWS = toggle("hud-follows-head", "HUD follows your head",
             "On, the HUD moves with your head. Off, it stays put ahead of you, and moves only when you look well away.",
             true);
-    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, POLE, ECO_SPARKS, VEHICLES, FP_ZOOMER, FP_FLUT, FP_BOARD,
+    public static final Option[] VR_BODY = {VIEW, CUTSCENES, ADAPTIVE, TALKS, POLE, ECO_SPARKS, FISHING, VEHICLES, FP_ZOOMER, FP_FLUT, FP_BOARD,
             FP_CARS, FP_BIKES, FP_TITAN, FP_LEAPERS, FP_DESERT, FP_OTHER, VEHICLE_HEIGHT, VEHICLE_FORWARD,
             VEHICLE_TILT, STEADY_RIDE, SEATED, VIEW_HEIGHT, WORLD_SCALE, THIRD_SCALE, BODY,
             BODY_SHOWN, HIDE_ARMS_NEAR_EYES, FADE_BODY, KEEP_UPRIGHT, FINGERS, PREDICT, HANDS_ON_WORLD, CROUCH, CROUCH_DROP, ARM_LENGTH, BODY_HEIGHT, BODY_FORWARD, HUD_SIZE,
@@ -407,6 +414,16 @@ public final class VrOptions {
     public static final Option WHEEL_TURN = number("wheel-turn", "Wheel turn",
             "How far you turn the wheel for full steering. Handlebars and bars need a little over half of it.", 20,
             180, 10, " degrees", 60);
+    // 0.1.9 (LIST-0.1.9 item 14; a tester: B for the hover height while gripping; game/vr/vr_options.h wheel_b_height)
+    public static final Option WHEEL_B_HEIGHT = guns(toggle("wheel-b-height", "B for height while holding the wheel",
+            "Hover cars and bikes (Jak II and 3): while your right hand holds the wheel, B changes height and the "
+                    + "right stick's click is the turbo. Off: B the turbo and the click the height, as before. A quick "
+                    + "squeeze on the wheel changes height either way.", true));
+    // 0.1.9 (LIST-0.1.9 item 15; a tester: push the wheel forward to lean as the stick does; vr_options.h wheel_lean)
+    public static final Option WHEEL_LEAN = toggle("wheel-lean", "Lean by pushing the wheel",
+            "Holding the wheel or handlebars, push them away from you to lean forward and pull them back to lean "
+                    + "back, as the left stick's forward and back do (in the air, Jak 3's desert vehicles tip their "
+                    + "nose). Turning never leans. The stick still works too.", true);
     public static final Option DPAD = choice("dpad", "D-pad",
             "What makes a stick the d-pad (gun choice, warp gates): the left thumb resting on its rest makes the right "
                     + "stick the d-pad, or the left hand held by your head makes the left stick the d-pad. A controller "
@@ -429,9 +446,9 @@ public final class VrOptions {
             true);
     // 0.1.7 (LIST-0.1.7 item 9; a tester: "is there a way to implement just the gamepad"): off to start
     public static final Option GAMEPAD_ONLY = toggle("gamepad-only", "Gamepad only (no VR controllers)",
-            "Play with a gamepad alone: the VR controllers are left out of the game (their buttons, sticks, gestures "
-                    + "and hands); the headset still turns the view. The in-game VR menu takes both, from the game's "
-                    + "pause menu (VR Options).", false);
+            "Play with a gamepad alone: while a gamepad is connected, the VR controllers are left out of the game "
+                    + "(their buttons, sticks, gestures and hands); the headset still turns the view. With no gamepad "
+                    + "connected the VR controllers play (0.1.9). The in-game VR menu takes both.", false);
     public static final Option STICK_CLICK_MENU = toggle("stick-click-menu", "Stick click as menu button",
             "When SteamVR keeps the left menu button (Touch controllers there), the left stick's click is the menu "
                     + "button: Start, held a second the view or the VR menu. Off: it stays L3.", true);
@@ -494,7 +511,7 @@ public final class VrOptions {
             "Pickups: a buzz for each orb, eco, cell and the like you collect. The whole world: also each step, jump,"
             + " landing, roll, punch and kick, each hit, and the world's shakes.",
             new String[] {"Off", "Pickups", "The whole world"}, new String[] {"0", "1", "2"}, "2");
-    public static final Option[] VR_CONTROLS = {GAMEPAD_ONLY, TURN, SNAP, SMOOTH, MOVE, WHEEL_STEER, WHEEL_TURN, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
+    public static final Option[] VR_CONTROLS = {GAMEPAD_ONLY, TURN, SNAP, SMOOTH, MOVE, WHEEL_STEER, WHEEL_TURN, WHEEL_B_HEIGHT, WHEEL_LEAN, DPAD, DPAD_REACH, DPAD_BUZZ, MENU_HAND,
             STICK_CLICK_MENU, MELEE, MELEE_GRIP, MELEE_SPEED, SPREAD_SPIN_KICK, HAND_AIM, TWO_HAND, HOLSTER, HOLSTER_SIZE,
             HOLSTER_ON_FOOT, RIDE_GUN, GUN_ANGLE, CROSSHAIR, CROSSHAIR_SIZE, CROSSHAIR_COLOR, CROSSHAIR_OPACITY, CROSSHAIR_ENEMY,
             VIBRATION, VIBRATION_STRENGTH, WORLD_VIBRATION, EXTRA_VIBRATION, GUN_SWITCH_BUZZ};

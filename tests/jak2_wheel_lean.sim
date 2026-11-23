@@ -1,0 +1,67 @@
+# Jak II, 0.1.9 (LIST-0.1.9 items 14 and 15: B for height while holding the wheel, Lean by pushing the wheel; a
+# tester: "B would be more convenient", "pushing forward while gripping steering do forward joystick's action of
+# leaning"). Run as jak2_wheel.sim (JAKVR_TEST_CONTINUE=ctysluma-start JAKVR_TEST_WARP=bikea JAKVR_TEST_RIDE=1
+# QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1): on a city bike, both grips squeezed on the handlebars, both hands pushed
+# 12 cm ahead and held, back, pulled 12 cm back and held, back; then turned as handlebars (the right ahead, the left
+# back: a turn, no lean); then B, and the right stick's click. Expect "[vr-pad] the wheel pushed 12 cm: the left stick
+# forward", "... pulled 12 cm: the left stick back", none while turning, "[vr-pad] B with the right hand on a hover
+# vehicle's wheel: R2 (the height)" and "the right stick's click with that hand on the wheel: Circle (the turbo; B is
+# the height)".
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot wl-start
+10200 shot wl-seated
+10260 a 1
+10300 left_grip 1
+10300 right_grip 1
+10360 shot wl-held
+10380 rh_z -0.12
+10380 lh_z -0.12
+10440 shot wl-pushed-1
+10520 shot wl-pushed-2
+10540 rh_z 0
+10540 lh_z 0
+10600 shot wl-middle
+10620 rh_z 0.12
+10620 lh_z 0.12
+10680 shot wl-pulled-1
+10760 shot wl-pulled-2
+10780 rh_z 0
+10780 lh_z 0
+10840 shot wl-middle-2
+10860 rh_z -0.1
+10860 lh_z 0.1
+10920 shot wl-turn-1
+11000 shot wl-turn-2
+11020 rh_z 0
+11020 lh_z 0
+11080 shot wl-middle-3
+11100 b 1
+11110 b 0
+11160 shot wl-b
+11200 right_click 1
+11210 right_click 0
+11260 shot wl-click
+11300 left_grip 0
+11300 right_grip 0
+11300 a 0
+11360 shot wl-end
+11400 quit 0

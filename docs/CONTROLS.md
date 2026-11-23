@@ -86,8 +86,20 @@ go and it comes back to the middle. The stick steers as before, and the two add 
 start) is how far you turn it for full steering; handlebars and the glider's bar need a little over half of that.
 Jak's hands are drawn on the handles while you hold them. While a grip holds the wheel it is not its button: a quick
 squeeze and let go is still the button (R2, L2), squeezed again and held it holds it, and while a hand holds the wheel
-its stick's click is that button (Jak II and 3: the right click R2, the car's height or Jak 3's turbo while held; the
-left click L2, Jak 3's camera view). A grip still squeezed as you get off is nothing until you let it go.
+its stick's click is that button (Jak II and 3: the right click R2, the car's height or Jak 3's turbo while held,
+the turbo in the hover cars and bikes with B for height below; the left click L2, Jak 3's camera view). A grip still
+squeezed as you get off is nothing until you let it go.
+
+**B for height while holding the wheel** (on to start, since 0.1.9; VR menu and both launchers; Jak II and 3's hover
+cars and bikes): while your right hand holds the wheel, **B** is the height (the game's R2) and the right stick's click
+is the turbo (Circle), the button B is otherwise. A quick squeeze of the right grip on the wheel is still the height.
+Off: B is the turbo and the click the height, as in 0.1.8.
+
+**Lean by pushing the wheel** (on to start, since 0.1.9; VR menu and both launchers): with the wheel held, push it away
+from you to lean forward and pull it back to lean back, as the left stick forward and back (the lean in the air on
+Jak 3's desert vehicles and jumps, and whatever forward and back do in each vehicle). It needs both hands moving
+together, or one hand on a wheel; turning moves the hands opposite ways and never leans, and on handlebars one hand's
+push is its turn. It adds to the stick.
 
 **Hold the gun while driving** (on to start, since 0.1.8; Jak II and 3, once he has a gun): in the vehicles that let
 Jak keep his gun (the city's bikes and cars, Jak 3's hijacked pickup too), reach over your right shoulder and squeeze
@@ -112,6 +124,28 @@ jump off until his feet are on the ground (**Third person after a pole until you
 ledge, a death or a scene end it too, and so do 6 seconds in the air), so your aim does not jump in the air; off, the view goes back in his eyes as he lets go. A painful landing from a long fall (over 30 m: a health pip
 lost, and no control until he is up again) is seen from the game's camera as well (0.1.7), so you see him land and
 get up, then back in his eyes.
+
+**Gun turrets aimed by the hand** (since 0.1.9, with **Aim with your hand** on): Jak II's drill platform turrets, and
+Jak 3's Spargus wall turret, the forest's turrets, the Scorpion's gun and the pickup's gun in the tower mission (its
+reticle goes where your hand points on the game's view). The turret turns to where your right hand points, at no more
+than its own speed, and the right trigger fires. On a controller that tells when your first finger rests on the trigger (Touch,
+Index), it aims by the hand only while that finger is on the trigger; lift it off and the stick turns the turret as
+before. The stick works whenever it is pushed. The gun's lean of the VR menu (**Gun angle**) tilts the aim as it does
+for the guns. The log says `[vr-gun] a gun turret: it turns to where the right hand points`.
+
+**The fisherman's game** (Jak 1, since 0.1.9). With **Fishing game in first person** on (to start; the VR menu and both
+launchers, Jak 1) and the view in first person, you play it from Jak's eyes on the bridge, the river turned ahead of
+you, with the net in your right hand: its pole goes where the controller points, long enough to reach across the
+river. Point it down to dip the basket where the fish come; whatever the basket is over is caught, as the game's own
+net catches. A catch buzzes the net's hand (a fish lightly, the big one harder, an eel hardest), and so does the
+basket going into the water. Squeeze the other grip to take the net in that hand. While you fish the grips and quick
+swings of your hands are not punches or kicks. The log says `[vr-pad] the fishing game from Jak's eyes: the net in the
+right hand`.
+
+Off, or in third person: the game's camera shows it, and the net goes where your raised hand is, side to side (the
+hand held higher, the right to start; 35 cm either way of where you stand is the river's edges), no faster than the
+stick moves it. The stick still works: while it is pushed it moves the net, and it stays where the stick left it until
+your hand moves again (5 cm).
 
 **Eco sparks in first person** (on to start, since 0.1.7): while Jak holds eco, the game throws sparks off his body,
 his head too, so in his eyes they burst right at yours (Jak II's and 3's Dark and Light Jak the same). Off, they are
@@ -188,7 +222,7 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Left thumb on its rest, right stick | D-pad | The guns: up, down, left, right pick each of his four. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (Jak II multiplayer: the player list; alone the game does nothing with it), the right L3 (multiplayer: the HUD and names while held). |
 | Menu button | Start | Pause; held, first and third person. |
-| Riding a car or bike | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the controls steer (the right stick click is then the height). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
+| Riding a car or bike | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the controls steer; with your right hand on them B is the height and the right stick click the turbo (B for height while holding the wheel; off, the click is the height). Pushed away or pulled back, the wheel leans (Lean by pushing the wheel). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
 | On the JET-Board | | A jumps, X, B and the left trigger as the game's board moves; the right grip or the right stick click takes him off. |
 | In the Titan suit | | The game's own buttons on the same controller buttons (X punches). |
 
@@ -205,12 +239,12 @@ With the default options (Fists on the right grip on, the d-pad on the left thum
 | Right trigger | R1 | Draw the gun and fire. |
 | Right grip | (fists), R2 | Held: the fists. A quick squeeze and let go: R2, the JET-Board out and away. |
 | Right stick click | R2 | The JET-Board out and away; as Light Jak, back to Jak. |
-| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Light Jak (since 0.1.6, once the game has given him Light Jak; the game's "Hold L2 then Press Triangle"): hold the left grip and press Y. That is L2 held (no fist, a light buzz): Jak stops for his power. Then let Y go: Triangle, he heals. Or slide the thumb from Y to X: Square, time slows. Or press A: Cross, the wings. Or press B and keep it held: Circle, the shield, up while B stays held (the game's own rule: up 3 s by itself, then only while Circle is held; only once the story has given it, and it takes light eco; the log says why when the game refuses it). Or push the right stick: up heals, down the wings, left slows time, right the shield (up while the stick stays right, the view still meanwhile). Let the grip go before choosing: L2 alone, Dark Jak, as on the game's pad. As Dark Jak, Y with the grip held is Y (his invisibility), not Light Jak. The 0.1.5 way works too: squeezed again at once and held, L2 held, then Y, A, X or B or the right stick. |
+| Left grip | (left fist), L2 | Held: the left fist. A quick squeeze and let go: L2, Dark Jak. Light Jak (since 0.1.6, once the game has given him Light Jak; the game's "Hold L2 then Press Triangle"): hold the left grip and press Y. That is L2 held (no fist, a light buzz): Jak stops for his power. Then let Y go: Triangle, he heals. Or, with the grip still held and before Y is let go (Y let go alone is the heal), slide the thumb from Y to X: Square, time slows. Or press A: Cross, the wings. Or press B and keep it held: Circle, the shield, up while B stays held (the game's own rule: up 3 s by itself, then only while Circle is held; only once the story has given it, and it takes light eco; the log says why when the game refuses it). Or push the right stick: up heals, down the wings, left slows time, right the shield (up while the stick stays right, the view still meanwhile). Let the grip go before choosing: L2 alone, Dark Jak, as on the game's pad. As Dark Jak, Y with the grip held is Y (his invisibility), not Light Jak. The 0.1.5 way works too: squeezed again at once and held, L2 held, then Y, A, X or B or the right stick. |
 | Left stick click | L2 | As the left grip: a click and let go for Dark Jak; held, Light Jak's powers with Y, A, X or B or the right stick. |
 | Left thumb on its rest, right stick | D-pad | The guns: each direction picks a color, and the same direction again the next gun of that color. |
 | Left hand by your head, a stick click | Select, L3 | The left click Select (a pause without the menu), the right L3. |
 | Menu button | Start | Pause; held, first and third person. |
-| Riding a city car | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the wheel steer (the right stick click is then the height). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
+| Riding a city car | | A speeds up, X brakes and backs up, the left trigger hops, B the turbo, the right grip goes up or down a height, Y gets out. Gripped, the handlebars or the wheel steer; with your right hand on them B is the height and the right stick click the turbo (B for height while holding the wheel; off, the click is the height). Pushed away or pulled back, the wheel leans (Lean by pushing the wheel). With the gun, it is drawn over the right shoulder (Hold the gun while driving). |
 | Riding a desert vehicle | | A speeds up, X brakes and backs up, the left trigger jumps, the right trigger fires its guns, the right grip the turbo, the left grip held with the right stick looks around, the right stick click its other switch, Y gets out. Gripped, the wheel steers; the right stick click is then the turbo and the left the camera view. The glider, the catacombs' sled and the war factory's hellcat steer by their bar or wheel the same. |
 | On a leaper lizard | | A jumps; the other buttons as the game's own. |
 | On the JET-Board | | A jumps. B held grinds a rail (the game's Square) and X zaps (its Circle): swapped from Jak II's board since 0.1.6, so the left thumb stays on the stick. The triggers as the game's board moves; the right grip or the right stick click takes him off. |
@@ -238,8 +272,10 @@ on the trigger when the trigger is pressed and the thumb resting on the controll
 ## Gamepad only
 
 **Gamepad only (no VR controllers)** (since 0.1.7; the VR menu's Controls and both launchers' VR options, off to
-start): play with a gamepad alone, its buttons and sticks as the flat game's. The VR controllers are left out of the
-game: their buttons, sticks, gestures and hands (no hand aim, no laser). The headset still turns the view, and in
+start): play with a gamepad alone, its buttons and sticks as the flat game's. While a gamepad is connected, the VR
+controllers are left out of the game: their buttons, sticks, gestures and hands (no hand aim, no laser). Since 0.1.9,
+with no gamepad connected the VR controllers play as usual (so the option left on never locks you out), and the log
+says `[vr-pad] Gamepad only: no gamepad connected now, so the VR controllers play`. The headset still turns the view, and in
 first person the gamepad's right stick turns you as **Turning** says (snap or smooth). The game's rumble goes to the
 gamepad alone. The VR menu takes both: the controllers, and the gamepad's left stick or d-pad, Cross to choose, Circle
 or Triangle to go back. With the controllers left out, open it from the game's pause menu (VR Options). The log says

@@ -1,0 +1,45 @@
+# Jak 1: the fisherman's game from Jak's eyes, the net in the hand (LIST-0.1.9 item 20; the owner: "making the fishing
+# minigame work in first person vr ... motion controls, proper implementation"). Run with JAKVR_TEST_CONTINUE=jungle-start
+# JAKVR_TEST_WARP=fisher JAKVR_TEST_RIDE=1 QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1 (as jak1_fishing.sim) and Fishing
+# game in first person on (it starts on): the game starts 3 seconds after the warp, the view in his eyes turned to the
+# river ("[vr-view] the fishing game from Jak's eyes"), the net in the right hand ("[vr-pad] ... from Jak's eyes",
+# "[vr-body] the fishing net carried"). The hand then points down at the water ahead, to the left, to the right, far
+# left with the hand out; the head leans (the net stays); the left grip takes the net in the left hand, the right grip
+# back. "[vr] fishing: the net across the river at ..." once a second says where the basket is. Each step about a
+# second and a half, all inside the game's first 15 s (missed fish lose it some 17 s in, sim s14 fe); the grips and the
+# hands' sweeps make no fists or kicks while fishing.
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot fe-warp
+10400 shot fe-game
+10410 head_pitch -35
+10410 hand_pitch -40
+10480 shot fe-down
+10490 hand_yaw 40
+10560 shot fe-left
+10570 hand_yaw -40
+10640 shot fe-right
+10650 hand_yaw 65
+10650 rh_x -0.25
+10720 shot fe-far-left
+10730 hand_yaw 0
+10730 rh_x 0
+10730 head_x 0.12
+10800 shot fe-lean
+10810 head_x 0
+10810 left_grip 1
+10820 left_grip 0
+10820 lh_y 0.15
+10900 shot fe-left-hand
+10910 right_grip 1
+10920 right_grip 0
+10920 lh_y 0
+11000 shot fe-back-right
+11400 shot fe-later
+11500 quit 0

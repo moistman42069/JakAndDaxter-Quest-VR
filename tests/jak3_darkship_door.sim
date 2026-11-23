@@ -1,0 +1,52 @@
+# Jak 3: the Dark Maker ship's door that waits for a squad of troopers (LIST-0.1.9 item 27; a player: "a squad of
+# enemies that must be killed in order for a door to open seemingly don't spawn"). Run with JAKVR_TEST_TASK=64
+# (precursor-tour) JAKVR_TEST_WARP=precur-door-b QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: a new game into play (as
+# jak3_vehicle_hands.sim), the task's continue, then Jak put 2 m from the nearest of the ship's doors (frame 10000).
+# Jak is held there until every level the game wants is up (5 s at most; build 127c's warp came before precurb, the
+# floor there, and he fell). From then pc-vr.gc vr-test-watch! logs Jak's place and every actor within 40 m every
+# 2 seconds for 30 s ("[vr-test] watch:", each with its state, or none-born or no-state, and its perm bits): the
+# door's troopers (dp-bipedal-123 to 126, 16 to 31 m off, dormant-aware ambushers) must wake and come; on build 127c
+# they stood in process-drawable-art-error (born before precurb, which holds their nav mesh). Pictures as he looks
+# round.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3100 a 1
+3106 a 0
+3300 a 1
+3306 a 0
+3500 a 1
+3506 a 0
+3700 a 1
+3706 a 0
+3900 a 1
+3906 a 0
+4100 a 1
+4106 a 0
+4300 a 1
+4306 a 0
+4500 a 1
+4506 a 0
+10000 shot ds-warp
+10300 shot ds-wait-1
+10320 head_yaw 90
+10360 shot ds-left
+10380 head_yaw -90
+10420 shot ds-right
+10440 head_yaw 0
+10800 shot ds-wait-2
+11400 shot ds-wait-3
+12000 shot ds-wait-4
+12600 shot ds-wait-5
+12700 quit 0

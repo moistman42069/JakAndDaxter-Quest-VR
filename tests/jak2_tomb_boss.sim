@@ -1,0 +1,42 @@
+# Jak II, 0.1.9 (LIST-0.1.9 item 1, a tester: "when i caught back up with daxter at the boss fight area of mars tomb
+# cutscene did not happen, so i am just stuck in mar's tomb"). Run with JAKVR_TEST_TASK=51 (tomb-boss) and
+# JAKVR_STATE_TRACE=1, the multiplayer mod on (gkcfg) and off (gkcfg-mpoff): a new game as jak2_race_ride.sim starts
+# one, vr-test-task! plays the boss's task from its continue (its door open, the widow waiting), then Jak walks
+# toward her; the widow's scene (tomb-boss-intro) should start within 92 m of her, and the fight after it. 0.1.9
+# (build 122, sim tb2): the scene started at once (53.6 m), then the boss checkpoint's auto-save failed (a new game
+# with no save slot: "Error while saving") and its page came up; A (the confirm button, 11100) closes it for the fight
+# (Start does not: the page takes only confirm, progress.gc menu-error-auto-saving-option).
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+8000 shot tb-arrive
+8400 left_y 1
+9000 shot tb-walk-1
+9600 shot tb-walk-2
+10200 left_y 0
+10200 shot tb-stop
+11000 shot tb-wait-1
+11100 a 1
+11106 a 0
+11300 shot tb-fight-1
+12500 shot tb-wait-2
+14000 shot tb-wait-3
+15500 shot tb-end
+15600 quit 0

@@ -1,0 +1,83 @@
+# Jak 3: Daxter's second section in the war factory (LIST-0.1.9 item 13; a tester: "i think there is a effect missing at
+# crimson bot factory jak3 daxter section 2nd time you play as daxter in robot facility"). Run with
+# JAKVR_TEST_CONTINUE=factory-indax-2 JAKVR_TEST_WARP=generic-spot-shadow-effect QUEST_SIM_ALIGN=10000
+# JAKVR_SHADOW_EYES=1 JAKVR_STATE_TRACE=1, then again with JAKVR_SHADOW_ZPASS=1 (the shadows counted as the flat game
+# counts them): a new game into play (as jak3_shadow_walk.sim), the section's continue, Daxter put 2 m from the nearest
+# zapper's red glow (fac-zapper's hilite, a spot shadow lightening the floor along its beam) at frame 10000. Then a
+# picture each way round (the head turned 0, 90, 180 and 270 degrees) four times over the zapper's on and off (about
+# 1.85 s each), and looking down. Expect the beam and its red glow on the floor in both eyes, the same in both runs.
+# A (Cross) every 200 frames from 3100 to 4500 closes the new game's save notice (it hid the view in sim pg).
+# 0.1.9 (sim s09 fd): the continue starts Daxter hanging from a ledge; the warp takes him from there (build 126) and A
+# at 10002 lets him drop (standing, a jump).
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3100 a 1
+3106 a 0
+3300 a 1
+3306 a 0
+3500 a 1
+3506 a 0
+3700 a 1
+3706 a 0
+3900 a 1
+3906 a 0
+4100 a 1
+4106 a 0
+4300 a 1
+4306 a 0
+4500 a 1
+4506 a 0
+9000 shot fd-start
+10000 head_yaw 0
+10002 a 1
+10008 a 0
+10030 shot fd00-yaw0
+10040 head_yaw 90
+10070 shot fd01-yaw90
+10080 head_yaw 180
+10110 shot fd02-yaw180
+10120 head_yaw -90
+10150 shot fd03-yaw-90
+10160 head_yaw 0
+10190 shot fd04-yaw0
+10200 head_yaw 90
+10230 shot fd05-yaw90
+10240 head_yaw 180
+10270 shot fd06-yaw180
+10280 head_yaw -90
+10310 shot fd07-yaw-90
+10320 head_yaw 0
+10350 shot fd08-yaw0
+10360 head_yaw 90
+10390 shot fd09-yaw90
+10400 head_yaw 180
+10430 shot fd10-yaw180
+10440 head_yaw -90
+10470 shot fd11-yaw-90
+10480 head_yaw 0
+10510 shot fd12-yaw0
+10520 head_yaw 90
+10550 shot fd13-yaw90
+10560 head_yaw 180
+10590 shot fd14-yaw180
+10600 head_yaw -90
+10630 shot fd15-yaw-90
+10700 head_yaw 0
+10700 head_pitch -35
+10740 shot fd-down-1
+10900 shot fd-down-2
+11060 shot fd-down-3
+11100 head_pitch 0
+11200 quit 0

@@ -1,0 +1,52 @@
+# Jak 3: a gun turret aimed by the right hand (LIST-0.1.9 item 23; the owner: "add proper flawless working vr
+# sections"). Run with JAKVR_TEST_CONTINUE=wascityb-gungame JAKVR_TEST_TURRETS=1 JAKVR_STATE_TRACE=1: the opening
+# skipped as /c/JakQuest/sim/jak3_turret.sim, then the gun game's continue, and pc-vr.gc puts Jak in Spargus' wall
+# turret (before 4500). Then the hand turned left, right, down and up, a picture after each (the turret, and the view
+# with it, follow the hand; "[vr-gun] the turret aims where the right hand points"); the first finger then lifted off
+# the trigger once it has been seen on it (the stick's turret: the hand turned, the turret stays), back on and fired.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+3300 a 1
+3306 a 0
+3420 a 1
+3426 a 0
+4500 shot th-start
+4520 hand_yaw 30
+4700 shot th-hand-left
+4720 hand_yaw -30
+4900 shot th-hand-right
+4920 hand_yaw 0
+4920 hand_pitch -30
+5100 shot th-hand-down
+5120 hand_pitch 20
+5300 shot th-hand-up
+5320 hand_pitch 0
+5400 shot th-hand-ahead
+5420 right_first_touch 1
+5440 right_first_touch 0
+5460 hand_yaw 35
+5640 shot th-finger-off
+5660 right_first_touch 1
+5840 shot th-finger-on
+5860 right_trigger 1
+5900 shot th-fire
+5920 right_trigger 0
+5940 right_first_touch 0
+5960 left_x 0.8
+6060 shot th-stick
+6080 left_x 0
+6200 quit 0

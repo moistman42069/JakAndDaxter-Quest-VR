@@ -5,19 +5,18 @@ PlayStation 2): standalone on Meta Quest, and on PC VR headsets with the same la
 natively through <a href="https://opengoal.dev"><b>OpenGOAL</b></a>, by way of <a href="https://github.com/thebardockgames/Precursor"><b>Precursor</b></a>,
 OpenGOAL's Android fork. You supply your own discs; no game files are included.</p>
 
-> **Test release [0.1.8](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** two new options,
-> both on to start: **Steer by grabbing the wheel** (squeeze a grip on a vehicle's wheel or handlebars and turn it;
-> the stick still steers) and **Hold the gun while driving** (Jak II and 3's city bikes and cars). Fixes for the
-> latest reports on 0.1.7: Jak II no longer closes after a long pause, Jak 1 is no longer held still after a power
-> cell, the game's sound goes on when the sound device goes away (PC), a black headset is said plainly in the PC
-> window's title and the log, Jak II and 3's shadows are the same in both eyes, jumps are as high as the game's own at
-> the headset's rate, and Jak 1's end credits no longer flicker. On PC you can choose where your texture packs, saves
-> and logs are kept. It is still a test release, tested on a PC with a simulated headset, and its main purpose is
-> still to collect logs. Whatever happens, please send yours: the [release notes](docs/release-notes.md) say how.
-> [docs/LIST-0.1.8.md](docs/LIST-0.1.8.md) says what changed and how each part was checked
-> ([LIST-0.1.7.md](docs/LIST-0.1.7.md), [LIST-0.1.6.md](docs/LIST-0.1.6.md), [LIST-0.1.5.md](docs/LIST-0.1.5.md),
-> [LIST-0.1.4.md](docs/LIST-0.1.4.md), [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and
-> [LIST-0.1.0.md](docs/LIST-0.1.0.md) for the releases before).
+> **Test release [0.1.9](https://github.com/moistman42069/JakAndDaxter-Quest-VR/releases/latest):** Jak II and 3's
+> gun turrets aimed by your hand, Jak 1's fishing game played from Jak's eyes with the net in your hand (new option
+> **Fishing game in first person**, on to start) and Jak 3's maze game in front of you. Fixes for the latest reports
+> on 0.1.8: Jak II's boss scene in Mar's Tomb, Errol's floor and the Dark Maker ship's door in Jak 3, a section of the
+> city not loading, the map's double image, see-through squares in the HUD, the guns' shots leaving your hand, and
+> Jak's hands on the bikes' handlebars and the cars' wheels. It is still a test release, tested on a PC with a
+> simulated headset, and its main purpose is still to collect logs. Whatever happens, please send yours: the
+> [release notes](docs/release-notes.md) say how. [docs/LIST-0.1.9.md](docs/LIST-0.1.9.md) says what changed and how
+> each part was checked ([LIST-0.1.8.md](docs/LIST-0.1.8.md), [LIST-0.1.7.md](docs/LIST-0.1.7.md),
+> [LIST-0.1.6.md](docs/LIST-0.1.6.md), [LIST-0.1.5.md](docs/LIST-0.1.5.md), [LIST-0.1.4.md](docs/LIST-0.1.4.md),
+> [LIST-0.1.3.md](docs/LIST-0.1.3.md), [LIST-0.1.1.md](docs/LIST-0.1.1.md) and [LIST-0.1.0.md](docs/LIST-0.1.0.md)
+> for the releases before).
 
 ## Built on OpenGOAL
 
@@ -44,6 +43,8 @@ One VR layer shared by all three games, so each plays start to finish as it woul
   real punches and uppercuts, Jak 1's yellow eco from your hand, Jak II and 3's guns aimed by the hand, drawn from the
   hip or shoulder, steadied with both hands. Body shown picks what of him you see: the whole body, body and arms, body
   and legs, arms and legs, arms only, legs only or hands only.
+- **Vehicles and minigames by hand:** steering by grabbing the wheel or handlebars, the gun held while driving, gun
+  turrets aimed by the hand, and Jak 1's fishing game from Jak's eyes with the net in your hand.
 - **Haptics** for the game's rumble and for every VR action.
 - **Performance options** as Ratchet & Clank Quest VR's: Smoother frames (AppSW), foveated rendering, CPU and GPU boost,
   refresh rate, eye resolution, Max draw distance.
@@ -61,6 +62,20 @@ Each VR mechanic is on to start and has its own off switch in the VR menu. Which
 - Your own discs of the games, as disc images (`.iso`). The launcher reads them and builds each game from source for
   your disc's version (US, PAL, Japanese, Korean).
 - A Meta Quest 2, 3 or 3S, or a PC VR headset (OpenXR: SteamVR, Meta Quest Link, Virtual Desktop).
+
+## If Windows Security removes gk.exe
+
+Microsoft Defender has taken the PC release's `game\gk.exe` for a threat by mistake and removed it while a game ran
+(the launcher then says gk.exe is missing). The release is built from this repository's source, and nothing in it
+changes your system. To get it back:
+
+1. Open **Windows Security**, **Virus & threat protection**, **Protection history**.
+2. Find the item naming `gk.exe` (or another file in the release's `game` folder), open it and choose **Restore**
+   (or **Actions**, **Allow on device**).
+3. Start the game again from the launcher. If the file is not in Protection history, unzip the release again.
+
+From 0.1.9 the release's programs carry Windows version information (product, company, description), which these
+checks look at. If it happens again, please say in your report which threat name Windows Security showed.
 
 ## Building
 

@@ -176,10 +176,21 @@ final class PcSetup {
 
     private static final Pattern PERCENT = Pattern.compile("\\[\\s*(\\d{1,3})%\\]");
 
+    /**
+     * 0.1.9 (LIST-0.1.9 item 17; a tester: Windows took gk.exe for a virus, and restoring it from Protection history
+     * fixed it): what to do when one of the release's programs is gone. Windows Security quarantining it by mistake is
+     * the likely cause, so its way back comes first.
+     */
+    static String missingProgram(String exe) {
+        return "The release's game\\" + exe + " is missing. Windows Security may have removed it by mistake: open "
+            + "Windows Security, Virus & threat protection, Protection history, find " + exe + " and choose Restore "
+            + "(or Allow on device). If it is not there, unzip the release again.";
+    }
+
     private static void run(PcPaths paths, String game, File iso, Runnable changed) throws IOException,
             InterruptedException {
         if (!paths.extractor().isFile()) {
-            throw new IOException("The release's game\\extractor.exe is missing: unzip the release again.");
+            throw new IOException(missingProgram("extractor.exe"));
         }
         if (iso == null && !paths.extracted(game).isDirectory()) {
             throw new IOException("The disc extracted before is gone: set the game up from your disc image again.");

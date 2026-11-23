@@ -1,0 +1,69 @@
+# Jak 3: an orb hunt's opening flyover (LIST-0.1.9 item 19; a tester: "jak 3 sidequest orb hunt cutscenes don't work if
+# your playing 1st person"), run with JAKVR_TEST_TASK=73 (desert-bbush-get-to-1), JAKVR_STATE_TRACE=1. The boot of
+# jak3_vehicle_gun.sim (a new game into play), then the task's continue: Jak is seated in a desert vehicle and the
+# game's camera flies to the orbs and back (sim s10 orb on build 128b: about frames 11000 to 11300). A picture every
+# 60 frames from 10200 to 12600, the head still. Expect "[vr-view] the game's camera shows something away from Jak while
+# it holds him ... the view from the game's camera", then "the game holds Jak no more", and in the pictures between them
+# the game's own flyover (the desert from above, the orbs), not Jak's seat.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3100 a 1
+3106 a 0
+3300 a 1
+3306 a 0
+3500 a 1
+3506 a 0
+10200 shot ob00
+10260 shot ob01
+10320 shot ob02
+10380 shot ob03
+10440 shot ob04
+10500 shot ob05
+10560 shot ob06
+10620 shot ob07
+10680 shot ob08
+10740 shot ob09
+10800 shot ob10
+10860 shot ob11
+10920 shot ob12
+10980 shot ob13
+11040 shot ob14
+11100 shot ob15
+11160 shot ob16
+11220 shot ob17
+11280 shot ob18
+11340 shot ob19
+11400 shot ob20
+11460 shot ob21
+11520 shot ob22
+11580 shot ob23
+11640 shot ob24
+11700 shot ob25
+11760 shot ob26
+11820 shot ob27
+11880 shot ob28
+11940 shot ob29
+12000 shot ob30
+12060 shot ob31
+12120 shot ob32
+12180 shot ob33
+12240 shot ob34
+12300 shot ob35
+12360 shot ob36
+12420 shot ob37
+12480 shot ob38
+12540 shot ob39
+12600 shot ob40
+12900 head_yaw 0

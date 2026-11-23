@@ -1,0 +1,59 @@
+# Jak II: the drill platform's gun turret aimed by the right hand (LIST-0.1.9 item 23). Run with JAKVR_TEST_TASK=37
+# (drill-ship) JAKVR_TEST_WARP=turret QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: the boot of jak2_vehicle_hands.sim, the
+# task's continue, then Jak put 1.5 m behind the nearest turret (pc-vr.gc, build 126; frame 10000), where Triangle (Y)
+# gets him on. Then the hand turned left, right, down and up, a picture after each (the turret and the view with it
+# follow the hand; "[vr-gun] the turret aims where the right hand points"), the first finger lifted off the trigger once
+# it has been seen on it (the stick's turret: the hand turned, the turret stays), back on and fired, then the stick.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+10000 shot tt-warp
+10060 y 1
+10066 y 0
+10160 y 1
+10166 y 0
+10260 y 1
+10266 y 0
+10500 shot tt-on
+10520 hand_yaw 30
+10700 shot tt-hand-left
+10720 hand_yaw -30
+10900 shot tt-hand-right
+10920 hand_yaw 0
+10920 hand_pitch -20
+11100 shot tt-hand-down
+11120 hand_pitch 15
+11300 shot tt-hand-up
+11320 hand_pitch 0
+11400 shot tt-hand-ahead
+11420 right_first_touch 1
+11440 right_first_touch 0
+11460 hand_yaw 35
+11640 shot tt-finger-off
+11660 right_first_touch 1
+11840 shot tt-finger-on
+11860 right_trigger 1
+11900 shot tt-fire
+11920 right_trigger 0
+11940 right_first_touch 0
+11960 left_x 0.8
+12060 shot tt-stick
+12080 left_x 0
+12200 quit 0

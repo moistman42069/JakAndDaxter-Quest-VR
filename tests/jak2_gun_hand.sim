@@ -1,0 +1,65 @@
+# Jak II: every gun aimed by the hand (LIST-0.1.9 items 3 and 4; a tester: the Peace Maker's shot "not from the
+# gun", Jak II has it too), run with JAKVR_TEST_GUN=1 (the four guns) JAKVR_STATE_TRACE=1. A new game to the fortress
+# exit (as jak2_gun.sim), the gun drawn (the Scatter Gun, the first the game gives), the right hand turned 40 degrees
+# left of Jak's facing and 15 down, and each of the four fired: the Scatter Gun as drawn (its d-pad button would put it
+# away: sim gh2b, build 123, "the game's gun 0"), then each picked by the d-pad with the left thumb on its rest (the
+# game's gun 4, the Peace Maker, right; 1, the Blaster, down; 3, the Vulcan Fury, left): the Scatter Gun and the Peace
+# Maker tapped, the Blaster and the Vulcan Fury held. Expect one "[vr-gun] ... by the hand"
+# line for each gun's first shot (and the Vulcan Fury's flash, the Peace Maker's ball), each starting 0.00 m from the
+# gun's muzzle and going 0.0 degrees off the hand's aim.
+2400 menu 1
+2406 menu 0
+2900 a 1
+2906 a 0
+3300 a 1
+3306 a 0
+3700 a 1
+3706 a 0
+3760 y 1
+3766 y 0
+3880 y 1
+3886 y 0
+4000 y 1
+4006 y 0
+4120 y 1
+4126 y 0
+4300 a 1
+4306 a 0
+4420 a 1
+4426 a 0
+4500 shot gh-start
+4520 right_trigger 1
+4526 right_trigger 0
+4600 shot gh-drawn
+4610 hand_yaw 40
+4610 hand_pitch -15
+4780 right_trigger 1
+4786 right_trigger 0
+4790 shot gh-red
+4900 left_rest_touch 1
+4910 right_x 1
+4930 right_x 0
+4940 left_rest_touch 0
+4980 right_trigger 1
+4986 right_trigger 0
+4990 shot gh-dark
+5100 left_rest_touch 1
+5110 right_y -1
+5130 right_y 0
+5140 left_rest_touch 0
+5180 right_trigger 1
+5195 shot gh-yellow-held
+5210 right_trigger 0
+5214 shot gh-yellow
+5300 left_rest_touch 1
+5310 right_x -1
+5330 right_x 0
+5340 left_rest_touch 0
+5380 right_trigger 1
+5402 shot gh-blue-held
+5425 right_trigger 0
+5429 shot gh-blue
+5500 hand_yaw 0
+5500 hand_pitch 0
+5560 shot gh-end
+5570 quit 0

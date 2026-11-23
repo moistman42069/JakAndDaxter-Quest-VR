@@ -1,3 +1,71 @@
+0.1.9: gun turrets aimed by the hand, the fisherman's game and Daxter's maze game made for VR, two more ways to use
+the wheel, and fixes for the latest reports (Mar's Tomb's boss, Errol's floor, the Dark Maker ship's door, the guns,
+the map, the HUD). Still a test release: please keep sending your logs.
+
+0.1.9 changes the game code: each game is prepared again once (Quest: Prepare again; PC: Build it again on each game,
+which builds again only what changed). Your saves and options are kept.
+
+New
+- Gun turrets aimed by the hand (Jak II and 3, with Aim with your hand on): Jak II's drill platform turrets; Jak 3's
+  Spargus wall turret, the forest's turrets, the Scorpion's gun and the pickup's gun in the blow tower mission. With
+  your first finger on the right trigger the turret turns to where your right hand points, and the trigger fires; lift
+  the finger and the stick aims as before.
+- The fisherman's game (Jak 1) in first person: you stand on the bridge in Jak's eyes with the net in your hand, its
+  pole where the controller points. Dip the basket where the fish come down the river; a catch buzzes the net's hand
+  (harder for the big one and the eel). The other grip takes the net in that hand. Punches and kicks are off while you
+  fish. New option, Fishing game in first person (on to start; Jak 1): off, the game's camera shows it and the net
+  follows your raised hand side to side, the stick moving it too.
+- Daxter's maze game (Jak 3, Vin's room): the board is ahead of you instead of under your feet.
+- B for height while holding the wheel (on to start; Jak II and 3's hover cars and bikes): with your right hand on
+  the wheel, B is the height and the right stick's click the turbo. Off: as 0.1.8.
+- Lean by pushing the wheel (on to start): with the wheel held, push it away to lean forward and pull it back to lean
+  back, as the stick (the lean in the air matters most in Jak 3's desert). Turning never leans.
+
+Changed
+- Jak 3: in the Dark Maker robot the view is the game's camera, whatever the view setting (in first person you saw
+  only the inside of its cockpit); first person again once out.
+- Jak 3: when the game's camera shows something away from Jak while it holds him (the orb hunts' openings), you see
+  it from the game's camera, then the view goes back.
+- Jak 3: at the Scorpion's gun and the pickup's gun the view is the game's camera, tipped so what it shows is ahead
+  (in first person there was nothing to see).
+- First person: the JET-Board on Jak's back and Light Jak's wings are no longer in your view (third person shows
+  them), and any model that comes within a hand's width of your eyes fades instead of filling the view.
+- Jak's hands close on the bikes' handlebars and the cars' wheels where the game's own pose holds them (Steer by
+  grabbing the wheel; Jak II and 3), the fingers round the bar.
+- Swimming: your eyes stay over the water (at Jak II's port they were under it), and in Jak II and 3 over the
+  sea's waves round them too, so you no longer look at the dark under the sea.
+- Gamepad only stands aside while no gamepad is connected: the VR controllers play, so you are never stuck at a
+  title. The log says which.
+- The log says where each kind of shot starts and goes against the gun in your hand, what took a slow frame's time
+  ([vr-perf], when drawing takes over 8 ms a frame), when the view stands outside every level shown ([vr-level]),
+  and why an object stands in the game's art error.
+- PC: gk.exe and extractor.exe carry Windows version information. If Windows Security removes gk.exe anyway, the
+  launcher says how to restore it (Windows Security, Virus and threat protection, Protection history).
+- Jak II: some frames were slow at the port and in the Strip Mine; the world's sprites are now worked out once for
+  both eyes.
+
+Fixed
+- Jak II: the Baron's widow's scene in Mar's Tomb could stay unplayed, leaving you stuck there (the multiplayer mod
+  asked for the nearest player playing Jak instead of Jak himself). A save made there plays it once loaded.
+- Jak 3: Errol's boss floor mostly not drawn (its panels ran out of memory as the level began); the whole floor is
+  drawn and drops when bombed.
+- Jak 3: the blow tower mission could stop the game (more shadows in one frame than the game had room for); the
+  room grows now.
+- Jak II and 3: a section of the city sometimes not loading. The game decided which part of the city you stand in
+  from your eyes, which in first person can stand outside every part; it asks from its own camera now, as the
+  original, and the log says when the view stands outside every part shown.
+- Jak 3: the Dark Maker ship's door after the first squad never opened: its four troopers were made before the next
+  part of the ship was up and stood still, unseen, for good. Troopers like them now wait for it.
+- The guns aimed by the hand: Jak 3's Peace Maker ball, the Wave Concussor's shockwave and the Plasmite RPG's grenade
+  leave the gun in your hand along its aim (the ball homes only on what you point at), and the Scatter Gun's blast is
+  turned by your hand (Jak II and 3).
+- Jak II and 3: the map looked double. It was drawn on the HUD and also flat in each eye behind it (Jak II's subtitles
+  too), and the pause ring stood less than a metre from your eyes while the map and the menu's words were on the HUD,
+  farther away. The map is on the HUD alone now, and the ring stands at the HUD's distance, looking as large as before.
+- See-through squares in the HUD where one part was drawn over another.
+- Jak II: the log filled with a line for each of Daxter's models every frame.
+- Jak 1: a false stall in the log as the game closed.
+
 0.1.8: steer by grabbing the wheel, hold the gun while driving, choose where your files are kept, and fixes for the
 latest reports (a close after a long pause, a power cell that held Jak still, the sound and the headset going away).
 Still a test release: please keep sending your logs.

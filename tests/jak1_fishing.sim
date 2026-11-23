@@ -1,0 +1,39 @@
+# Jak 1: the fisherman's game from the game's camera, by the hand (LIST-0.1.9 item 20; a tester: "will vr fishing be in
+# next update"). Run with Fishing game in first person off (sim cfg gkcfg-fishtp; tests/jak1_fishing_eyes.sim is the game
+# from his eyes) and JAKVR_TEST_CONTINUE=jungle-start JAKVR_TEST_WARP=fisher JAKVR_TEST_RIDE=1 QUEST_SIM_ALIGN=10000
+# JAKVR_STATE_TRACE=1: a new game (as jak1_tether_rock.sim), the continue, Jak put by the fisherman (frame 10000), and 3
+# seconds on his game starts as his question's Yes does (pc-vr.gc, fisher.gc idle: "[vr] test: the fishing game
+# started"). It is seen from the game's camera (target-fishing). The right hand then held 35 cm left of the head, 35 cm
+# right, in front of it (the net there, at no more than the original's speed), then the stick (the stick's net, the hand
+# ignored), the stick let go (the net stays where the stick left it), the hand moved (it takes the net back), and the
+# left hand raised and moved left (the raised hand has the net). Each step about a second and a half, all inside the
+# game's first 15 s: missed fish lose it some 17 s in (sim s14 fi).
+2400 menu 1
+2406 menu 0
+2700 a 1
+2706 a 0
+3000 a 1
+3006 a 0
+3420 y 1
+3426 y 0
+10000 shot fi-warp
+10400 shot fi-game
+10410 rh_x -0.55
+10500 shot fi-hand-left
+10510 rh_x 0.15
+10600 shot fi-hand-right
+10610 rh_x -0.2
+10700 shot fi-hand-middle
+10710 left_x -1
+10780 shot fi-stick-left
+10790 left_x 0
+10860 shot fi-stick-stays
+10870 rh_x 0.15
+10950 shot fi-hand-again
+10960 lh_y 0.25
+10960 lh_x -0.2
+11040 shot fi-left-raised
+11050 lh_y 0
+11050 lh_x 0
+11400 shot fi-later
+11500 quit 0

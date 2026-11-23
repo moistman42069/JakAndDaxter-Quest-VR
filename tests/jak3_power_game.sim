@@ -1,0 +1,100 @@
+# Jak 3: Daxter's maze game in Vin's room (LIST-0.1.9 item 12; a tester: "the daxter pacman like minigame cant be seen
+# if your set to 1st person, and you have to look down to play it in 3rd person"), run with JAKVR_TEST_TASK=51
+# (city-power-game, its continue vinroom-start) QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1. A new game into play (as jak3_shadow_walk.sim),
+# the task's continue, A (Cross) between the Ys until 4100 to close the new game's save notice (sim pg, build 123: it
+# stayed up over Vin's room and hid the maze), Y (the game's Triangle) by the machine every 200 frames until the game starts, then Daxter
+# steered round the board by the left stick, a picture every 300 frames with the head level, and some with it 30
+# degrees down and 30 to the side. Expect "[vr-view] a view from the game's own camera" and "the view tipped N
+# degrees down", "view in play: third person", and in the level-head pictures the board ahead, its far side up; at the
+# end "the view level again" and first person back.
+# 0.1.9: with QUEST_SIM_ALIGN=10000, the game from frame 10000 counts from the task aid's mark (Jak 2 s in
+# play at the task's continue, "[vr] test: the task's set-up done"): the task's two continues load in a
+# different time each run (sims pg in batch62 and 65 pressed before Vin's room was there).
+# 0.1.9 (sim s10 pg on build 128b): the maze game is already on at the mark (the view tipped 63 degrees down before it)
+# and the A and Y presses that were to start it quit it (Y is its Triangle): none now, Daxter steered from 10300.
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3100 a 1
+3106 a 0
+3200 a 1
+3206 a 0
+10000 shot pg00-before
+10300 left_y 1
+10420 left_y 0
+10450 shot pg01-play
+10600 left_x 1
+10720 left_x 0
+10750 shot pg02-play
+10900 left_y -1
+11020 left_y 0
+11050 shot pg03-play
+11070 head_pitch -30
+11100 shot pg04-down
+11110 head_pitch 0
+11120 head_yaw 30
+11150 shot pg05-side
+11160 head_yaw 0
+11200 left_x -1
+11320 left_x 0
+11350 shot pg06-play
+11500 left_y 1
+11620 left_y 0
+11650 shot pg07-play
+11800 left_x 1
+11920 left_x 0
+11950 shot pg08-play
+11970 head_pitch -30
+12000 shot pg09-down
+12010 head_pitch 0
+12020 head_yaw 30
+12050 shot pg10-side
+12060 head_yaw 0
+12100 left_y -1
+12220 left_y 0
+12250 shot pg11-play
+12400 left_x -1
+12520 left_x 0
+12550 shot pg12-play
+12700 left_y 1
+12820 left_y 0
+12850 shot pg13-play
+12870 head_pitch -30
+12900 shot pg14-down
+12910 head_pitch 0
+12920 head_yaw 30
+12950 shot pg15-side
+12960 head_yaw 0
+13000 left_x 1
+13120 left_x 0
+13150 shot pg16-play
+13300 left_y -1
+13420 left_y 0
+13450 shot pg17-play
+13600 left_x -1
+13720 left_x 0
+13750 shot pg18-play
+13770 head_pitch -30
+13800 shot pg19-down
+13810 head_pitch 0
+13820 head_yaw 30
+13850 shot pg20-side
+13860 head_yaw 0
+13900 left_y 1
+14020 left_y 0
+14050 shot pg21-play
+14200 left_x 1
+14320 left_x 0
+14350 shot pg22-play
+14700 quit 0

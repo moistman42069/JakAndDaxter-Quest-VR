@@ -32,8 +32,9 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | --- | --- |
 | `JAKVR_TEST_CONTINUE=<continue point>` | Once Jak has been in play on foot for 2 seconds, the game starts again at that continue point (each game's level-info.gc, e.g. Jak 1 `firecanyon-start`, Jak II `ctysluma-start`, Jak 3 `wasdoors-desert-turtle`). |
 | `JAKVR_TEST_WARP=<actor>` | Jak 1: once Jak has been in play on foot for 3 seconds after any test continue, he is put a metre over that actor (its entity name, e.g. `sunken-elevator-2`, or its type's name for the first of that type), and the sim's `QUEST_SIM_ALIGN` frames count from then. `=list` logs each actor of the levels loaded (`[vr-test] actor <level> <name> <type> at x y z`, metres). |
-| `JAKVR_TEST_WARP=<type>` (Jak II) | 0.1.7: once Jak has been in play on foot, the blackout over and any test continue or task started, and 3 seconds more, he is put 2 m from the nearest process of that type (one waiting for its race first: `vehicle-racer` for the stadium's racer), and the sim's `QUEST_SIM_ALIGN` frames count from then (`[vr-test] warp: Jak put 2 m from ...`, or `no ... in play`). 0.1.8 (LIST-0.1.8 item 14): `swingpole` puts him a metre over the nearest swing pole instead, so he takes it as he falls past (tests/jak2_pole.sim). |
-| `JAKVR_TEST_RIDE=1` | 0.1.8 (LIST-0.1.8 items 5 and 6), Jak II, with `JAKVR_TEST_WARP=<vehicle type>` (`bikea`, `cara`): for 3 seconds after the warp Jak is kept 2 m beside that vehicle each frame (a city vehicle drives off or sinks before Triangle reaches it), until he is on it (`[vr-test] ride: Jak is on it`, or `... did not get on in 3 s`). Once he stands there he is put on it as Triangle does (`[vr-test] ride: Jak beside it, standing: on it as Triangle puts him`; a script's Triangle came while he still fell from the warp). |
+| `JAKVR_TEST_WARP=<type>` (Jak II) | 0.1.7: once Jak has been in play on foot, the blackout over and any test continue or task started, and 3 seconds more, he is put 2 m from the nearest process of that type (one waiting for its race first: `vehicle-racer` for the stadium's racer), and the sim's `QUEST_SIM_ALIGN` frames count from then (`[vr-test] warp: Jak put 2 m from ...`, or `no ... in play`). 0.1.8 (LIST-0.1.8 item 14): `swingpole` puts him a metre over the nearest swing pole instead, so he takes it as he falls past (tests/jak2_pole.sim). 0.1.9 (LIST-0.1.9 item 23): `turret` puts him 1.5 m behind the nearest gun turret and 0.5 m up, where its Triangle prompt shows (tests/jak2_turret_hand.sim, with `JAKVR_TEST_TASK=37`). |
+| `JAKVR_TEST_WARP=<type>` (Jak 3) | 0.1.9 (LIST-0.1.9 items 6, 7, 13 and 27): as Jak II's, after any test continue or task, also as Daxter alone (his ledge hang at `factory-indax-2` counts as standing) and in the Dark Maker robot (`precur-door-b` with `JAKVR_TEST_TASK=64`). For 30 s after the warp, every 2 s, the watch logs each actor of a level in play within 40 m (`[vr-test] watch:   <name> (<type>, <level>) N m away: <its state, or none-born>, perm #x...`), to see whether a door's squad was born, waits dormant or was killed. |
+| `JAKVR_TEST_RIDE=1` | 0.1.8 (LIST-0.1.8 items 5 and 6), Jak II, with `JAKVR_TEST_WARP=<vehicle type>` (`bikea`, `cara`): for 3 seconds after the warp Jak is kept 2 m beside that vehicle each frame (a city vehicle drives off or sinks before Triangle reaches it), until he is on it (`[vr-test] ride: Jak is on it`, or `... did not get on in 3 s`). Once he stands there he is put on it as Triangle does (`[vr-test] ride: Jak beside it, standing: on it as Triangle puts him`; a script's Triangle came while he still fell from the warp). 0.1.9: Jak 3 too (`h-bike-a`, `h-car-b`). Jak 1 (LIST-0.1.9 item 20), with `JAKVR_TEST_WARP=fisher` (`JAKVR_TEST_CONTINUE=jungle-start`): 3 seconds after the warp the fisherman's game starts as his talk starts it (`[vr] test: the fishing game started`; tests/jak1_fishing.sim). |
 | `JAKVR_TEST_WARP_OFFSET=dx,dy,dz` | Jak 1, with `JAKVR_TEST_WARP`: that many metres from the actor instead of a metre over it (the pipe game's buttons, which are not entities: `sunken-pipegame-1` with `7.5,1.3,1.25` for the right one). |
 | `JAKVR_TEST_WARP_APPROACH=1` | Jak 1, with `JAKVR_TEST_WARP_OFFSET`: first to the offset, then onto the actor once the levels there have loaded, as a player walking up to it (the elevator down to the underwater city asks for the city as it starts). |
 | `JAKVR_TEST_KILL_SCENE=1` | Jak 1: a scene's camera (pov-camera) dies a second into its scene, to see Jak let go (`[vr] the scene ... ended before it let Jak go`). |
@@ -46,7 +47,7 @@ flat screen) and `-motion.png`; `quit 0` ends the run. Every other name sets an 
 | `JAKVR_RIDE_TRACE=1` | Riding in first person, every 30 frames: the most the view moved in his seat in a frame against his head's own move, and its turn against his (`[vr-cam] riding, the most in a frame: ...`). |
 | `QUEST_SIM_HZ=N` | The refresh rate the simulated headset tells (72 to start), for Game frame rate: Automatic. |
 | `QUEST_SIM_PERIOD_BLIPS=N` | 0.1.5: every Nth frame the simulated headset tells a doubled frame period, as SteamVR does for each frame it missed; Automatic keeps the game's rate (a change of the headset's rate is followed once it has held a second: `[vr-view] the headset at ...`). |
-| `JAKVR_TEST_TASK=<number>`, `JAKVR_TEST_RESTARTS=N` | 0.1.5, Jak 3 (and 0.1.7, Jak II, `JAKVR_TEST_TASK` alone; with `JAKVR_TEST_CONTINUE` it starts after the continue; 43 is the stadium's class 3 race): once Jak has been in play for 2 seconds, that mission played from its start (the game's play-task and its continue), then restarted N times as the pause menu's Restart mission does, a minute after and then every 20 seconds (`[vr] test: task ...`, `restart mission N`; 17 is the leaper race). |
+| `JAKVR_TEST_TASK=<number>`, `JAKVR_TEST_RESTARTS=N` | 0.1.5, Jak 3 (and 0.1.7, Jak II, `JAKVR_TEST_TASK` alone; with `JAKVR_TEST_CONTINUE` it starts after the continue; 43 is the stadium's class 3 race): once Jak has been in play for 2 seconds, that mission played from its start (the game's play-task and its continue), then restarted N times as the pause menu's Restart mission does, a minute after and then every 20 seconds (`[vr] test: task ...`, `restart mission N`; 17 is the leaper race). 0.1.9, Jak 3: in two steps. First the game goes to the task's continue (or `JAKVR_TEST_CONTINUE`'s) with no step of the story changed (`[vr] test: task N, first to its continue <name>, then played there`), so the new game's arena opening is left and unloaded; once Jak has been 2 seconds in play there, the task is played without the menu's reset of the whole game (play-clean's `'debug`, which brought the arena's opening back), its steps opened as the menu opens them. Played in the arena, closing its steps made the arena's task manager ask for its scene level, which held the loader: the task's continue never loaded and Jak stayed in `target-continue` (sim ds on build 126). With no `JAKVR_TEST_WARP`, once Jak has been 2 seconds in play after the task (`[vr] test: the task's set-up done, Jak in play there`) the sim's `QUEST_SIM_ALIGN` frames count from then (tests/jak3_power_game.sim). A pause menu left open in play (a sim prelude's late Start) is closed first, once, and the aid waits for play (`[vr] test: the pause menu closed, the task aid waits for play`): a continue started behind it never loaded (sim ds on build 127). Numbers used in 0.1.9: Jak II 37 the drill platform, 51 the tomb's boss; Jak 3 51 the maze game, 54 the Scorpion's gun, 64 the Dark Maker ship, 65 the blow tower, 73 an orb hunt. |
 | `JAKVR_TEST_SOUND_STALL=S` | 0.1.5, Jak 1: the sound processor's player stops answering for S seconds at its 1200th batch of commands (about 20 seconds into a run; `[vr-test] the sound player held for S s`, then `goes on`), and the game, once the player has been busy for 30 frames, sends 300 sound commands at once (`[vr] test: 300 sound commands while the sound player is held`), so the sound queue fills as in the tester's freeze. |
 | `JAKVR_TEST_GAME_STALL=S` | 0.1.5: the game's thread held S seconds at its 1500th frame (`[vr-test] the game held for S s`, then `goes on`), for the stall watch's `[vr-stall]` lines. PC only. |
 | `JAKVR_TEST_BAD_TEXTURE=N` | 0.1.5: the Nth texture page the game uploads has its first entry read as 0 (`[vr-test] page N's first entry read as 0`), as the page in Jak 3's crash on a restart had: the texture guard passes it over. |
@@ -357,7 +358,7 @@ as the game read them:
   the right stick held right.
 - `pturn3`, `pstick3` (`jak2_pause_turned`, `jak2_pause_stickturn`; item 10): `[vr-view] paused: the menu on the HUD,
   following the head (1.60 m ahead ...)`, with the head turned 150 degrees and after a stick turn.
-- The launchers' options files: `VrOptionsTest` (below, 21 checks).
+- The launchers' options files: `VrOptionsTest` (below, 30 checks).
 - `mp1`, `mp2` (C:\JakQuest\sim\mp017.sh, build 97; items 1 and 3; Port mapping off, nothing sent to the router):
   Jak 1's party as in 0.1.6 (host and guest on this PC, the guest playing the host's progress): both joined, the
   progress sent, the VR bodies shown, no error, no `[crash]`, no `max number of riders`. Jak II's (C:\JakQuest\sim\mp2.sh,
@@ -506,6 +507,88 @@ how it is run).
   end (7.8 s), Jak in play again; al1ob `[vr] the streamed animation fuel-cell-victory-7 held at 4544 for 4 s (its
   sound stream stopped): it ends here`, Jak in play again (the tester's case: before 0.1.8 he stayed held).
 
+## The checks added in 0.1.9
+
+Runs in C:\JakQuest\sim\s09 to s18 (scratch), builds 121 to 137 (LIST-0.1.9), from C:\JakQuest\sim\batch60.sh to
+batch77.sh. The new sims: `jak1_fishing`, `jak1_fishing_eyes`, `jak2_gun_hand`, `jak2_show_map`, `jak2_tomb_boss`,
+`jak2_turret_hand`, `jak2_vehicle_hands`, `jak2_wheel_lean`, `jak3_darkship_door`, `jak3_errol_floor`,
+`jak3_factory_daxter`, `jak3_gun_hand`, `jak3_orb_hunt`, `jak3_power_game`, `jak3_show_map`, `jak3_turret_hand`,
+`jak3_vehicle_gun`, `jak3_vehicle_gun_hand`, `jak3_vehicle_hands`, `jak3_wheel_lean` (each header says how it is run).
+Two options folders of the sims: `gkcfg-gponly` (Gamepad only on, no gamepad connected) and `gkcfg-fishtp` (Fishing
+game in first person off).
+
+- Jak II's tomb boss (item 1): `tb-on`, `tb-off` (`jak2_tomb_boss`, `JAKVR_TEST_TASK=51`, the multiplayer mod on and
+  off) on the 0.1.8 build, the widow's scene never starting, as for the tester; `tb2`, `tb3` (builds 122, 123) and
+  `tb4` (build 131): `[vr] the tomb boss's scene starts: Jak 53.6 m from her`, then the fight.
+- The city's sections (item 2): `pf2p`, `pf2s` (`jak2_shadow_walk`, `gkcfg-perf`, `JAKVR_TEST_CONTINUE=ctyport-start`
+  and `strip-start`): the `[vr-level]` watch names each level and what the game wants; none left out.
+- Every gun from the hand (items 3 and 4): `gh2b` (`jak2_gun_hand`, `JAKVR_TEST_GUN=1`) and `gh3b` (`jak3_gun_hand`,
+  `JAKVR_TEST_GUN=all`), build 123: every shot `starts 0.00 m from the gun's muzzle` and goes 0.0 to 0.1 degrees off
+  the hand's aim, Jak 3's Needle Lazer picking its own targets as on a pad; `gh2c` (build 130), the Scatter Gun's blast
+  turned by the hand.
+- The guns on Jak 3's vehicles (item 5): `vgsc`, `vgbt` (`jak3_vehicle_gun`, `JAKVR_TEST_TASK=54` and `65`), the view
+  from the game's camera at each gun, `[vr-gun] the Scorpion's gun aims where the right hand points`; `vgbt` on build
+  131: `[vr-shadow] ... grown to 98304 points`, the mission played on.
+- The hands on the handlebars and the wheel (items 6 and 7): `vh2b`, `vh2c` (`jak2_vehicle_hands`,
+  `JAKVR_TEST_WARP=bikea`, `cara`, build 130): `[vr-body] the left hand onto the ride's handle: ...`, both hands closed
+  on the bars' ends looking down. `vh3g` (`jak3_vehicle_hands`, `JAKVR_TEST_CONTINUE=ctygenb-start
+  JAKVR_TEST_WARP=h-car-base`, build 134): the car parked by the traffic, both hands on the wheel's grips. `vh3b`
+  (`JAKVR_TEST_WARP=h-bike-base`, build 136): the bike parked 4 m ahead of Jak (no parking spot within 150 m there),
+  Jak on it, both grips on the handlebars, `the left hand onto the ride's handle: -0.38 -0.29 -0.22 m from the head`
+  and the right `0.39 -0.31 -0.22`, both hands closed on the bars' ends looking down.
+- The HUD's squares (item 9): `hud1`, `hud2`, `hud3` (each game's `_shadow_walk`, `QUEST_SIM_HEADSET=1
+  JAKVR_TEST_HUD=1`): no squares in the panel pictures' alpha.
+- The maps (item 11): `map2`, `map3` (`jak2_show_map`, `jak3_show_map`, build 131): one map, on the panel, `[vr-view]
+  the pause menu's ring at the HUD's depth: 1.60 m`.
+- Daxter's maze game (item 12): `pg` (`jak3_power_game`, `JAKVR_TEST_TASK=51`, build 130): `[vr-view] the view tipped 63
+  degrees down with the game's camera, so what it shows is ahead`, the board ahead.
+- The robot factory's Daxter section (item 13): `fd`, `fdz` (`jak3_factory_daxter`, the second with
+  `JAKVR_SHADOW_ZPASS=1`, build 128b): fd, as players have it, the eyes' shadow shares within 0.02 points of each
+  other and 0.18 of the flat game's count; fdz, the flat game's count in the headset, up to 0.26 apart (what 0.1.8
+  fixed); the zappers' glow, the lights and the particles in both eyes alike.
+- B for height and the lean (items 14 and 15): `wl2` (`jak2_wheel_lean`), `wl3` (`jak3_wheel_lean`): `B with the right
+  hand on a hover vehicle's wheel: R2 (the height)`, `the wheel pushed 12 cm: the left stick forward (lean 1)`,
+  `pulled 12 cm: ... back (lean 2)`, the turn still steering with no lean.
+- Errol's floor and the port's mines (item 16): `ef` (`jak3_errol_floor`, `JAKVR_TEST_TASK=60`, build 122): no
+  `!alloc`, the floor drawn ahead, down and behind; `pa`, `pa2` (`JAKVR_TEST_TASK=38`): none from build 123.
+- Jak II's slow frames (item 18): `pf2s`, `pf2p`: Daxter's lines 4 in a whole run, `[vr-perf] the drawing took 8.8 to
+  12.6 ms a frame` on the sim's PC; `pf1`, `pf3` (Jak 1 and 3): three such windows in all, at most 8.7 ms.
+- The orb hunts' scenes (item 19): `orb` (`jak3_vehicle_gun`, `JAKVR_TEST_TASK=73`, build 128b), `orb2`
+  (`jak3_orb_hunt`): `[vr-view] the game's camera shows something away from Jak while it holds him (186.5 m from him,
+  146 degrees off its ahead): the view from the game's camera`, then back.
+- The fishing game (item 20): `fe` (`jak1_fishing_eyes`, `JAKVR_TEST_CONTINUE=jungle-start JAKVR_TEST_WARP=fisher
+  JAKVR_TEST_RIDE=1`, build 134): from Jak's eyes, the basket 6.09 m from the hand and 0.05 m off the catch line
+  pointed at it, the far left end reached, `[vr-feel] a fish in the net`, `the net taken in the left hand (its grip
+  squeezed)` and back, no fists or kicks; the pictures: the thin pole and its basket over the river in either hand.
+  `fi` (`jak1_fishing`, `gkcfg-fishtp`): the game's camera, the net following the raised hand, the stick's hold, the
+  left hand raised taking it over. `fish` (s09, s12, `jak1_fishing`): `[vr] test: the fishing game started`, `state
+  target-fishing`.
+- What hangs on Jak's back (item 21): `board2` (`jak2_board`, `JAKVR_TEST_BOARD=1`), `light3` (`jak3_lightjak`):
+  `[vr-body] in first person the eyes leave out board-lod0 (the JET-Board on his back)`, `... jakb-wings-wings-lod0
+  (Light Jak's wings)`; ridden, the board is drawn.
+- The turrets (item 23): `tt2` (`jak2_turret_hand`, `JAKVR_TEST_TASK=37 JAKVR_TEST_WARP=turret`), `th3`
+  (`jak3_turret_hand`, `JAKVR_TEST_TURRETS=1`) and `vgsc`: `[vr-gun] a gun turret: it turns to where the right hand
+  points while its first finger is on the trigger`.
+- The Dark Maker robot and the ship's door (items 24 and 27): `ds` (`jak3_darkship_door`, `JAKVR_TEST_TASK=64
+  JAKVR_TEST_WARP=precur-door-b`, build 128b): `[vr-cam] mode 0 flags 0x2251 third person view` in the robot; the
+  door's ten troopers each `waits to be born` until `Displaying level precurb`, then `born now`, the four fighting.
+- Gamepad only with no gamepad (item 25): `gp` (`jak1_title_a`, `gkcfg-gponly`), `gp2` (`jak1_stick_start`, build
+  135): `[vr-pad] gamepads connected: 0`, `Gamepad only: no gamepad connected now, so the VR controllers play`, the
+  title started by the left stick's click, the VR menu opened and closed over the title's menu, its rows on the HUD.
+- Swimming (item 28): `pf2p` on builds 133 to 137: `[vr-view] swimming: the eyes kept at least 12 cm over the water
+  ...`, still black looking down (s18: 64% and 59% of two pictures lit). `pf2p` on build 138 (a trace, taken out
+  since): the game draws the near tiles there already; the eyes went under the waves. `pf2p` and `pf3p`
+  (`jak3_shadow_walk`, `gkcfg-perf`, `JAKVR_TEST_CONTINUE=ctyport-start`, the same dock in Jak 3) on build 139:
+  `[vr-view] swimming: a wave round the eyes stands 43.9 cm over his water's height: the eyes kept over it` (Jak 3:
+  8.5 cm), every swimming picture 95 to 100% lit (`tools/png_levels.ps1`).
+- Multiplayer (C:\JakQuest\sim\mp019.sh, build 135; port mapping off, nothing sent to the router): Jak 1's party
+  (`mp1` host and guest on this PC, the guest playing the host's progress) and Jak II's (`mp2`, host and guest by the
+  network's list): both exit 0, no errors, no `[crash]`, no `max number of riders`, the VR bodies shown.
+- The Quest's runtime compiled for ARM64 (C:\JakQuest\sim\android_native_check.sh, the NDK 27.2), after build 135:
+  linked, exit 0; the release's APK (C:\JakQuest\sim\build_apk.sh, after build 139) built it again: libmain.so has
+  0.1.9's lines (`the HUD's layer first sent`, `the fishing game from Jak's eyes`), no warning from game/vr.
+- The launchers' options files: `VrOptionsTest` (below, 30 checks), the new option on to start.
+
 ## Without a game
 
 - The party server: `python -I tests/party_server_test.py tools/party_server.py 8139` (24 checks).
@@ -533,6 +616,7 @@ how it is run).
   tab's Where things are listing every folder.
 - The launchers' VR options files (launcher/common VrOptions.java, 0.1.7) the same way:
   `tests/java/dev/jakquest/vr/VrOptionsTest.java`, `java -cp <classes>;<out> dev.jakquest.vr.VrOptionsTest <an empty
-  scratch folder>` (21 checks: a fresh file's starts, the crosshair Off under `crosshair-mark` and the new toggles; each
+  scratch folder>` (30 checks: a fresh file's starts, the crosshair Off under `crosshair-mark` and the new toggles,
+  0.1.9's two wheel options on and in VR Controls, B for height for the guns only, Fishing game in first person on; each
   older crosshair key as the game's vr_options.cpp reads it, 0.1.6's Dot Off and any other shape kept; written back
   with no older key). C:\JakQuest\sim\javac_check.sh compiles the launchers' sources for it.

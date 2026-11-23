@@ -32,6 +32,73 @@ is in [LIST-0.1.0.md](LIST-0.1.0.md) and not repeated here.
 - **Jak 3's white screen after its first scene** (Precursor's README): a new game; after the opening scene the desert
   should draw.
 
+## 0.1.9's changes (a tester's reports on 0.1.8, and a Pimax player's)
+
+- **Defaults**: `[vr] options: ...` with `wheel-lean on`, `wheel-b-height on` and `fishing-first-person on`.
+- **Gamepad only with no gamepad** (the Pimax player's case): turn Gamepad only on with no gamepad connected. At Jak
+  1's title the VR controllers still play (A starts, the stick moves the menu): `[vr-pad] Gamepad only: no gamepad
+  connected now, so the VR controllers play`. Connect a gamepad: `[vr-pad] Gamepad only: the VR controllers are left
+  out of the game`, the gamepad alone plays.
+- **The fisherman's game from Jak's eyes** (Jak 1, the river by the jungle; Fishing game in first person, on to
+  start): talk to the fisherman and play. You stand on the bridge in Jak's eyes, the river turned ahead of you
+  (`[vr-view] the fishing game from Jak's eyes: the net in your hand, the river turned ahead of you`), the net in your
+  right hand, its pole where the controller points and long enough for the basket to reach where the fish come down
+  (`[vr] the fishing game from Jak's eyes: the net's pole ... m (its own 3.22 m, ...)`). Point the basket under a
+  falling fish: it is caught and the net's hand buzzes (`[vr-feel] a fish in the net`; harder for the big one and the
+  eel), and the basket going into the water buzzes lightly. Squeeze the left grip: the net goes to the left hand
+  (`[vr-pad] the fishing game: the net taken in the left hand (its grip squeezed)`), and the right grip takes it back.
+  No punches or kicks while fishing. Each second of play a line says where the net is across the river.
+- **The fisherman's game from the game's camera** (Fishing game in first person off, or third person): the game's
+  camera; move your raised hand side to side and the net follows it, smoothly (`[vr-pad] the fishing game: the net
+  follows the right hand side to side, the raised hand (the stick still moves it)`). The stick moves it as the game's
+  own does; after that, the hand takes the net back once it moves 5 cm.
+- **Gun turrets aimed by the hand**: Jak II's drill platform turrets; Jak 3's Spargus wall turret, the forest's
+  turrets, the Scorpion's gun (the desert's beast battle) and the pickup's gun in the blow tower mission. With your
+  first finger on the right trigger, the turret turns to where your right hand points and the trigger fires; lift the
+  finger off and the stick aims as before. `[vr-gun] the turret aims where the right hand points`, `... the
+  Scorpion's gun aims ...`, `... the pickup's gun aims ...`. The view at the Scorpion's and the pickup's gun is the
+  game's camera, tipped so what it shows is ahead (`[vr-view] a view from the game's own camera ...`).
+- **Daxter's maze game** (Jak 3, Vin's room): the board is ahead of you, not under your feet (`[vr-view] the view
+  tipped N degrees down with the game's camera, so what it shows is ahead`); the view as before after it.
+- **The orb hunts' opening** (Jak 3, the desert's side missions) and any scene where the game's camera shows something
+  away from Jak while it holds him: the view goes to the game's camera (`[vr-view] the game's camera shows something
+  away from Jak while it holds him ...`), then back (`... is on Jak again`).
+- **The Dark Maker robot** (Jak 3, the Dark Maker ship): third person while in it, whatever the view setting, and
+  first person again once out.
+- **What hangs on Jak's back** (Jak II and 3, first person): the JET-Board put away and Light Jak's wings are not seen
+  in your view (`[vr-body] in first person the eyes leave out board-lod0 (the JET-Board on his back)`, `... (Light
+  Jak's wings)`); the board ridden is seen as before, and third person shows both.
+- **Steer by grabbing the wheel, B and the lean** (Jak II and 3's hover vehicles): with your right hand on the wheel,
+  B is the height (`[vr-pad] B with the right hand on a hover vehicle's wheel: R2 (the height)`) and the right stick's
+  click the turbo; push the wheel away to lean forward, pull it back to lean back (`[vr-pad] the wheel pushed 12 cm:
+  the left stick forward (lean 1)`), without turning.
+- **Jak's hands on the handlebars and the wheel** (Jak II and 3's city bikes and cars, first person, Steer by grabbing
+  the wheel): squeeze a grip at the handlebars or the wheel; Jak's drawn hand goes onto the bar's end or the wheel's
+  grip and closes on it (`[vr-body] the left hand onto the ride's handle: ... m from the head ...`), and off again as
+  you let go. Looking down, both hands are on the bars, not floating beside them.
+- **Swimming** (all three games, first person): the eyes stay over the water as Jak swims (`[vr-view] swimming: the
+  eyes kept at least 12 cm over the water ...`), and in Jak II and 3's city waters over the waves round them too,
+  never under the sea looking at black, also as a wave washes over him (`[vr-view] swimming: a wave round the eyes
+  stands ... cm over his water's height: the eyes kept over it`).
+- **The map** (Jak II and 3): the HUD's minimap and the pause menu's map are one picture, not doubled.
+- **The HUD**: no see-through squares in the HUD's pictures (the health, the guns' ammo, the orbs).
+- **The guns' shots** (Jak II and 3, every gun and mod): each shot leaves the gun in your hand and goes where the hand
+  aims; the Peace Maker's ball too. Jak 3's Needle Lazer still picks its own targets round Jak, as on a pad.
+- **The city's sections** (Jak II): every part of the city loads as you go; a log names any section the game wants
+  while the view stands outside (`[vr-level] the view has stood ... s outside every level shown, ...; the game wants ...`).
+- **The HUD's layer** (a Pimax or any headset whose HUD is not seen): the log's `[openxr] the HUD's layer first sent:
+  ... m, at ... m in the head's space ..., its picture ... (layer N of the frame's)` says the HUD went to the headset,
+  how big and where. Please send the log if the HUD or the menus' rows cannot be seen.
+- **Jak II's tomb boss** (Mar's Tomb, multiplayer on or off): walking up to the Baron's widow plays her scene. A save
+  made in the boss area before 0.1.9 plays it too once loaded.
+- **Jak 3's Errol boss** (the war factory's end): the whole floor drawn, its panels dropping when bombed; no `!alloc`
+  lines in the log at the level's start.
+- **Jak 3's Dark Maker ship**: the airlock door after the first squad opens once its four troopers come and are beaten.
+- **Closing the game**: no `[vr-stall]` lines after `GOAL Runtime Shutdown` unless the close takes over 5 s
+  (`[vr-stall] the game is closing: ...`).
+- **Windows Security** (PC): gk.exe is kept after a long play. If Windows Security removes it anyway, the launcher
+  says how to restore it from Protection history.
+
 ## 0.1.8's changes (a tester's reports on 0.1.7)
 
 - **Defaults**: `[vr] options: ...` with `ride-gun on`, `wheel-steer on` and `wheel-turn 60`.

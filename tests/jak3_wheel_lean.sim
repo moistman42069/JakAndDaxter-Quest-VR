@@ -1,0 +1,60 @@
+# Jak 3, 0.1.9 (LIST-0.1.9 item 15, Lean by pushing the wheel; the tester: "in jak 3 its important"). Run as
+# jak3_wheel.sim (JAKVR_TEST_CONTINUE=wasdoors-desert-turtle, the desert buggy: the continue seats him in it)
+# QUEST_SIM_ALIGN=10000 JAKVR_STATE_TRACE=1: seated, A held, both grips squeezed on the wheel, both hands
+# pushed 12 cm ahead and held, back, pulled 12 cm back and held, back, then turned as a wheel (no lean). Expect the
+# "[vr-pad] the wheel pushed ... forward" and "... pulled ... back" lines and none while turning; B there stays the
+# game's (no height in the desert).
+600 y 1
+606 y 0
+840 y 1
+846 y 0
+1500 a 1
+1506 a 0
+1800 a 1
+1806 a 0
+2100 a 1
+2106 a 0
+2400 a 1
+2406 a 0
+2700 a 1
+2706 a 0
+3000 y 1
+3006 y 0
+10000 shot wl-start
+10200 shot wl-seated
+10260 a 1
+10300 left_grip 1
+10300 right_grip 1
+10360 shot wl-held
+10380 rh_z -0.12
+10380 lh_z -0.12
+10440 shot wl-pushed-1
+10520 shot wl-pushed-2
+10540 rh_z 0
+10540 lh_z 0
+10600 shot wl-middle
+10620 rh_z 0.12
+10620 lh_z 0.12
+10680 shot wl-pulled-1
+10760 shot wl-pulled-2
+10780 rh_z 0
+10780 lh_z 0
+10840 shot wl-middle-2
+10860 rh_z -0.1
+10860 lh_z 0.1
+10920 shot wl-turn-1
+11000 shot wl-turn-2
+11020 rh_z 0
+11020 lh_z 0
+11080 shot wl-middle-3
+11100 b 1
+11110 b 0
+11160 shot wl-b
+11200 right_click 1
+11210 right_click 0
+11260 shot wl-click
+11300 left_grip 0
+11300 right_grip 0
+11300 a 0
+11360 shot wl-end
+11400 quit 0
